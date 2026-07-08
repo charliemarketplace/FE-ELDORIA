@@ -54,6 +54,74 @@ os.makedirs('saves', exist_ok=True)
 PROJECT = 'lion_throne'
 
 
+def restore_saves():
+    """Copy persisted save files from browser localStorage into saves/.
+
+    Must run before any app.engine import: config.py reads saves/config.ini
+    at import time.
+    """
+    if sys.platform != 'emscripten':
+        return
+    try:
+        import base64
+        import platform
+        data = json.loads(str(platform.window.lt_saves_dump()) or '{}')
+        count = 0
+        for rel, b64 in data.items():
+            rel = rel.replace('\\', '/')
+            if not rel.startswith('saves/') or '..' in rel:
+                continue
+            os.makedirs(os.path.dirname(rel), exist_ok=True)
+            with open(rel, 'wb') as fp:
+                fp.write(base64.b64decode(b64))
+            count += 1
+        js_log('restored %d save file(s) from browser storage' % count)
+    except Exception:
+        import traceback
+        js_log('save restore failed:\n' + traceback.format_exc())
+
+
+def persist_saves():
+    """Mirror the saves/ dir into browser localStorage (replaces prior mirror)."""
+    if sys.platform != 'emscripten':
+        return
+    try:
+        import base64
+        import platform
+        data = {}
+        for root, _, files in os.walk('saves'):
+            for fn in files:
+                if fn.endswith('.log') or fn.endswith('.txt'):
+                    continue
+                path = os.path.join(root, fn)
+                with open(path, 'rb') as fp:
+                    data[path.replace(os.sep, '/')] = base64.b64encode(fp.read()).decode('ascii')
+        result = str(platform.window.lt_saves_put_all(json.dumps(data)))
+        if result != 'ok':
+            js_log('save persist warning: %s' % result)
+    except Exception:
+        import traceback
+        js_log('save persist failed:\n' + traceback.format_exc())
+
+
+def hook_save_persistence():
+    """Persist to localStorage after every game save or settings write."""
+    from app.engine import save as save_module
+    import app.engine.config as cf_module
+
+    orig_save_io = save_module.save_io
+    def save_io_and_persist(*args, **kwargs):
+        orig_save_io(*args, **kwargs)
+        persist_saves()
+    save_module.save_io = save_io_and_persist
+
+    orig_save_config = cf_module.save_config
+    def save_config_and_persist(*args, **kwargs):
+        orig_save_config(*args, **kwargs)
+        persist_saves()
+    cf_module.save_config = save_config_and_persist
+
+
 def apply_audio_config():
     """No audio ships in the web build; the engine degrades missing files to
     silence. If web_config.json sets music_base_url, rewrite song paths to
@@ -92,6 +160,7 @@ def js_log(msg):
 
 async def main():
     js_log('main() entered')
+    restore_saves()
     from app import lt_log
     lt_log.create_logger()
     js_log('logger created')
@@ -116,6 +185,7 @@ async def main():
 
     from app.engine import driver, game_state
     js_log('engine imported')
+    hook_save_persistence()
     title = DB.constants.value('title')
     driver.start(title)
     js_log('driver started: %s' % title)

@@ -46,9 +46,12 @@ uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions pyth
   Tab options menu (Start); full mouse support unchanged
 - Fast-forward: number keys **1 / 2 / 5** set game speed ×1/×2/×5 (scaled
   game clock in `engine.update_time`; `get_true_time` stays real-time)
-- In-game keybinds and saves write to `saves/` in the browser's in-memory
-  filesystem — they work within a session but are lost on page reload
-  (persistence via IndexedDB is future work)
+- Save persistence: `saves/` is mirrored into browser localStorage after
+  every game save / settings write (hooks on `save.save_io` and
+  `config.save_config` in main.py) and restored at boot, so saves and
+  keybinds survive page reloads. The 💾 button downloads all saves as
+  `lion_throne_saves.json`; 📂 imports one (then reloads). localStorage
+  is per-browser/per-origin, ~5 MB quota
 
 ## Local modifications to engine source
 

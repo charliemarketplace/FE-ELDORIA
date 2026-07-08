@@ -365,6 +365,25 @@ function show_infobox() {
         }
 
         #controls_btn:hover { opacity: 1; }
+
+        .tool_btn {
+            position: fixed;
+            top: 12px;
+            z-index: 70;
+            background: var(--lt-panel);
+            color: var(--lt-gold);
+            border: 1px solid var(--lt-border);
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            font-size: 15px;
+            cursor: pointer;
+            opacity: .75;
+        }
+
+        .tool_btn:hover { opacity: 1; }
+        #export_btn { right: 56px; }
+        #import_btn { right: 98px; }
     </style>
 
     <script src="{{cookiecutter.cdn}}/browserfs.min.js"></script>
@@ -397,6 +416,9 @@ height="{{cookiecutter.height}}px"
     <div id="infobox">Loading, please wait ...</div>
 
     <button id="controls_btn" title="Show controls" onclick="toggle_controls()">?</button>
+    <button id="export_btn" class="tool_btn" title="Download saves" onclick="lt_export_saves()">&#128190;</button>
+    <button id="import_btn" class="tool_btn" title="Import saves file" onclick="dlg_savefile.click()">&#128194;</button>
+    <input type="file" id="dlg_savefile" accept=".json" hidden onchange="lt_import_saves(this.files[0])">
 
     <div id="controls_card">
         <h2>Controls</h2>
@@ -410,7 +432,8 @@ height="{{cookiecutter.height}}px"
             <tr><td>Mouse</td><td>Click to select &amp; move, right-click cancels</td></tr>
             <tr><td><kbd>1</kbd> <kbd>2</kbd> <kbd>5</kbd></td><td>Game speed &#215;1 / &#215;2 / &#215;5</td></tr>
         </table>
-        <div class="foot">Press any key or click the game to dismiss &middot; <b>?</b> reopens this card</div>
+        <div class="foot">Press any key or click the game to dismiss &middot; <b>?</b> reopens this card<br>
+        Saves persist in this browser &middot; &#128190; downloads them &middot; &#128194; imports a download</div>
     </div>
 
     <div id=html></div>
@@ -474,6 +497,59 @@ frameborder="1"
 
     globalThis.__canvas_resized = (self, ecw, ech) => {
         console.warn("TODO: panda3d canvas monitor", self, ecw, ech)
+    }
+
+    // --- Save persistence bridge (called from Python via platform.window) ---
+    // Save files live in the tab's in-memory FS; these mirror them into
+    // localStorage under "lt_save:<relpath>" so they survive reloads.
+
+    function lt_saves_dump() {
+        const data = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith("lt_save:")) data[k.slice(8)] = localStorage.getItem(k);
+        }
+        return JSON.stringify(data);
+    }
+
+    function lt_saves_put_all(json_str) {
+        try {
+            const data = JSON.parse(json_str);
+            const stale = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && k.startsWith("lt_save:")) stale.push(k);
+            }
+            stale.forEach(k => localStorage.removeItem(k));
+            for (const [k, v] of Object.entries(data)) localStorage.setItem("lt_save:" + k, v);
+            return "ok";
+        } catch (e) {
+            return "error: " + e;
+        }
+    }
+
+    function lt_export_saves() {
+        const blob = new Blob([lt_saves_dump()], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "lion_throne_saves.json";
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    function lt_import_saves(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            const res = lt_saves_put_all(reader.result);
+            if (res === "ok") {
+                alert("Saves imported. The page will reload to load them.");
+                location.reload();
+            } else {
+                alert("Import failed: " + res);
+            }
+        };
+        reader.readAsText(file);
     }
 
     function toggle_controls() {
