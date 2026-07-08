@@ -8,9 +8,13 @@ distribution in `../LT_Engine/lion-throne/`.
 ## Run
 
 ```sh
-uvx pygbag .            # build + serve at http://localhost:8000
-uvx pygbag --build .    # build only; static output in build/web/
+uvx pygbag --ume_block 0 .    # build + serve at http://localhost:8000
+uvx pygbag --build .          # build only; static output in build/web/
 ```
+
+`--ume_block 0` skips pygbag's audio-unlock click gate (this build ships no
+audio, so there is nothing to unlock; without the flag the page can hang at
+"MEDIA USER ACTION REQUIRED").
 
 Native desktop run (for fast iteration on game data edits):
 
@@ -20,7 +24,11 @@ uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions pyth
 
 ## Layout
 
-- `main.py` — pygbag entry point (async bootstrap, WASM shims)
+- `main.py` — pygbag entry point (async bootstrap, WASM shims). Notable:
+  top-level `import pygame` is required (pygbag scans main.py's imports to
+  decide which WASM wheels to load); `threading.Thread`/`Timer` are shimmed
+  (no real threads in WASM); boot milestones mirror to the JS console as
+  `LT_BOOT:` lines for headless debugging
 - `app/` — engine source (editor and map_maker excluded; `app/editor/lib/math` kept — the engine imports it)
 - `lion_throne.ltproj/` — game data; all `.ogg` files stripped, manifests kept
 - `resources/`, `sprites/` — engine-level UI assets
