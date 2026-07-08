@@ -1,0 +1,4 @@
+{
+    "music_base_url": null,
+    "_comment": "No audio is embedded in the web build. Set music_base_url to an https URL serving the project's .ogg files by filename (e.g. https://example.com/lion_throne/music) to source music externally. null = silent."
+}
