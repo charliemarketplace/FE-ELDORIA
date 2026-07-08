@@ -137,6 +137,16 @@ async def run(game):
         if raw_events == engine.QUIT:
             break
 
+        # Fast-forward hotkeys (web build): 1 = normal, 2 = 2x, 5 = 5x
+        for e in raw_events:
+            if e.type == engine.KEYDOWN:
+                if e.key == engine.key_map['1']:
+                    engine.set_time_scale(1)
+                elif e.key == engine.key_map['2']:
+                    engine.set_time_scale(2)
+                elif e.key == engine.key_map['5']:
+                    engine.set_time_scale(5)
+
         event = inp.process_input(raw_events)
 
         # Handle soft reset

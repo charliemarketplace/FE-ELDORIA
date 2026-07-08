@@ -8,9 +8,12 @@ distribution in `../LT_Engine/lion-throne/`.
 ## Run
 
 ```sh
-uvx pygbag --ume_block 0 .    # build + serve at http://localhost:8000
-uvx pygbag --build .          # build only; static output in build/web/
+uvx pygbag --ume_block 0 --template lt.tmpl .    # build + serve at http://localhost:8000
+uvx pygbag --build --template lt.tmpl .          # build only; static output in build/web/
 ```
+
+`lt.tmpl` is a customized pygbag page template (dark theme, controls card,
+`?` help button). Without `--template` you get pygbag's stock gray page.
 
 `--ume_block 0` skips pygbag's audio-unlock click gate (this build ships no
 audio, so there is nothing to unlock; without the flag the page can hang at
@@ -35,6 +38,14 @@ uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions pyth
 - `web_config.json` — `music_base_url`: null (silent) or an https URL serving the
   project's `.ogg` files by filename; external streaming in-browser is future work
 - `smoke_test.py` — headless load + import + silent-audio regression test
+
+## Web-only features
+
+- Fast-forward: number keys **1 / 2 / 5** set game speed ×1/×2/×5 (scaled
+  game clock in `engine.update_time`; `get_true_time` stays real-time)
+- In-game keybinds and saves write to `saves/` in the browser's in-memory
+  filesystem — they work within a session but are lost on page reload
+  (persistence via IndexedDB is future work)
 
 ## Local modifications to engine source
 

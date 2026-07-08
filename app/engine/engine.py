@@ -69,11 +69,24 @@ def on_end(crash=False):
     cf.save_settings()
 
 # === timing functions ===
+# Fast-forward multiplier (web build feature): game time advances
+# time_scale ms per real ms. get_true_time() is intentionally unscaled.
+time_scale = 1
+_real_last_time = 0
+
+def set_time_scale(scale: int):
+    global time_scale
+    time_scale = scale
+
 def update_time():
     # All measured in milliseconds
+    global _real_last_time
+    real_time = pygame.time.get_ticks()
+    real_delta = real_time - _real_last_time
+    _real_last_time = real_time
     constants['last_time'] = constants['current_time']
-    constants['current_time'] = pygame.time.get_ticks()
-    constants['delta_t'] = constants['current_time'] - constants['last_time']
+    constants['delta_t'] = real_delta * time_scale
+    constants['current_time'] = constants['last_time'] + constants['delta_t']
 
 def get_time() -> int:
     return constants['current_time']
