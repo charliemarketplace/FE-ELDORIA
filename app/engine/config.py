@@ -31,11 +31,13 @@ def base_config() -> OrderedDict:
                         ('hp_map_team', 'All'),
                         ('hp_map_cull', 'All'),
                         ('display_hints', 0),
-                        ('key_SELECT', 'K_x'),
-                        ('key_BACK', 'K_z'),
-                        ('key_INFO', 'K_c'),
-                        ('key_AUX', 'K_a'),
-                        ('key_START', 'K_s'),
+                        # Web build defaults: GBA-style QWAS layout
+                        # (rebindable in-game; saved to saves/config.ini)
+                        ('key_SELECT', 'K_s'),
+                        ('key_BACK', 'K_a'),
+                        ('key_INFO', 'K_w'),
+                        ('key_AUX', 'K_q'),
+                        ('key_START', 'K_TAB'),
                         ('key_LEFT', 'K_LEFT'),
                         ('key_RIGHT', 'K_RIGHT'),
                         ('key_UP', 'K_UP'),

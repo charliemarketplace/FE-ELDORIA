@@ -147,6 +147,17 @@ async def run(game):
                 elif e.key == engine.key_map['5']:
                     engine.set_time_scale(5)
 
+        # Web build: SPACE and ENTER always act as confirm, on top of
+        # whatever key_SELECT is bound to
+        import pygame
+        confirm_aliases = (pygame.K_SPACE, pygame.K_RETURN)
+        if any(getattr(e, 'key', None) in confirm_aliases for e in raw_events):
+            raw_events = [
+                pygame.event.Event(e.type, key=cf.SETTINGS['key_SELECT'])
+                if e.type in (engine.KEYDOWN, engine.KEYUP) and e.key in confirm_aliases
+                else e
+                for e in raw_events]
+
         event = inp.process_input(raw_events)
 
         # Handle soft reset

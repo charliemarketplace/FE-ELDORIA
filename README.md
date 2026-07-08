@@ -41,6 +41,9 @@ uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions pyth
 
 ## Web-only features
 
+- Default controls (GBA-style QWAS, rebindable in-game): arrows move,
+  S/Space/Enter confirm (A), A cancel (B), W info (R), Q cycle units (L),
+  Tab options menu (Start); full mouse support unchanged
 - Fast-forward: number keys **1 / 2 / 5** set game speed ×1/×2/×5 (scaled
   game clock in `engine.update_time`; `get_true_time` stays real-time)
 - In-game keybinds and saves write to `saves/` in the browser's in-memory
