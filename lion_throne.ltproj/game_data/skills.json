@@ -3112,5 +3112,57 @@
                 10
             ]
         ]
+    },
+    {
+        "nid": "EMB_Emberheart",
+        "name": "Emberheart",
+        "desc": "Grants Damage +3 when this unit is at or below half HP.",
+        "icon_nid": "Skills",
+        "icon_index": [
+            8,
+            2
+        ],
+        "components": [
+            [
+                "dynamic_damage",
+                "3 if unit.get_hp() * 2 <= unit.get_max_hp() else 0"
+            ]
+        ]
+    },
+    {
+        "nid": "EMB_Kinsight",
+        "name": "Kinsight",
+        "desc": "Grants Avoid +15.",
+        "icon_nid": "Skills",
+        "icon_index": [
+            0,
+            0
+        ],
+        "components": [
+            [
+                "hidden",
+                null
+            ],
+            [
+                "avoid",
+                15
+            ]
+        ]
+    },
+    {
+        "nid": "EMB_QuietFlame",
+        "name": "Quiet Flame",
+        "desc": "Regenerates 40% of missing HP every turn.",
+        "icon_nid": "Skills",
+        "icon_index": [
+            1,
+            2
+        ],
+        "components": [
+            [
+                "regeneration",
+                0.4
+            ]
+        ]
     }
 ]

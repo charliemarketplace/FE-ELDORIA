@@ -3048,5 +3048,1018 @@
         "portrait_nid": "Wren",
         "affinity": null,
         "fields": []
+    },
+    {
+        "nid": "Rowan",
+        "name": "Rowan",
+        "desc": "A flamekeeper's apprentice who acts first and grieves later.",
+        "variant": "",
+        "level": 2,
+        "klass": "Mercenary",
+        "tags": [
+            "Lord"
+        ],
+        "bases": {
+            "HP": 15,
+            "STR": 4,
+            "MAG": 0,
+            "SKL": 6,
+            "SPD": 6,
+            "LCK": 2,
+            "DEF": 3,
+            "RES": 1,
+            "CON": 6,
+            "MOV": 5
+        },
+        "growths": {
+            "HP": 90,
+            "STR": 55,
+            "MAG": 10,
+            "SKL": 60,
+            "SPD": 55,
+            "LCK": 45,
+            "DEF": 30,
+            "RES": 20,
+            "CON": 0,
+            "MOV": 0
+        },
+        "stat_cap_modifiers": {},
+        "starting_items": [
+            [
+                "Iron Sword",
+                false
+            ],
+            [
+                "Vulnerary",
+                false
+            ],
+            [
+                "EMB_EmberCoal",
+                false
+            ]
+        ],
+        "learned_skills": [
+            [
+                1,
+                "EMB_Emberheart"
+            ]
+        ],
+        "unit_notes": [],
+        "wexp_gain": {
+            "Sword": [
+                true,
+                16,
+                null
+            ],
+            "Lance": [
+                false,
+                0,
+                null
+            ],
+            "Axe": [
+                false,
+                0,
+                null
+            ],
+            "Bow": [
+                false,
+                0,
+                null
+            ],
+            "Light": [
+                false,
+                0,
+                null
+            ],
+            "Anima": [
+                false,
+                0,
+                null
+            ],
+            "Dark": [
+                false,
+                0,
+                null
+            ],
+            "Default": [
+                false,
+                0,
+                null
+            ]
+        },
+        "alternate_classes": [],
+        "portrait_nid": "Rowan",
+        "affinity": null,
+        "fields": []
+    },
+    {
+        "nid": "Iska",
+        "name": "Iska",
+        "desc": "A blunt-spoken hunter who notices the lie before anyone says it.",
+        "variant": "",
+        "level": 2,
+        "klass": "Archer",
+        "tags": [],
+        "bases": {
+            "HP": 12,
+            "STR": 4,
+            "MAG": 0,
+            "SKL": 5,
+            "SPD": 5,
+            "LCK": 2,
+            "DEF": 2,
+            "RES": 1,
+            "CON": 5,
+            "MOV": 5
+        },
+        "growths": {
+            "HP": 75,
+            "STR": 55,
+            "MAG": 10,
+            "SKL": 75,
+            "SPD": 70,
+            "LCK": 30,
+            "DEF": 20,
+            "RES": 35,
+            "CON": 0,
+            "MOV": 0
+        },
+        "stat_cap_modifiers": {},
+        "starting_items": [
+            [
+                "Willow Bow",
+                false
+            ],
+            [
+                "Vulnerary",
+                false
+            ]
+        ],
+        "learned_skills": [],
+        "unit_notes": [],
+        "wexp_gain": {
+            "Sword": [
+                false,
+                0,
+                null
+            ],
+            "Lance": [
+                false,
+                0,
+                null
+            ],
+            "Axe": [
+                false,
+                0,
+                null
+            ],
+            "Bow": [
+                true,
+                16,
+                null
+            ],
+            "Light": [
+                false,
+                0,
+                null
+            ],
+            "Anima": [
+                false,
+                0,
+                null
+            ],
+            "Dark": [
+                false,
+                0,
+                null
+            ],
+            "Default": [
+                false,
+                0,
+                null
+            ]
+        },
+        "alternate_classes": [],
+        "portrait_nid": "Iska",
+        "affinity": null,
+        "fields": []
+    },
+    {
+        "nid": "Sable",
+        "name": "Sable",
+        "desc": "A gentle acolyte who bandages wounds and swallows her fear.",
+        "variant": "Female",
+        "level": 1,
+        "klass": "Cleric",
+        "tags": [],
+        "bases": {
+            "HP": 11,
+            "STR": 0,
+            "MAG": 3,
+            "SKL": 4,
+            "SPD": 4,
+            "LCK": 5,
+            "DEF": 1,
+            "RES": 4,
+            "CON": 4,
+            "MOV": 5
+        },
+        "growths": {
+            "HP": 65,
+            "STR": 10,
+            "MAG": 70,
+            "SKL": 55,
+            "SPD": 50,
+            "LCK": 70,
+            "DEF": 25,
+            "RES": 75,
+            "CON": 0,
+            "MOV": 0
+        },
+        "stat_cap_modifiers": {},
+        "starting_items": [
+            [
+                "Heal",
+                false
+            ],
+            [
+                "Vulnerary",
+                false
+            ]
+        ],
+        "learned_skills": [],
+        "unit_notes": [],
+        "wexp_gain": {
+            "Sword": [
+                false,
+                0,
+                null
+            ],
+            "Lance": [
+                false,
+                0,
+                null
+            ],
+            "Axe": [
+                false,
+                0,
+                null
+            ],
+            "Bow": [
+                false,
+                0,
+                null
+            ],
+            "Light": [
+                true,
+                8,
+                null
+            ],
+            "Anima": [
+                false,
+                0,
+                null
+            ],
+            "Dark": [
+                false,
+                0,
+                null
+            ],
+            "Default": [
+                false,
+                0,
+                null
+            ]
+        },
+        "alternate_classes": [],
+        "portrait_nid": "Sable",
+        "affinity": null,
+        "fields": []
+    },
+    {
+        "nid": "Corwin",
+        "name": "Corwin",
+        "desc": "An exiled archivist who has known the truth for years and said nothing.",
+        "variant": "",
+        "level": 4,
+        "klass": "Mage",
+        "tags": [],
+        "bases": {
+            "HP": 15,
+            "STR": 1,
+            "MAG": 7,
+            "SKL": 7,
+            "SPD": 7,
+            "LCK": 4,
+            "DEF": 2,
+            "RES": 5,
+            "CON": 4,
+            "MOV": 5
+        },
+        "growths": {
+            "HP": 70,
+            "STR": 10,
+            "MAG": 75,
+            "SKL": 55,
+            "SPD": 55,
+            "LCK": 40,
+            "DEF": 20,
+            "RES": 55,
+            "CON": 0,
+            "MOV": 0
+        },
+        "stat_cap_modifiers": {},
+        "starting_items": [
+            [
+                "Fire",
+                false
+            ],
+            [
+                "Vulnerary",
+                false
+            ]
+        ],
+        "learned_skills": [],
+        "unit_notes": [],
+        "wexp_gain": {
+            "Sword": [
+                false,
+                0,
+                null
+            ],
+            "Lance": [
+                false,
+                0,
+                null
+            ],
+            "Axe": [
+                false,
+                0,
+                null
+            ],
+            "Bow": [
+                false,
+                0,
+                null
+            ],
+            "Light": [
+                false,
+                0,
+                null
+            ],
+            "Anima": [
+                true,
+                6,
+                null
+            ],
+            "Dark": [
+                false,
+                0,
+                null
+            ],
+            "Default": [
+                false,
+                0,
+                null
+            ]
+        },
+        "alternate_classes": [],
+        "portrait_nid": "Corwin",
+        "affinity": null,
+        "fields": []
+    },
+    {
+        "nid": "Tamsin",
+        "name": "Tamsin",
+        "desc": "An Imperial scout whose orders never told her not to feel anything.",
+        "variant": "Female",
+        "level": 4,
+        "klass": "Skirmisher",
+        "tags": [],
+        "bases": {
+            "HP": 13,
+            "STR": 5,
+            "MAG": 1,
+            "SKL": 7,
+            "SPD": 9,
+            "LCK": 3,
+            "DEF": 3,
+            "RES": 3,
+            "CON": 4,
+            "MOV": 6
+        },
+        "growths": {
+            "HP": 80,
+            "STR": 45,
+            "MAG": 10,
+            "SKL": 55,
+            "SPD": 90,
+            "LCK": 40,
+            "DEF": 25,
+            "RES": 35,
+            "CON": 0,
+            "MOV": 0
+        },
+        "stat_cap_modifiers": {},
+        "starting_items": [
+            [
+                "Iron Lance",
+                false
+            ]
+        ],
+        "learned_skills": [
+            [
+                1,
+                "EMB_Kinsight"
+            ]
+        ],
+        "unit_notes": [],
+        "wexp_gain": {
+            "Sword": [
+                false,
+                0,
+                null
+            ],
+            "Lance": [
+                true,
+                21,
+                null
+            ],
+            "Axe": [
+                false,
+                0,
+                null
+            ],
+            "Bow": [
+                false,
+                0,
+                null
+            ],
+            "Light": [
+                false,
+                0,
+                null
+            ],
+            "Anima": [
+                false,
+                0,
+                null
+            ],
+            "Dark": [
+                false,
+                0,
+                null
+            ],
+            "Default": [
+                false,
+                0,
+                null
+            ]
+        },
+        "alternate_classes": [],
+        "portrait_nid": "Tamsin",
+        "affinity": null,
+        "fields": []
+    },
+    {
+        "nid": "Ysolde",
+        "name": "Ysolde",
+        "desc": "A Cinder Warden priest exhausted by orders to call the sickness something else.",
+        "variant": "Female",
+        "level": 6,
+        "klass": "Cleric",
+        "tags": [],
+        "bases": {
+            "HP": 17,
+            "STR": 1,
+            "MAG": 8,
+            "SKL": 9,
+            "SPD": 8,
+            "LCK": 6,
+            "DEF": 3,
+            "RES": 9,
+            "CON": 4,
+            "MOV": 5
+        },
+        "growths": {
+            "HP": 65,
+            "STR": 10,
+            "MAG": 70,
+            "SKL": 55,
+            "SPD": 50,
+            "LCK": 55,
+            "DEF": 25,
+            "RES": 70,
+            "CON": 0,
+            "MOV": 0
+        },
+        "stat_cap_modifiers": {},
+        "starting_items": [
+            [
+                "Mend",
+                false
+            ],
+            [
+                "Vulnerary",
+                false
+            ]
+        ],
+        "learned_skills": [
+            [
+                1,
+                "EMB_QuietFlame"
+            ]
+        ],
+        "unit_notes": [],
+        "wexp_gain": {
+            "Sword": [
+                false,
+                0,
+                null
+            ],
+            "Lance": [
+                false,
+                0,
+                null
+            ],
+            "Axe": [
+                false,
+                0,
+                null
+            ],
+            "Bow": [
+                false,
+                0,
+                null
+            ],
+            "Light": [
+                true,
+                31,
+                null
+            ],
+            "Anima": [
+                false,
+                0,
+                null
+            ],
+            "Dark": [
+                false,
+                0,
+                null
+            ],
+            "Default": [
+                false,
+                0,
+                null
+            ]
+        },
+        "alternate_classes": [],
+        "portrait_nid": "Ysolde",
+        "affinity": null,
+        "fields": []
+    },
+    {
+        "nid": "Draven",
+        "name": "Draven",
+        "desc": "Voss's lieutenant, who calls burning shrines mercy on a schedule.",
+        "variant": "",
+        "level": 3,
+        "klass": "Cavalier",
+        "tags": [
+            "Boss"
+        ],
+        "bases": {
+            "HP": 18,
+            "STR": 6,
+            "MAG": 0,
+            "SKL": 7,
+            "SPD": 6,
+            "LCK": 3,
+            "DEF": 6,
+            "RES": 2,
+            "CON": 7,
+            "MOV": 7
+        },
+        "growths": {
+            "HP": 80,
+            "STR": 50,
+            "MAG": 5,
+            "SKL": 45,
+            "SPD": 40,
+            "LCK": 30,
+            "DEF": 45,
+            "RES": 25,
+            "CON": 0,
+            "MOV": 0
+        },
+        "stat_cap_modifiers": {},
+        "starting_items": [
+            [
+                "Iron Lance",
+                false
+            ],
+            [
+                "Javelin",
+                false
+            ]
+        ],
+        "learned_skills": [],
+        "unit_notes": [],
+        "wexp_gain": {
+            "Sword": [
+                false,
+                0,
+                null
+            ],
+            "Lance": [
+                true,
+                16,
+                null
+            ],
+            "Axe": [
+                false,
+                0,
+                null
+            ],
+            "Bow": [
+                false,
+                0,
+                null
+            ],
+            "Light": [
+                false,
+                0,
+                null
+            ],
+            "Anima": [
+                false,
+                0,
+                null
+            ],
+            "Dark": [
+                false,
+                0,
+                null
+            ],
+            "Default": [
+                false,
+                0,
+                null
+            ]
+        },
+        "alternate_classes": [],
+        "portrait_nid": "SoldierBlue",
+        "affinity": null,
+        "fields": []
+    },
+    {
+        "nid": "Garrow",
+        "name": "Garrow",
+        "desc": "A raid captain paid to loot, not to care what burns.",
+        "variant": "",
+        "level": 8,
+        "klass": "Halberdier",
+        "tags": [
+            "Boss"
+        ],
+        "bases": {
+            "HP": 31,
+            "STR": 14,
+            "MAG": 1,
+            "SKL": 13,
+            "SPD": 8,
+            "LCK": 4,
+            "DEF": 13,
+            "RES": 6,
+            "CON": 9,
+            "MOV": 6
+        },
+        "growths": {
+            "HP": 90,
+            "STR": 55,
+            "MAG": 10,
+            "SKL": 55,
+            "SPD": 45,
+            "LCK": 30,
+            "DEF": 35,
+            "RES": 20,
+            "CON": 0,
+            "MOV": 0
+        },
+        "stat_cap_modifiers": {},
+        "starting_items": [
+            [
+                "Steel Lance",
+                false
+            ]
+        ],
+        "learned_skills": [],
+        "unit_notes": [],
+        "wexp_gain": {
+            "Sword": [
+                false,
+                0,
+                null
+            ],
+            "Lance": [
+                true,
+                31,
+                null
+            ],
+            "Axe": [
+                false,
+                0,
+                null
+            ],
+            "Bow": [
+                false,
+                0,
+                null
+            ],
+            "Light": [
+                false,
+                0,
+                null
+            ],
+            "Anima": [
+                false,
+                0,
+                null
+            ],
+            "Dark": [
+                false,
+                0,
+                null
+            ],
+            "Default": [
+                false,
+                0,
+                null
+            ]
+        },
+        "alternate_classes": [],
+        "portrait_nid": "Bandit1",
+        "affinity": null,
+        "fields": []
+    },
+    {
+        "nid": "Voss",
+        "name": "Voss",
+        "desc": "An Imperial general who is right about the poison and wrong about how fast to end it.",
+        "variant": "",
+        "level": 12,
+        "klass": "General",
+        "tags": [
+            "Boss"
+        ],
+        "bases": {
+            "HP": 42,
+            "STR": 16,
+            "MAG": 0,
+            "SKL": 14,
+            "SPD": 7,
+            "LCK": 5,
+            "DEF": 17,
+            "RES": 10,
+            "CON": 12,
+            "MOV": 5
+        },
+        "growths": {
+            "HP": 90,
+            "STR": 40,
+            "MAG": 0,
+            "SKL": 35,
+            "SPD": 15,
+            "LCK": 20,
+            "DEF": 35,
+            "RES": 20,
+            "CON": 0,
+            "MOV": 0
+        },
+        "stat_cap_modifiers": {},
+        "starting_items": [
+            [
+                "Brave Lance",
+                false
+            ],
+            [
+                "Short Spear",
+                false
+            ]
+        ],
+        "learned_skills": [],
+        "unit_notes": [],
+        "wexp_gain": {
+            "Sword": [
+                false,
+                0,
+                null
+            ],
+            "Lance": [
+                true,
+                91,
+                null
+            ],
+            "Axe": [
+                false,
+                0,
+                null
+            ],
+            "Bow": [
+                false,
+                0,
+                null
+            ],
+            "Light": [
+                false,
+                0,
+                null
+            ],
+            "Anima": [
+                false,
+                0,
+                null
+            ],
+            "Dark": [
+                false,
+                0,
+                null
+            ],
+            "Default": [
+                false,
+                0,
+                null
+            ]
+        },
+        "alternate_classes": [],
+        "portrait_nid": "Man5",
+        "affinity": null,
+        "fields": []
+    },
+    {
+        "nid": "Halvard",
+        "name": "Halvard",
+        "desc": "Rowan's mentor, already gone by the time the battle starts.",
+        "variant": "",
+        "level": 1,
+        "klass": "Citizen",
+        "tags": [],
+        "bases": {
+            "HP": 7,
+            "STR": 0,
+            "MAG": 0,
+            "SKL": 0,
+            "SPD": 0,
+            "LCK": 0,
+            "DEF": 0,
+            "RES": 0,
+            "CON": 3,
+            "MOV": 4
+        },
+        "growths": {
+            "HP": 0,
+            "STR": 0,
+            "MAG": 0,
+            "SKL": 0,
+            "SPD": 0,
+            "LCK": 0,
+            "DEF": 0,
+            "RES": 0,
+            "CON": 0,
+            "MOV": 0
+        },
+        "stat_cap_modifiers": {},
+        "starting_items": [],
+        "learned_skills": [],
+        "unit_notes": [],
+        "wexp_gain": {
+            "Sword": [
+                false,
+                0,
+                null
+            ],
+            "Lance": [
+                false,
+                0,
+                null
+            ],
+            "Axe": [
+                false,
+                0,
+                null
+            ],
+            "Bow": [
+                false,
+                0,
+                null
+            ],
+            "Light": [
+                false,
+                0,
+                null
+            ],
+            "Anima": [
+                false,
+                0,
+                null
+            ],
+            "Dark": [
+                false,
+                0,
+                null
+            ],
+            "Default": [
+                false,
+                0,
+                null
+            ]
+        },
+        "alternate_classes": [],
+        "portrait_nid": "OldMan1",
+        "affinity": null,
+        "fields": []
+    },
+    {
+        "nid": "Maren",
+        "name": "Maren",
+        "desc": "Emberfall's elder, who has watched the shrine take a life every season for forty years.",
+        "variant": "",
+        "level": 1,
+        "klass": "Citizen",
+        "tags": [],
+        "bases": {
+            "HP": 7,
+            "STR": 0,
+            "MAG": 0,
+            "SKL": 0,
+            "SPD": 0,
+            "LCK": 0,
+            "DEF": 0,
+            "RES": 0,
+            "CON": 3,
+            "MOV": 4
+        },
+        "growths": {
+            "HP": 0,
+            "STR": 0,
+            "MAG": 0,
+            "SKL": 0,
+            "SPD": 0,
+            "LCK": 0,
+            "DEF": 0,
+            "RES": 0,
+            "CON": 0,
+            "MOV": 0
+        },
+        "stat_cap_modifiers": {},
+        "starting_items": [],
+        "learned_skills": [],
+        "unit_notes": [],
+        "wexp_gain": {
+            "Sword": [
+                false,
+                0,
+                null
+            ],
+            "Lance": [
+                false,
+                0,
+                null
+            ],
+            "Axe": [
+                false,
+                0,
+                null
+            ],
+            "Bow": [
+                false,
+                0,
+                null
+            ],
+            "Light": [
+                false,
+                0,
+                null
+            ],
+            "Anima": [
+                false,
+                0,
+                null
+            ],
+            "Dark": [
+                false,
+                0,
+                null
+            ],
+            "Default": [
+                false,
+                0,
+                null
+            ]
+        },
+        "alternate_classes": [],
+        "portrait_nid": "OldLady1",
+        "affinity": null,
+        "fields": []
     }
 ]

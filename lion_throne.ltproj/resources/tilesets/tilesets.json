@@ -975,5 +975,15 @@
         "nid": "Riverhollow",
         "terrain_grid": {},
         "autotiles": {}
+    },
+    {
+        "nid": "Emberhold",
+        "terrain_grid": {},
+        "autotiles": {}
+    },
+    {
+        "nid": "Cindervault",
+        "terrain_grid": {},
+        "autotiles": {}
     }
 ]

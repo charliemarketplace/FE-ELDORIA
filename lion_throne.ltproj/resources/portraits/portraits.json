@@ -550,5 +550,77 @@
             42
         ],
         "info_offset": 0
+    },
+    {
+        "nid": "Rowan",
+        "blinking_offset": [
+            20,
+            24
+        ],
+        "smiling_offset": [
+            24,
+            36
+        ],
+        "info_offset": 0
+    },
+    {
+        "nid": "Iska",
+        "blinking_offset": [
+            22,
+            27
+        ],
+        "smiling_offset": [
+            24,
+            42
+        ],
+        "info_offset": 0
+    },
+    {
+        "nid": "Sable",
+        "blinking_offset": [
+            22,
+            20
+        ],
+        "smiling_offset": [
+            26,
+            32
+        ],
+        "info_offset": 0
+    },
+    {
+        "nid": "Corwin",
+        "blinking_offset": [
+            22,
+            27
+        ],
+        "smiling_offset": [
+            26,
+            42
+        ],
+        "info_offset": 0
+    },
+    {
+        "nid": "Tamsin",
+        "blinking_offset": [
+            22,
+            22
+        ],
+        "smiling_offset": [
+            26,
+            36
+        ],
+        "info_offset": 0
+    },
+    {
+        "nid": "Ysolde",
+        "blinking_offset": [
+            22,
+            28
+        ],
+        "smiling_offset": [
+            24,
+            44
+        ],
+        "info_offset": 0
     }
 ]

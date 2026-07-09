@@ -7984,5 +7984,840 @@
             "lose_game"
         ],
         "nid": "RIVER LoseGame"
+    },
+    {
+        "name": "Intro",
+        "trigger": "level_start",
+        "level_nid": "S1",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "change_background;ClearingDark",
+            "transition;Open",
+            "add_portrait;Halvard;Left",
+            "speak;Halvard;Rowan. The coal is lit. Keep it low, keep it hidden.",
+            "speak;Rowan;It's already glowing through my fingers. It knows something's coming.",
+            "add_portrait;Iska;Right",
+            "speak;Iska;Imperial banners on the ridge. Cinder Wardens. A lot of them.",
+            "speak;Halvard;Take the coal and run if it turns bad. Promise me.",
+            "speak;Rowan;You're scaring me, old man.",
+            "speak;Halvard;Good. Fear keeps flamekeepers alive. Mostly.",
+            "remove_portrait;Halvard",
+            "remove_portrait;Iska",
+            "transition;Open"
+        ],
+        "nid": "S1 Intro"
+    },
+    {
+        "name": "SickHouse",
+        "trigger": "Visit",
+        "level_nid": "S1",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "change_background;House",
+            "transition;Open",
+            "add_portrait;Woman2;Left",
+            "speak;Woman2;My boy hasn't stopped coughing since the shrine flame flared last spring.",
+            "speak;Woman2;The healers call it mountain air. I've stopped believing that.",
+            "remove_portrait;Woman2",
+            "transition;Open",
+            "has_attacked;{unit}"
+        ],
+        "nid": "S1 SickHouse"
+    },
+    {
+        "name": "FightDraven",
+        "trigger": "combat_start",
+        "level_nid": "S1",
+        "condition": "check_default('Draven')",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "speak;Draven;The coal, girl. Emberhollow is already ash. Do not add yourself to it."
+        ],
+        "nid": "S1 FightDraven"
+    },
+    {
+        "name": "WinGame",
+        "trigger": "combat_end",
+        "level_nid": "S1",
+        "condition": "len(game.get_enemy_units()) == 0",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "speak;Rowan;Draven's men are broken. Where's Halvard?",
+            "add_portrait;Iska;Right",
+            "speak;Iska;Rowan... I found his cloak by the shrine stone. Just the cloak.",
+            "speak;Rowan;Then we carry the coal. For him.",
+            "give_item;Rowan;EMB_EmberBlade",
+            "give_money;400",
+            "remove_portrait;Iska",
+            "transition;Close",
+            "set_next_chapter;S2",
+            "win_game"
+        ],
+        "nid": "S1 WinGame"
+    },
+    {
+        "name": "LoseGame",
+        "trigger": "unit_death",
+        "level_nid": "S1",
+        "condition": "unit.nid == 'Rowan'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "lose_game"
+        ],
+        "nid": "S1 LoseGame"
+    },
+    {
+        "name": "Intro",
+        "trigger": "level_start",
+        "level_nid": "S2",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "add_talk;Iska;Tamsin",
+            "transition;Close",
+            "change_background;Desert",
+            "transition;Open",
+            "speak;Rowan;Keep the line moving. Emberhold's a day off if we don't stop.",
+            "add_portrait;Sable;MidLeft",
+            "speak;Sable;Some of these folks haven't slept since Emberhollow burned.",
+            "speak;Rowan;Neither have I. Doesn't matter right now.",
+            "add_portrait;Iska;Right",
+            "speak;Iska;Scouts on the ridge. Not soldiers. Cinder Wardens again.",
+            "remove_portrait;Iska",
+            "remove_portrait;Sable",
+            "transition;Open"
+        ],
+        "nid": "S2 Intro"
+    },
+    {
+        "name": "ShrineRuin",
+        "trigger": "Search",
+        "level_nid": "S2",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "change_background;Ruins",
+            "transition;Open",
+            "speak;Rowan;Every animal near this shrine stump is dead. Every one.",
+            "speak;Iska;Ground's not scorched. Nothing burned them.",
+            "transition;Open",
+            "game_var;met_ruin;1",
+            "has_attacked;{unit}"
+        ],
+        "nid": "S2 ShrineRuin"
+    },
+    {
+        "name": "TalkTamsin",
+        "trigger": "on_talk",
+        "level_nid": "S2",
+        "condition": "unit2.nid == 'Tamsin' and game.game_vars.get('met_ruin')",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "add_portrait;Tamsin;Right",
+            "add_portrait;Iska;Left",
+            "speak;Iska;You've got that look. The one where the orders stopped making sense.",
+            "speak;Tamsin;I was told to count the sick. Not to ask why there were so many.",
+            "speak;Tamsin;I saw what's near that ruin. I'm done counting for them.",
+            "change_team;Tamsin;player",
+            "give_item;Tamsin;EMB_ScoutsBow",
+            "game_var;tamsin_joined;1",
+            "remove_portrait;Tamsin",
+            "remove_portrait;Iska"
+        ],
+        "nid": "S2 TalkTamsin"
+    },
+    {
+        "name": "Escape",
+        "trigger": "Escape",
+        "level_nid": "S2",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "speak;Rowan;Emberhold's smoke on the horizon. We made it.",
+            "add_portrait;Sable;MidLeft",
+            "speak;Sable;Whatever's waiting there, at least it's not a road full of soldiers.",
+            "remove_portrait;Sable",
+            "give_money;500",
+            "transition;Close",
+            "set_next_chapter;SHUB",
+            "win_game"
+        ],
+        "nid": "S2 Escape"
+    },
+    {
+        "name": "LoseGame",
+        "trigger": "unit_death",
+        "level_nid": "S2",
+        "condition": "unit.nid == 'Rowan'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "lose_game"
+        ],
+        "nid": "S2 LoseGame"
+    },
+    {
+        "name": "Intro",
+        "trigger": "level_start",
+        "level_nid": "SHUB",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "give_money;1200",
+            "if;game.game_vars.get('tamsin_joined') and game.get_unit('Tamsin') and game.get_unit('Tamsin').team == 'player'",
+            "add_unit;Tamsin;10,0;immediate",
+            "end",
+            "add_talk;Rowan;Kid",
+            "add_talk;Rowan;Villager1",
+            "transition;Close",
+            "change_background;MainBase",
+            "transition;Open",
+            "speak;Rowan;Emberhold. Halvard talked about this place like it was a myth.",
+            "add_portrait;Iska;Right",
+            "speak;Iska;Myth's got a working forge and a very loud arena. I'll take it.",
+            "remove_portrait;Iska",
+            "transition;Open"
+        ],
+        "nid": "SHUB Intro"
+    },
+    {
+        "name": "Vendor",
+        "trigger": "Vendor",
+        "level_nid": "SHUB",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "shop;{unit};Vulnerary,Potion,Iron Sword,Iron Lance,Iron Axe,Willow Bow;vendor",
+            "transition;Open"
+        ],
+        "nid": "SHUB Vendor"
+    },
+    {
+        "name": "Armory",
+        "trigger": "Armory",
+        "level_nid": "SHUB",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "shop;{unit};Steel Sword,Steel Lance,Steel Axe,EMB_CinderVial",
+            "transition;Open"
+        ],
+        "nid": "SHUB Armory"
+    },
+    {
+        "name": "Arena",
+        "trigger": "Arena",
+        "level_nid": "SHUB",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "change_background;Arena",
+            "transition;Open",
+            "add_portrait;Jack;Right",
+            "speak;Jack;The pit takes one challenger at a time. My champion, your best swing. Winner keeps the javelin.",
+            "remove_portrait;Jack",
+            "transition;Open",
+            "add_unit;Duelist;6,10;immediate",
+            "interact_unit;{unit};Duelist;hit1,hit1,end",
+            "if;game.check_dead('Duelist')",
+            "add_portrait;Jack;Right",
+            "speak;Jack;Clean work. The javelin's yours, and the purse with it. Now clear out before the crowd wants seconds.",
+            "remove_portrait;Jack",
+            "give_item;{unit};EMB_HuntersJavelin",
+            "give_money;300",
+            "end",
+            "has_attacked;{unit}"
+        ],
+        "nid": "SHUB Arena"
+    },
+    {
+        "name": "Archive",
+        "trigger": "Search",
+        "level_nid": "SHUB",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "change_background;Study",
+            "transition;Open",
+            "speak;Rowan;Ledgers. Flamekeeper ledgers, going back a century.",
+            "speak;Rowan;Deaths in every shrine village, season after season. Someone kept count and said nothing.",
+            "speak;Iska;Someone with very tidy handwriting. The man by the red-roofed house keeps looking over here.",
+            "give_item;{unit};EMB_CinderVial",
+            "transition;Open",
+            "add_talk;Rowan;Corwin",
+            "has_attacked;{unit}"
+        ],
+        "nid": "SHUB Archive"
+    },
+    {
+        "name": "TalkCorwin",
+        "trigger": "on_talk",
+        "level_nid": "SHUB",
+        "condition": "unit2.nid == 'Corwin'",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "add_portrait;Corwin;Right",
+            "add_portrait;Rowan;Left",
+            "speak;Rowan;You kept the ledgers. You knew what the shrines were doing to us.",
+            "speak;Corwin;I counted. Counting felt like scholarship. Silence felt like safety. It was neither.",
+            "speak;Corwin;Take me with you. When you reach the reliquary, you will want someone who reads old valve schematics.",
+            "speak;Rowan;Then stop counting and start speaking, archivist.",
+            "change_team;Corwin;player",
+            "give_item;Corwin;EMB_QuenchDraught",
+            "game_var;corwin_joined;1",
+            "remove_portrait;Corwin",
+            "remove_portrait;Rowan"
+        ],
+        "nid": "SHUB TalkCorwin"
+    },
+    {
+        "name": "TalkKid",
+        "trigger": "on_talk",
+        "level_nid": "SHUB",
+        "condition": "unit2.nid == 'Kid'",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "add_portrait;Boy2;Right",
+            "speak;Boy2;Watch this! Halvard's old drill, one hundred swings before breakfast!",
+            "speak;Boy2;You do it too! I bet you can't even keep up!",
+            "remove_portrait;Boy2",
+            "give_exp;{unit};20"
+        ],
+        "nid": "SHUB TalkKid"
+    },
+    {
+        "name": "TalkVillager1",
+        "trigger": "on_talk",
+        "level_nid": "SHUB",
+        "condition": "unit2.nid == 'Villager1'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "add_portrait;Man1;Right",
+            "speak;Man1;Stalls up the north road, forge across from them. The pit down southwest pays in bruises and javelins.",
+            "speak;Man1;And if you want strange reading, the archivist keeps his door shut by the red-roofed house southeast.",
+            "remove_portrait;Man1"
+        ],
+        "nid": "SHUB TalkVillager1"
+    },
+    {
+        "name": "Depart",
+        "trigger": "Depart",
+        "level_nid": "SHUB",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "if;game.game_vars.get('corwin_joined')",
+            "add_portrait;Corwin;Left",
+            "speak;Corwin;The road to the reliquary isn't kind. Watch your footing.",
+            "speak;Rowan;We're not stopping again until this is over.",
+            "remove_portrait;Corwin",
+            "else",
+            "speak;Rowan;Rested, armed, and out of reasons to wait. South it is.",
+            "end",
+            "set_next_chapter;S3",
+            "win_game"
+        ],
+        "nid": "SHUB Depart"
+    },
+    {
+        "name": "LoseGame",
+        "trigger": "unit_death",
+        "level_nid": "SHUB",
+        "condition": "unit.nid == 'Rowan'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "lose_game"
+        ],
+        "nid": "SHUB LoseGame"
+    },
+    {
+        "name": "Intro",
+        "trigger": "level_start",
+        "level_nid": "S3",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "if;game.game_vars.get('tamsin_joined') and game.get_unit('Tamsin') and game.get_unit('Tamsin').team == 'player'",
+            "add_unit;Tamsin;3,17;immediate",
+            "end",
+            "if;game.game_vars.get('corwin_joined') and game.get_unit('Corwin') and game.get_unit('Corwin').team == 'player'",
+            "add_unit;Corwin;4,17;immediate",
+            "end",
+            "add_talk;Rowan;Ysolde",
+            "transition;Close",
+            "change_background;InsideCastle",
+            "transition;Open",
+            "speak;Rowan;The coal-bearers move slow. We clear the way to the reliquary gate, nothing else.",
+            "if;game.game_vars.get('corwin_joined')",
+            "add_portrait;Corwin;MidLeft",
+            "speak;Corwin;Whatever you do, don't let them take the reliquary. Please.",
+            "remove_portrait;Corwin",
+            "end",
+            "transition;Open"
+        ],
+        "nid": "S3 Intro"
+    },
+    {
+        "name": "Turn3",
+        "trigger": "turn_change",
+        "level_nid": "S3",
+        "condition": "game.turncount == 3",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "add_portrait;Ysolde;Right",
+            "speak;Ysolde;Hold! Get the wounded behind me before they bleed out further!",
+            "remove_portrait;Ysolde"
+        ],
+        "nid": "S3 Turn3"
+    },
+    {
+        "name": "TalkYsolde",
+        "trigger": "on_talk",
+        "level_nid": "S3",
+        "condition": "unit1.nid == 'Rowan' and unit2.nid == 'Ysolde' and game.get_unit('Ysolde').get_hp() < 8",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "add_portrait;Ysolde;Right",
+            "add_portrait;Rowan;Left",
+            "speak;Rowan;Enough. Put the staff down before you fall too.",
+            "speak;Ysolde;I've healed forty soldiers this year of a sickness with no wound.",
+            "speak;Ysolde;It's the ember. It's always been the ember. Gods forgive me for knowing.",
+            "change_team;Ysolde;player",
+            "give_item;Ysolde;EMB_WardenStaff",
+            "game_var;ysolde_joined;1",
+            "remove_portrait;Ysolde",
+            "remove_portrait;Rowan"
+        ],
+        "nid": "S3 TalkYsolde"
+    },
+    {
+        "name": "Seize",
+        "trigger": "Seize",
+        "level_nid": "S3",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "speak;Rowan;The reliquary's ours. So is a very unwelcome truth.",
+            "transition;Close",
+            "set_next_chapter;S4",
+            "win_game"
+        ],
+        "nid": "S3 Seize"
+    },
+    {
+        "name": "LoseGame",
+        "trigger": "unit_death",
+        "level_nid": "S3",
+        "condition": "unit.nid == 'Rowan'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "lose_game"
+        ],
+        "nid": "S3 LoseGame"
+    },
+    {
+        "name": "Intro",
+        "trigger": "level_start",
+        "level_nid": "S4",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "if;game.game_vars.get('tamsin_joined') and game.get_unit('Tamsin') and game.get_unit('Tamsin').team == 'player'",
+            "add_unit;Tamsin;5,17;immediate",
+            "end",
+            "if;game.game_vars.get('ysolde_joined') and game.get_unit('Ysolde') and game.get_unit('Ysolde').team == 'player'",
+            "add_unit;Ysolde;6,17;immediate",
+            "end",
+            "if;game.game_vars.get('corwin_joined') and game.get_unit('Corwin') and game.get_unit('Corwin').team == 'player'",
+            "add_unit;Corwin;7,17;immediate",
+            "end",
+            "transition;Close",
+            "change_background;OutsideFort",
+            "transition;Open",
+            "add_portrait;Maren;Left",
+            "speak;Maren;Emberfall's shrine is the last one standing between here and the coast.",
+            "speak;Rowan;Then it stays standing.",
+            "if;game.game_vars.get('corwin_joined')",
+            "add_portrait;Corwin;Right",
+            "speak;Corwin;Rowan. Voss's whole column is coming. Not a patrol. All of it.",
+            "remove_portrait;Corwin",
+            "else",
+            "add_portrait;Iska;Right",
+            "speak;Iska;Voss's whole column is coming, Rowan. Not a patrol. All of it.",
+            "remove_portrait;Iska",
+            "end",
+            "remove_portrait;Maren",
+            "transition;Open"
+        ],
+        "nid": "S4 Intro"
+    },
+    {
+        "name": "Turn4Wave",
+        "trigger": "turn_change",
+        "level_nid": "S4",
+        "condition": "game.turncount == 4",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "if;not game.check_dead('Garrow')",
+            "speak;Garrow;Torch the granary! Nobody said we had to be gentle about this!",
+            "end",
+            "add_unit;S4Halb1;18,10;immediate",
+            "add_unit;S4Halb2;20,10;immediate",
+            "add_unit;S4Mage1;18,11;immediate",
+            "add_unit;S4Mage2;19,11;immediate"
+        ],
+        "nid": "S4 Turn4Wave"
+    },
+    {
+        "name": "Turn7Wave",
+        "trigger": "turn_change",
+        "level_nid": "S4",
+        "condition": "game.turncount == 7",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "add_unit;S4Berserk;20,12;immediate"
+        ],
+        "nid": "S4 Turn7Wave"
+    },
+    {
+        "name": "Turn8Maren",
+        "trigger": "turn_change",
+        "level_nid": "S4",
+        "condition": "game.turncount == 8",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "change_background;House",
+            "transition;Open",
+            "add_portrait;Maren;Left",
+            "speak;Maren;Rowan. Come here, child. Sit with me a moment.",
+            "speak;Maren;I have watched this shrine take a life a season for forty years.",
+            "speak;Maren;We called it the flame's blessing. It was never a blessing.",
+            "add_portrait;Rowan;Right",
+            "speak;Rowan;Then why did you let us believe it? Why did Halvard?",
+            "speak;Maren;Because hope keeps hands moving. Even a false hope. I'm sorry.",
+            "remove_portrait;Maren",
+            "remove_portrait;Rowan",
+            "transition;Open",
+            "game_var;maren_scene;1"
+        ],
+        "nid": "S4 Turn8Maren"
+    },
+    {
+        "name": "Storehouse",
+        "trigger": "Visit",
+        "level_nid": "S4",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "change_background;House",
+            "transition;Open",
+            "speak;Rowan;The storehouse still stands. And someone left mail cut for a flamekeeper's frame.",
+            "give_item;{unit};EMB_AshguardMail",
+            "transition;Open",
+            "has_attacked;{unit}"
+        ],
+        "nid": "S4 Storehouse"
+    },
+    {
+        "name": "FightGarrow",
+        "trigger": "combat_start",
+        "level_nid": "S4",
+        "condition": "check_default('Garrow')",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "speak;Garrow;Coin's coin. Nothing personal in it, torch-girl."
+        ],
+        "nid": "S4 FightGarrow"
+    },
+    {
+        "name": "WinGame",
+        "trigger": "combat_end",
+        "level_nid": "S4",
+        "condition": "len(game.get_enemy_units()) == 0",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "if;not game.game_vars.get('maren_scene')",
+            "transition;Close",
+            "change_background;House",
+            "transition;Open",
+            "add_portrait;Maren;Left",
+            "speak;Maren;Rowan. I have watched this shrine take a life a season for forty years.",
+            "speak;Maren;We called it the flame's blessing. It was never a blessing. I'm sorry.",
+            "remove_portrait;Maren",
+            "transition;Open",
+            "game_var;maren_scene;1",
+            "end",
+            "speak;Rowan;We held the village. Maren didn't hold on much longer after.",
+            "add_portrait;Iska;Right",
+            "speak;Iska;So what now? Everything we've bled for is the thing that's killing them.",
+            "speak;Rowan;Now we go end it. All of it. At the source.",
+            "remove_portrait;Iska",
+            "transition;Close",
+            "set_next_chapter;S5",
+            "win_game"
+        ],
+        "nid": "S4 WinGame"
+    },
+    {
+        "name": "LoseGame",
+        "trigger": "unit_death",
+        "level_nid": "S4",
+        "condition": "unit.nid == 'Rowan'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "lose_game"
+        ],
+        "nid": "S4 LoseGame"
+    },
+    {
+        "name": "Intro",
+        "trigger": "level_start",
+        "level_nid": "S5",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "if;game.game_vars.get('tamsin_joined') and game.get_unit('Tamsin') and game.get_unit('Tamsin').team == 'player'",
+            "add_unit;Tamsin;12,1;immediate",
+            "end",
+            "if;game.game_vars.get('ysolde_joined') and game.get_unit('Ysolde') and game.get_unit('Ysolde').team == 'player'",
+            "add_unit;Ysolde;8,2;immediate",
+            "end",
+            "if;game.game_vars.get('corwin_joined') and game.get_unit('Corwin') and game.get_unit('Corwin').team == 'player'",
+            "add_unit;Corwin;13,2;immediate",
+            "end",
+            "transition;Close",
+            "change_background;Cave",
+            "transition;Open",
+            "add_portrait;Voss;Right",
+            "speak;Voss;You carried that coal a long way to die next to it.",
+            "add_portrait;Rowan;Left",
+            "speak;Rowan;You're not wrong about the ember, Voss. You're wrong about how to end it.",
+            "speak;Voss;Slow and careful got Emberhollow burned. I don't do slow anymore.",
+            "speak;Voss;Three valves. One good swing. That's my plan. Don't get near it.",
+            "remove_portrait;Voss",
+            "if;game.game_vars.get('corwin_joined')",
+            "add_portrait;Corwin;MidRight",
+            "speak;Corwin;The fourth valve fused shut decades ago. Three will have to do.",
+            "remove_portrait;Corwin",
+            "else",
+            "speak;Rowan;Halvard's ledgers said the fourth valve fused shut decades ago. Three will have to do.",
+            "end",
+            "remove_portrait;Rowan",
+            "transition;Open"
+        ],
+        "nid": "S5 Intro"
+    },
+    {
+        "name": "Valve1",
+        "trigger": "Valve1",
+        "level_nid": "S5",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "game_var;valve1;1",
+            "speak;Iska;Valve's open. Pressure's already dropping on this side.",
+            "if;game.game_vars.get('valve1') and game.game_vars.get('valve2') and game.game_vars.get('valve3')",
+            "speak;Rowan;All three are open. To the core, before Voss cracks it.",
+            "end"
+        ],
+        "nid": "S5 Valve1"
+    },
+    {
+        "name": "Valve2",
+        "trigger": "Valve2",
+        "level_nid": "S5",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "game_var;valve2;1",
+            "speak;Sable;This valve's loose. The heat off the core is fading already.",
+            "if;game.game_vars.get('valve1') and game.game_vars.get('valve2') and game.game_vars.get('valve3')",
+            "speak;Rowan;All three are open. To the core, before Voss cracks it.",
+            "end"
+        ],
+        "nid": "S5 Valve2"
+    },
+    {
+        "name": "Valve3",
+        "trigger": "Valve3",
+        "level_nid": "S5",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "game_var;valve3;1",
+            "speak;Rowan;That's another valve done. The vault's breath is slowing.",
+            "if;game.game_vars.get('valve1') and game.game_vars.get('valve2') and game.game_vars.get('valve3')",
+            "speak;Rowan;All three are open. To the core, before Voss cracks it.",
+            "end"
+        ],
+        "nid": "S5 Valve3"
+    },
+    {
+        "name": "Turn5Wave",
+        "trigger": "turn_change",
+        "level_nid": "S5",
+        "condition": "game.turncount == 5",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "add_unit;S5Wave1;10,11;immediate",
+            "add_unit;S5Wave2;11,11;immediate",
+            "if;not game.check_dead('Voss')",
+            "speak;Voss;Reinforcements, hold the gate! I want that vault cracked, not quenched!",
+            "end"
+        ],
+        "nid": "S5 Turn5Wave"
+    },
+    {
+        "name": "FightVoss",
+        "trigger": "combat_start",
+        "level_nid": "S5",
+        "condition": "check_default('Voss')",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "speak;Voss;One good swing ends a century of lies. Stand aside or share the vault's grave."
+        ],
+        "nid": "S5 FightVoss"
+    },
+    {
+        "name": "QuenchWin",
+        "trigger": "Quench",
+        "level_nid": "S5",
+        "condition": "game.game_vars.get('valve1') and game.game_vars.get('valve2') and game.game_vars.get('valve3')",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "change_background;Cave",
+            "transition;Open",
+            "add_portrait;Rowan;Left",
+            "speak;Rowan;It's done. No bloom. No blessing left to lie about, either.",
+            "if;game.game_vars.get('ysolde_joined') and not game.check_dead('Ysolde')",
+            "add_portrait;Ysolde;Right",
+            "speak;Ysolde;Voss believed he was the only one willing to pay the price. He wasn't.",
+            "speak;Rowan;Nobody else has to pay it now. That's the part he never let himself hope for.",
+            "remove_portrait;Ysolde",
+            "else",
+            "speak;Rowan;Voss believed he was the only one willing to pay the price. He wasn't. And nobody else has to now.",
+            "end",
+            "remove_portrait;Rowan",
+            "win_game"
+        ],
+        "nid": "S5 QuenchWin"
+    },
+    {
+        "name": "QuenchFail",
+        "trigger": "Quench",
+        "level_nid": "S5",
+        "condition": "not (game.game_vars.get('valve1') and game.game_vars.get('valve2') and game.game_vars.get('valve3'))",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "speak;Rowan;The core still rages. The valves first."
+        ],
+        "nid": "S5 QuenchFail"
+    },
+    {
+        "name": "LoseGame",
+        "trigger": "unit_death",
+        "level_nid": "S5",
+        "condition": "unit.nid == 'Rowan'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "lose_game"
+        ],
+        "nid": "S5 LoseGame"
     }
 ]
