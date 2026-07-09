@@ -272,6 +272,12 @@ terrain grants a regeneration-style skill. Movement costs:
 `game_data/mcost.json` matrix (terrain movement class × unit
 `movement_group`).
 
+A brand-new map does **not** require per-tile art: a "tileset" can be one
+full-map PNG whose sprite grid maps every cell 1:1 (see the Riverhollow
+pipeline in `AUTHORING_CASE_STUDY.md`, including generating the image with
+an AI image model). ⚠️ The two resource manifests (`tilesets.json`,
+`tilemaps.json`) are LF-terminated, unlike `game_data/*.json` (CRLF).
+
 ### 5.2 Regions — interaction hotspots (defined per level, in the level entry)
 
 ```json

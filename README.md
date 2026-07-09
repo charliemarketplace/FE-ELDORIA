@@ -3,7 +3,10 @@
 > **Editing game content (units, items, skills, levels, events)?**
 > Read [`CONTENT_GUIDE.md`](CONTENT_GUIDE.md) first — it documents the whole
 > .ltproj data model, cross-references, discovery recipes, and the
-> edit→test→rebuild workflow.
+> edit→test→rebuild workflow. Then [`AUTHORING_CASE_STUDY.md`](AUTHORING_CASE_STUDY.md)
+> for the proven end-to-end process (incl. headless browser verification and
+> AI-generated map art). API keys for generation tooling live in `.env`
+> (gitignored, never committed).
 
 A WebAssembly (pygbag) build of the Lex Talionis engine running *The Lion Throne*,
 with no editor and no embedded audio. Engine source is the game-runtime slice of
@@ -50,7 +53,9 @@ uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions pyth
   directly into that chapter (editor test-play path), skipping the title
   screen — e.g. `?level=DEBUG` opens the hidden DEBUG sandbox chapter in
   ~9 s. Wrong nids log the valid list to the JS console and fall back to
-  the title screen
+  the title screen. AI-authored test chapters: `TRIAL` (arena skirmish),
+  `TOWN` (talk/shops/arena, reach-the-gate win), `RIVER` (from-scratch
+  AI-generated map)
 - Default controls (GBA-style QWAS, rebindable in-game): arrows move,
   S/Space/Enter confirm (A), A cancel (B), W info (R), Q cycle units (L),
   Tab options menu (Start); full mouse support unchanged
