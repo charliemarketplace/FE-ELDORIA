@@ -25,6 +25,7 @@ Layout of this repo:
 | `web_config.json` | `music_base_url` (null = silent; audio is stripped from this build) |
 | `smoke_test.py` | native headless load test — run this after any data edit |
 | `README.md` | build/run commands and web-specific engine modifications |
+| `AUTHORING_CASE_STUDY.md` | the verified end-to-end authoring process (discover → author → smoke test → rebuild → headless verify → commit), with worked examples and a pattern catalog |
 
 Sibling directories on this machine (outside this git repo, useful for
 comparison but do not edit them as part of web work):
