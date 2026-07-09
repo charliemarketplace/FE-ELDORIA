@@ -7709,5 +7709,53 @@
             "remove_portrait;Ophie"
         ],
         "nid": "DEBUG Turnwheel"
+    },
+    {
+        "name": "Intro",
+        "trigger": "level_start",
+        "level_nid": "TRIAL",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "# AI-authored test level intro",
+            "transition;Open",
+            "add_portrait;Kestrel;Left",
+            "speak;Kestrel;A proving ground... and a straw dummy with legs.|Watch how a real sellsword works, Ophie.",
+            "add_portrait;Ophie;Right",
+            "speak;Ophie;Just don't break the floor. We only borrowed this room.",
+            "remove_portrait;Kestrel",
+            "remove_portrait;Ophie"
+        ],
+        "nid": "TRIAL Intro"
+    },
+    {
+        "name": "WinGame",
+        "trigger": "combat_end",
+        "level_nid": "TRIAL",
+        "condition": "len(game.get_enemy_units()) == 0",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "# Rout: win when no enemies remain",
+            "win_game"
+        ],
+        "nid": "TRIAL WinGame"
+    },
+    {
+        "name": "LoseGame",
+        "trigger": "unit_death",
+        "level_nid": "TRIAL",
+        "condition": "unit.nid == 'Kestrel'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "# Lose if Kestrel falls",
+            "lose_game"
+        ],
+        "nid": "TRIAL LoseGame"
     }
 ]
