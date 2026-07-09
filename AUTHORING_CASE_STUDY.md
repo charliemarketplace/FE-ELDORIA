@@ -174,9 +174,21 @@ the base game's TacticsRoom already works this way (`TacticsFloor.png`,
    (river impassable, bridge walkable).
 
 Static image = no water animation (autotiles stay empty). Fine for a first
-map. Image-model note: the Gemini API free tier has **zero image-generation
-quota** (`limit: 0` for all `*-image` models; text models work) — image gen
-needs billing enabled, or generate in the AI Studio UI and drop the PNG in.
+map.
+
+**Image-model routes (both tested):** the Gemini API free tier has zero
+image-generation quota (`limit: 0` for all `*-image` models; text models
+work). **OpenRouter worked**: `google/gemini-2.5-flash-image` via
+`/chat/completions` with `"modalities": ["image", "text"]` (~$0.04/image,
+billed against the key's allowance; images come back as base64 data URLs in
+`message.images`). The winning workflow is **image-to-image**: draw a crude
+placeholder of the intended layout first, send it with a "repaint as GBA
+pixel art, keep every feature on the same grid cell" prompt — the layout
+(road/river/bridge/houses) survives almost perfectly, so the pre-authored
+terrain grid stays valid. Then diff the generated image against the terrain
+grid cell-by-cell with the overlay and patch where the model improvised
+(here: four decorative trees → those cells became Forest). Downscale the
+~1248×832 output to the exact map size with LANCZOS.
 
 ## Known cosmetic quirks (pre-existing, not content bugs)
 
