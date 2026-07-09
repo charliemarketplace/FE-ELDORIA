@@ -7949,7 +7949,12 @@
             "transition;Open",
             "add_portrait;Kestrel;Left",
             "speak;Kestrel;A bandit scout, watching the only bridge for miles.|Time to clear the crossing.",
-            "remove_portrait;Kestrel"
+            "add_portrait;Wren;Right",
+            "speak;Wren;Hold it. Nobody crosses that bridge without the scout whistling ten friends out of the trees.",
+            "speak;Kestrel;And you are?",
+            "speak;Wren;Wren. Hedge mage of Riverhollow. I keep crows off the fields, mostly.|Clear the crossing and the wind is yours.",
+            "remove_portrait;Kestrel",
+            "remove_portrait;Wren"
         ],
         "nid": "RIVER Intro"
     },

@@ -14354,6 +14354,19 @@
                 ],
                 "starting_traveler": null,
                 "generic": true
+            },
+            {
+                "nid": "Wren",
+                "team": "player",
+                "ai": "None",
+                "roam_ai": null,
+                "ai_group": null,
+                "starting_position": [
+                    8,
+                    4
+                ],
+                "starting_traveler": null,
+                "generic": false
             }
         ],
         "regions": [],
