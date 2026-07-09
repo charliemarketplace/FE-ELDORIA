@@ -7757,5 +7757,183 @@
             "lose_game"
         ],
         "nid": "TRIAL LoseGame"
+    },
+    {
+        "name": "Intro",
+        "trigger": "level_start",
+        "level_nid": "TOWN",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "# Market Day intro",
+            "give_money;900",
+            "add_talk;Kestrel;Mara",
+            "add_talk;Kestrel;Ben",
+            "add_talk;Kestrel;Pip",
+            "transition;Open",
+            "add_portrait;Kestrel;Left",
+            "speak;Kestrel;Market day. Time to restock, hear the gossip...|...and maybe knock some heads at the pit before I leave by the south gate.",
+            "remove_portrait;Kestrel"
+        ],
+        "nid": "TOWN Intro"
+    },
+    {
+        "name": "TalkMara",
+        "trigger": "on_talk",
+        "level_nid": "TOWN",
+        "condition": "unit2.nid == 'Mara'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "multi_add_portrait;Mara;Right;Kestrel;Left",
+            "speak;Mara;Fresh tonics, sharp steel! The armory is down by the south road, and I keep the potions right here.",
+            "speak;Kestrel;I'll take a look before I go.",
+            "remove_portrait;Mara",
+            "remove_portrait;Kestrel"
+        ],
+        "nid": "TOWN TalkMara"
+    },
+    {
+        "name": "TalkBen",
+        "trigger": "on_talk",
+        "level_nid": "TOWN",
+        "condition": "unit2.nid == 'Ben'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "multi_add_portrait;Ben;Right;Kestrel;Left",
+            "speak;Ben;Leaving already? The south gate is past the armory, just through the trees.",
+            "speak;Kestrel;Much obliged, old timer.",
+            "remove_portrait;Ben",
+            "remove_portrait;Kestrel"
+        ],
+        "nid": "TOWN TalkBen"
+    },
+    {
+        "name": "TalkPip",
+        "trigger": "on_talk",
+        "level_nid": "TOWN",
+        "condition": "unit2.nid == 'Pip'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "multi_add_portrait;Pip;Right;Kestrel;Left",
+            "speak;Pip;Miss! Miss! The pit boss says nobody's beaten his gladiator all month!",
+            "speak;Kestrel;That so? Maybe I have time for one round.",
+            "remove_portrait;Pip",
+            "remove_portrait;Kestrel"
+        ],
+        "nid": "TOWN TalkPip"
+    },
+    {
+        "name": "Vendor",
+        "trigger": "Vendor",
+        "level_nid": "TOWN",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "shop;{unit};Glimmer,Heal,Fire,Vulnerary;vendor",
+            "transition;Open"
+        ],
+        "nid": "TOWN Vendor"
+    },
+    {
+        "name": "Armory",
+        "trigger": "Armory",
+        "level_nid": "TOWN",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "shop;{unit};Iron Sword,Steel Sword,Iron Lance,Iron Axe,Willow Bow",
+            "transition;Open"
+        ],
+        "nid": "TOWN Armory"
+    },
+    {
+        "name": "Arena",
+        "trigger": "Arena",
+        "level_nid": "TOWN",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "change_background;House",
+            "add_portrait;Bandit1;Right",
+            "speak;Bandit1;Welcome to the pit. My champion against you, bare knuckles to broadswords. Try not to bleed on the floor.",
+            "remove_portrait;Bandit1",
+            "transition;Open",
+            "add_unit;Gladiator;7,8;immediate",
+            "interact_unit;{unit};Gladiator;hit1,hit1,end",
+            "if;game.check_dead('Gladiator')",
+            "add_portrait;Bandit1;Right",
+            "speak;Bandit1;Tch. Fine, take the purse. Now get out of my pit.",
+            "remove_portrait;Bandit1",
+            "give_money;300",
+            "end",
+            "has_attacked;{unit}"
+        ],
+        "nid": "TOWN Arena"
+    },
+    {
+        "name": "Visit",
+        "trigger": "Visit",
+        "level_nid": "TOWN",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "transition;Close",
+            "change_background;House",
+            "add_portrait;OldLady1;Right",
+            "speak;OldLady1;A traveler? Here, take this. An old woman has no use for adventures anymore.",
+            "give_item;{unit};Vulnerary",
+            "remove_portrait;OldLady1",
+            "transition;Open",
+            "has_attacked;{unit}"
+        ],
+        "nid": "TOWN Visit"
+    },
+    {
+        "name": "Arrive",
+        "trigger": "Arrive",
+        "level_nid": "TOWN",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "add_portrait;Kestrel;Left",
+            "speak;Kestrel;Provisions bought, gossip heard. The road calls.",
+            "remove_portrait;Kestrel",
+            "win_game"
+        ],
+        "nid": "TOWN Arrive"
+    },
+    {
+        "name": "Lose",
+        "trigger": "unit_death",
+        "level_nid": "TOWN",
+        "condition": "unit.nid == 'Kestrel'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "lose_game"
+        ],
+        "nid": "TOWN Lose"
     }
 ]
