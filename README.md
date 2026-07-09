@@ -46,6 +46,11 @@ uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions pyth
 
 ## Web-only features
 
+- Level jump for testing: `http://localhost:8000/?level=<nid>` boots
+  directly into that chapter (editor test-play path), skipping the title
+  screen — e.g. `?level=DEBUG` opens the hidden DEBUG sandbox chapter in
+  ~9 s. Wrong nids log the valid list to the JS console and fall back to
+  the title screen
 - Default controls (GBA-style QWAS, rebindable in-game): arrows move,
   S/Space/Enter confirm (A), A cancel (B), W info (R), Q cycle units (L),
   Tab options menu (Start); full mouse support unchanged
