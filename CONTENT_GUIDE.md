@@ -1,111 +1,206 @@
-# LT content authoring guide (for programmatic / AI editing)
+# LT content authoring guide — for programmatic / AI editing
 
-How game content is stored and wired together in a `.ltproj`, verified against
-`lion_throne.ltproj` (this repo) and `default.ltproj` (the Sacred Stones demo
-shipped with the editor at `../lt_editor/lt_editor/default.ltproj`). Everything
-below is plain JSON + PNG — no compilation step; the engine reads it directly.
+**Audience: an LLM (or human) starting with zero context.** This document is
+self-contained: it explains what this repo is, where every kind of game data
+lives, how the pieces reference each other, how to verify your changes, and
+how to discover valid values instead of guessing. All facts below were
+verified against the actual files on 2026-07-08; paths are given so you can
+re-verify anything.
 
-## 0. Two on-disk layouts
+## 0. Orientation — what you are looking at
 
-`metadata.json` → `"as_chunks"` decides the layout. **The engine reads both.**
+This repo (`lt_web/`) is a **browser (WebAssembly) build of the Lex Talionis
+(LT) engine** — a Python/pygame Fire-Emblem-style tactics engine — running a
+complete custom fangame, *The Lion Throne*. The project goal: game content
+that an AI can create/edit by writing JSON, playable in a browser.
 
-| | Lion Throne (monolithic) | default.ltproj (chunked) |
+Layout of this repo:
+
+| path | what it is |
+|---|---|
+| `main.py` | pygbag entry point + WASM shims (threading, save persistence, boot logging) |
+| `app/` | engine source (LT-Maker build 83ddbf13 = release 2025.03.13a); no editor code |
+| `lion_throne.ltproj/` | **the game — all content you would edit lives here** |
+| `lt.tmpl` | custom pygbag HTML template (controls card, save export buttons) |
+| `web_config.json` | `music_base_url` (null = silent; audio is stripped from this build) |
+| `smoke_test.py` | native headless load test — run this after any data edit |
+| `README.md` | build/run commands and web-specific engine modifications |
+
+Sibling directories on this machine (outside this git repo, useful for
+comparison but do not edit them as part of web work):
+
+- `../lt_editor/lt_editor/` — the LT editor distribution, including
+  `default.ltproj` (the Sacred Stones demo game, 7 levels). Same engine,
+  different game, and stored in the *chunked* layout (see §1).
+- `../LT_Engine/lion-throne/lt_engine/` — the desktop distribution
+  `lion_throne.ltproj` was copied from (that copy still has its audio).
+
+**Key architectural fact:** a game is pure data — JSON manifests + PNG
+sheets + (optional) OGG audio inside a `.ltproj` directory. There is no
+compile step for content. The engine loads it at boot via
+`app/data/resources/resources.py` (`RESOURCES.load`) and
+`app/data/database/database.py` (`DB.load`); see `main.py` lines ~160-195
+for the exact boot sequence.
+
+## 1. The .ltproj data model
+
+### 1.1 Two on-disk layouts
+
+`lion_throne.ltproj/metadata.json` contains `"as_chunks": false` →
+**monolithic**: each data type is one JSON array file. The demo
+`default.ltproj` uses `"as_chunks": true` → **chunked**: a directory per data
+type, one JSON file per entity, plus a `.orderkeys` file listing nids in
+display order. **The engine reads both layouts.**
+
+| data | monolithic (this game) | chunked (the demo) |
 |---|---|---|
-| units | `game_data/units.json` (one array) | `game_data/units/<Nid>.json` (one file each) + `.orderkeys` |
-| same for | `levels.json`, `items.json`, `skills.json`, `events.json`, `classes.json` | `levels/`, `events/`, `items/`, `skills/`, `classes/` dirs |
+| unique characters | `game_data/units.json` | `game_data/units/<Nid>.json` + `units/.orderkeys` |
+| classes | `game_data/classes.json` | `game_data/classes/…` |
+| items | `game_data/items.json` | `game_data/items/…` |
+| skills | `game_data/skills.json` | `game_data/skills/…` |
+| levels/chapters | `game_data/levels.json` | `game_data/levels/…` |
+| event scripts | `game_data/events.json` | `game_data/events/…` |
 
-Chunked is friendlier for AI edits (small files, no giant-array surgery).
-When editing monolithic files: append to the array; order = display order.
-When adding a chunked file: also append its nid to the dir's `.orderkeys`.
+Editing rules: in monolithic files, append to the array (array order = menu
+display order). In chunked layouts, also append the nid to `.orderkeys`.
 
-Shared singleton files (both layouts): `constants.json`, `equations.json`,
-`terrain.json`, `mcost.json`, `ai.json`, `factions.json`, `teams.json`,
-`stats.json`, `weapons.json`, `weapon_ranks.json`, `difficulty_modes.json`,
-`translations.json`, `tags.json`, `parties.json`, `lore.json`, `supports*`.
+### 1.2 Singleton files (same in both layouts), all under `game_data/`
 
-## 1. Levels
+- `constants.json` — ~80 game-rule toggles/values. **Serialized as a list of
+  `[key, value]` pairs, not a dict.** Controls mechanics like `crit`,
+  `def_double`, `line_of_sight`, `auto_promote`, EXP curve, `game_nid`
+  (save namespace), `title`.
+- `equations.json` — combat formulas as expressions over stat names (§4).
+- `stats.json` — the stat definitions themselves (HP/STR/MAG/SKL/SPD/LCK/DEF/RES/CON/MOV).
+- `terrain.json`, `mcost.json` — terrain properties and movement-cost matrix (§5).
+- `weapons.json`, `weapon_ranks.json` — weapon types, triangle advantage, rank thresholds.
+- `ai.json` — named AI presets (read it to see valid `ai` values for unit placements).
+- `factions.json`, `teams.json`, `parties.json`, `tags.json`,
+  `difficulty_modes.json`, `translations.json`, `lore.json`, `support_*`.
 
-One entry in `levels.json` per chapter. Anatomy (Lion Throne Chapter I):
+### 1.3 Cross-reference model
+
+Everything links by string `nid` (namespaced ID). The chain for a character
+on a map:
+
+```
+levels.json placement (nid) ─→ units.json unit (klass) ─→ classes.json class
+                                    │ (portrait_nid)          │ (map_sprite_nid, combat_anim_nid)
+                                    ▼                          ▼
+              resources/portraits/<nid>.png + portraits.json   resources/map_sprites/<nid>-stand.png etc.
+```
+
+A dangling nid usually fails at boot or on first use — `smoke_test.py`
+catches boot-time breaks (§7).
+
+## 2. Levels (chapters)
+
+File: `lion_throne.ltproj/game_data/levels.json` — 13 entries. Anatomy of
+Chapter I (`nid: "1"`), fields verbatim from the file:
 
 ```json
 {
   "nid": "1", "name": "Chapter I",
-  "tilemap": "Chapter 1",            // -> resources/tilemaps
+  "tilemap": "Chapter 1",            // nid in resources/tilemaps/tilemap_data/tilemaps.json
+  "bg_tilemap": null,
   "party": "Resistance",             // -> parties.json
-  "music": {"player_phase": "...", "enemy_phase": "...", ...},
+  "music": {"player_phase": "Airship Thunderchild", "enemy_phase": "...", ...},
   "objective": {"simple": "Defeat Boss", "win": "Defeat Sidney",
                 "loss": "Ophies dies,Any two of your units are defeated"},
-  "roam": false, "roam_unit": null,  // free-roam chapters
-  "units": [ ...placements... ],
-  "regions": [ ...map hotspots... ],
+  "roam": false, "roam_unit": null,
+  "go_to_overworld": false, "should_record": true, "tags": [],
+  "units": [ ...placements, see below... ],
+  "regions": [ ...interaction hotspots, see §5.2... ],
   "unit_groups": [{"nid": "EnemyRein", "units": ["108","109","110"], "positions": {}}],
   "ai_groups": []
 }
 ```
 
-**`objective` is display text only.** Actual win/loss logic lives in events
-(`win_game` / `lose_game` commands, see §5).
+⚠️ **`objective` is display text only.** Actual win/loss logic is implemented
+in events (§5.3) — e.g. Chapter I is won by an event with trigger
+`combat_end`, condition `game.check_dead('Sidney')`, body `win_game`.
 
-Unit placements come in two flavors:
+Unit placements (the `units` array) come in two flavors:
 
-- **Unique** (`"generic": false`): references a unit in `units.json` by nid,
-  adds only `team`, `ai` (-> `ai.json` presets: None/Attack/Defend/Pursue...),
-  `starting_position` `[x, y]`, `starting_traveler` (rescued passenger nid).
-- **Generic** (`"generic": true`): defined entirely inline — `klass`, `level`,
-  `faction` (-> `factions.json` for name/icon), `starting_items`
-  (`[["Willow Bow", false]]`, bool = droppable), `starting_skills`, `team`, `ai`.
-  Stats are computed from the class bases/growths at that level. This is how
-  all rank-and-file enemies exist; a new enemy needs zero files touched
-  besides the level entry.
+- **Unique** (`"generic": false`): `{"nid": "Ophie", "team": "player",
+  "ai": "None", "starting_position": [3, 7], "starting_traveler": null, ...}`
+  — references `units.json` by nid; stats/items come from there.
+- **Generic** (`"generic": true`): self-contained enemy/NPC —
+  `{"nid": "101", "klass": "Archer", "level": 1, "faction": "Soldier",
+  "starting_items": [["Willow Bow", false]], "starting_skills": [],
+  "team": "enemy", "ai": "Defend", "starting_position": [16, 4], ...}`.
+  Stats are rolled from the class at that level. The bool in
+  `starting_items` pairs = droppable. **All rank-and-file enemies are these;
+  adding one touches only the level entry.**
 
-`unit_groups` name sets of placed units so events can spawn/move them together
-(reinforcements). To make a new level: new tilemap (or reuse one), new entry in
-`levels.json`, a `level_start` event, and win/loss events.
+`unit_groups` name sets of placed units so event commands can move/spawn
+them together (reinforcements). `team` values come from `teams.json`:
+`player`, `enemy`, `enemy2`, `other` (= neutral/green).
 
-## 2. Characters (units)
+**Minimum new level** = a tilemap nid (reuse an existing one to start), a
+`levels.json` entry, a `level_start` event, and win/lose events. Chapter
+order/flow: the next chapter is set by event command `set_next_chapter` or
+follows array order at `win_game`.
 
-**Unique units** live in `units.json` (28 in Lion Throne). Key fields:
+## 3. Characters (units, enemies, neutrals)
 
+### 3.1 Unique units — `game_data/units.json` (28 entries)
+
+Verbatim structure (Ophie, the lord):
+
+```json
+{
+  "nid": "Ophie", "name": "Ophie", "desc": "A strong-hearted renegade...",
+  "variant": "", "level": 1, "klass": "Myrmidon", "tags": ["Lord"],
+  "bases":   {"HP": 12, "STR": 3, "MAG": 1, "SKL": 5, "SPD": 7, "LCK": 2, "DEF": 1, "RES": 1, "CON": 5, "MOV": 5},
+  "growths": {"HP": 105, "STR": 55, ...},        // percent chance per level-up
+  "stat_cap_modifiers": {},
+  "starting_items": [["Iron Sword", false]],      // [item_nid, droppable]
+  "learned_skills": [],                           // personal skills: [[level, skill_nid], ...]
+  "wexp_gain": {"Sword": [true, 8, null], "Lance": [false, 0, null], ...},
+  "alternate_classes": [], "portrait_nid": "Ophie", "affinity": null,
+  "unit_notes": [], "fields": []
+}
 ```
-nid, name, desc, level, klass          -> classes.json nid
-tags: ["Lord"]                         -> tags.json (Lord/Boss/Armor/Mounted...)
-bases / growths: {HP, STR, MAG, SKL, SPD, LCK, DEF, RES, CON, MOV}  (growths are %)
-starting_items: [["Iron Sword", false]]
-learned_skills: [[level, skill_nid], ...]        (personal skills)
-wexp_gain: {"Sword": [usable?, amount, cap], ...}  (weapon ranks; amount vs weapon_ranks.json thresholds)
-portrait_nid, affinity, variant, alternate_classes, stat_cap_modifiers
-```
 
-**Classes** (`classes.json`) carry the rest of a character's identity:
-`bases`/`growths`/`max_stats` (unit totals = unit + class contributions per
-`constants`), `movement_group` (-> `mcost.json` row), `promotes_from` /
-`turns_into` / `promotion` gains, `learned_skills` (class skills, e.g.
-Myrmidon: `[[1,"TLT_Riposte"],[5,"TLT_Vantage"],[8,"Feat"]]`), `wexp_gain`,
-and crucially the art links: **`map_sprite_nid`** and **`combat_anim_nid`**.
+`wexp_gain` per weapon type: `[usable?, starting_wexp, cap]`; wexp thresholds
+for ranks D/C/B/A/S are in `weapon_ranks.json`. Enemies/bosses/neutrals are
+not a separate concept — a boss is typically a unique unit placed with tag
+`Boss` and team `enemy`.
 
-**Art for a character**, all under `resources/`:
+### 3.2 Classes — `game_data/classes.json`
 
-- `portraits/<Nid>.png` + entry in `portraits/portraits.json`
-  (`blinking_offset`/`smiling_offset` — a 96×80 grid sheet: main face, chibi,
-  blink/smile frames). Used in dialogue scenes and info menu. `portrait_nid`
-  on the unit picks it; events can also reference any portrait directly.
-- `map_sprites/<Class>-stand.png` + `<Class>-move.png` — per class (and team
-  recolors are automatic via palettes). A new character in an existing class
-  needs no map sprite work; `variant` allows per-character overrides.
-- `combat_anims/<Class>-<WeaponType>.png` — battle animation sheets, per class.
-  Missing anim ⇒ engine falls back to map combat. So new content can skip
-  battle animations entirely.
-- `icons16/32/80` — item/skill icons referenced by `icon_nid` + `icon_index`
-  (sheet + cell coordinates).
+Classes carry the other half of a character: `bases`/`growths`/`max_stats`
+contributions, `movement_group` (row in `mcost.json`), promotion data
+(`promotes_from`, `turns_into`, `promotion` stat gains, `tier`, `max_level`),
+class `wexp_gain`, class `learned_skills` (e.g. Myrmidon:
+`[[1, "TLT_Riposte"], [5, "TLT_Vantage"], [8, "Feat"]]`), and the art links:
 
-Enemies and neutrals ("other" team) are not special: same units/classes,
-different `team` (`teams.json`: player/enemy/enemy2/other) and `ai` preset.
-Bosses are usually unique units placed with the `Boss` tag.
+- `map_sprite_nid` → `resources/map_sprites/<nid>-stand.png` and
+  `<nid>-move.png` (team recolors are automatic via palettes)
+- `combat_anim_nid` → `resources/combat_anims/<nid>-<WeaponAnim>.png`
+  (battle animations; **optional** — if missing, combat resolves on the map,
+  no crash)
 
-## 3. Items
+### 3.3 Art assets for a character (all under `lion_throne.ltproj/resources/`)
 
-An item is `nid/name/desc + icon + a list of [component_nid, value] pairs`.
-The full Iron Sword:
+| asset | files | manifest |
+|---|---|---|
+| dialogue portrait | `portraits/<Nid>.png` (96×80-grid sheet: face, chibi, blink+smile mouths) | `portraits/portraits.json` — entry with `blinking_offset`/`smiling_offset` `[x, y]` |
+| map sprite | `map_sprites/<Class>-stand.png`, `<Class>-move.png` | `map_sprites/map_sprites.json` |
+| battle anim | `combat_anims/<Class>-<Anim>.png` | `combat_anims/combat_anims.json` |
+| icons (items/skills) | `icons16/`, `icons32/`, `icons80/` sheets | referenced by `icon_nid` + `icon_index` [col, row] |
+
+**Cheapest new character**: new `units.json` entry using an *existing* class
+(inherits map sprite + battle anim) + an existing or new portrait + a
+placement in a level. Only genuinely new art requires PNG work.
+
+## 4. Items, skills, and combat math
+
+### 4.1 Items — `game_data/items.json` (102 entries)
+
+An item = `nid/name/desc` + icon ref + **a list of `[component_nid, value]`
+pairs**. The complete Iron Sword:
 
 ```json
 "components": [
@@ -116,81 +211,111 @@ The full Iron Sword:
 ]
 ```
 
-Components are tiny classes in `app/engine/item_components/*.py`
-(weapon, hit, usable, aoe, exp, target, special, ...). Each declares its
-`nid`, value type, and hook methods the engine calls (e.g. `Damage.damage()
--> value` feeds `combat_calcs`). A healing staff is just different
-components (`spell`, `target_ally`, `heal`, `weapon_type: Staff`, ...).
-Effective-vs-armor, brave, magic, siege range, status-on-hit — all existing
-components. **New items from existing components: JSON only, no code.**
-A genuinely new component type = new class in `item_components/` + rerun
-`source_generator.py` (regenerates `item_system.py`).
+Component implementations: `app/engine/item_components/*.py` (181 component
+types: weapon, usable, aoe, targeting, exp, special...). Each is a small
+class declaring `nid`, a value type, and hook methods the combat engine
+calls. A staff, a tome, a potion, a brave/effective/siege weapon are all
+just different component combinations. **New items from existing components
+= JSON only, zero code.**
 
-## 4. Combat, skills, bonuses, damage/hit
+### 4.2 Skills & statuses — `game_data/skills.json` (118 entries)
 
-**The stat formulas themselves are data** — `equations.json`, evaluated
-against unit stats. This is the single biggest "feel" lever and the clearest
-demo-vs-Lion-Throne behavioral diff:
+Same component pattern; implementations in `app/engine/skill_components/*.py`.
+Real examples from this game:
 
-| equation | demo (GBA-like) | Lion Throne |
-|---|---|---|
-| HIT | `SKL*2 + LCK//2` | `SKL*3 + LCK` |
-| AVOID | `SPD*2 + LCK` | `SPD*3 + LCK` |
-| CRIT_HIT / CRIT_AVOID | `SKL//2` / `LCK` | `SKL` / `LCK*2` |
-| CRIT_MULT | `3` (triple dmg) | `1` — with constant `crit: false`, crits are off entirely |
-| SPEED_TO_DOUBLE | 4 | 4 (doubling threshold, also an equation) |
+```json
+"Canto":        [["class_skill", null], ["canto", null]]
+"TLT_Riposte":  [["dynamic_damage", "3 if (mode == 'defense') else 0"], ["class_skill", null]]
+"TLT_Poison":   [["stat_change", [["STR",-2],["MAG",-2],["SKL",-2],["SPD",-2],["DEF",-2],["RES",-2]]],
+                 ["unit_anim", "MapPoison"], ["time", 4], ["negative", null]]
+"Regeneration": [["regeneration", 0.3], ["class_skill", null]]
+```
 
-Resolution pipeline (`app/engine/combat_calcs.py`): `compute_hit` =
-equation HIT + item's `hit` component + item dynamic hooks (effectiveness)
+Note `TLT_Riposte`: component values can be **Python eval strings** with
+combat context (`mode`, `unit`, `target`, `item`) — conditional combat
+bonuses are pure data. Statuses (poison, stun, buffs) are just skills with
+`time`/`negative` components. Skills attach via class `learned_skills`,
+unit `learned_skills`, terrain (§5.1), item components (`status_on_hit`),
+or the event command `give_skill`.
+
+### 4.3 Combat math — `game_data/equations.json` + `app/engine/combat_calcs.py`
+
+**The stat formulas are data**, evaluated over stat names. Lion Throne:
+
+```json
+{"nid": "HIT",   "expression": "SKL*3 + LCK"}
+{"nid": "AVOID", "expression": "SPD*3 + LCK"}
+{"nid": "DAMAGE","expression": "STR"}   ... etc
+```
+
+Resolution pipeline in `compute_hit` (`app/engine/combat_calcs.py:357`):
+equation HIT + item `hit` component + item dynamic hooks (effectiveness)
 ± weapon triangle (`weapons.json` advantage tables) + support bonuses
-− defender AVOID ± skill dynamic hooks, clamped 0–100. `compute_damage`
-analogous with DAMAGE/DEFENSE vs MAGIC_* equations chosen by the item.
+− defender's AVOID ± skill dynamic hooks (`dynamic_accuracy`/`dynamic_avoid`),
+clamped 0-100. `compute_damage` (line ~456) is analogous with
+DAMAGE/DEFENSE vs MAGIC_DAMAGE/MAGIC_DEFENSE chosen by the item's components.
+Doubling threshold is itself an equation (`SPEED_TO_DOUBLE`). Difficulty
+scaling: `difficulty_modes.json` (Hard/Lunatic/Grandmaster enemy bonuses).
 
-**Skills** are the same component pattern (`app/engine/skill_components/*.py`):
+## 5. Maps, terrain, interactions, win conditions
 
-- `Canto` = `[["class_skill", null], ["canto", null]]`
-- `TLT_Riposte` = `[["dynamic_damage", "3 if (mode == 'defense') else 0"], ...]`
-  — components can hold **Python eval strings** with combat context
-  (`mode`, `unit`, `target`, `item`), so conditional bonuses are pure data.
-- Statuses are skills too: `TLT_Poison` = `stat_change` −2 all stats +
-  `unit_anim` + `time: 4` turns + `negative`. `Regeneration` = 30%/turn.
+### 5.1 Tilemaps & terrain
 
-Skills attach via class `learned_skills`, unit `learned_skills`, terrain,
-items (`status_on_hold`/`status_on_hit`), or the event command `give_skill`.
-Lion Throne's 118 skills include a `TLT_*` family of custom behaviors —
-all built from stock components, zero engine changes.
+`resources/tilemaps/tilemap_data/tilemaps.json` — per map: `nid`, `size`
+`[w, h]`, `tilesets` used (PNGs in `resources/tilesets/`), and `layers`, each
+with a `terrain_grid` (`"x,y": terrain_nid`) plus a sprite grid. Layers can
+be shown/hidden by event commands (destroyed bridge, opened wall).
+`terrain_nid` → `game_data/terrain.json`: name, avoid/def bonuses, movement
+class, and optionally an **attached skill nid** — forts heal because the
+terrain grants a regeneration-style skill. Movement costs:
+`game_data/mcost.json` matrix (terrain movement class × unit
+`movement_group`).
 
-**Difficulty** (`difficulty_modes.json`): per-mode enemy stat/growth bonuses
-(Lion Throne: Hard/Lunatic/Grandmaster with `enemy_leveling: Fixed`).
+### 5.2 Regions — interaction hotspots (defined per level, in the level entry)
 
-## 5. Maps, interactions, win conditions
+```json
+{"nid": "House1", "region_type": "event", "position": [12, 3], "size": [1, 1],
+ "sub_nid": "Visit", "condition": "unit.team == 'player'",
+ "only_once": true, "interrupt_move": false, "time_left": null}
+```
 
-**Tilemaps** (`resources/tilemaps/tilemap_data/tilemaps.json` + tileset PNGs):
-`size`, `layers` (each a `terrain_grid` of `"x,y": terrain_nid` + a sprite
-grid referencing tileset cells), `tilesets` used. Terrain nids →
-`terrain.json` (name, avoid/def bonuses, movement class, optional attached
-skill — Forts heal because the terrain grants a skill) and `mcost.json`
-(movement cost matrix per movement_group). Layers can be shown/hidden by
-events (destroyed bridges, opened walls).
+`region_type: "event"` + `sub_nid` = an interaction verb: the engine shows a
+menu option named `sub_nid` to a unit standing in the region, and selecting
+it fires an event whose `trigger` equals that sub_nid. Sub_nids used in this
+game: `Visit`, `Chest`, `Door`, `Switch`, `Search`, `Armory`, `Vendor`,
+`Seize`, `Escape`, `Secret`. Other region types: `status` (grants a skill
+while inside), `formation` (prep-screen deployment slots), `time` (expires).
 
-**Regions** (per level, in the level entry): typed rectangles on the map.
-`region_type: "event"` + `sub_nid` = interaction verb — the engine surfaces
-a menu option with that name when a unit stands there, and fires the
-matching event trigger. Lion Throne uses: Visit (houses), Chest, Door,
-Switch, Search, Armory, Vendor, Seize, Escape, Secret. Also
-`region_type: "status"` (terrain-wide skill), `"formation"` (prep-screen
-deploy slots), `"time"` (expiring).
+### 5.3 Events — the actual game logic
 
-**Events** are the glue and the *actual* game logic. One entry:
-`nid, trigger, level_nid (null = global), condition (Python eval), _source`
-(list of `command;arg;arg` lines — note the engine parses `_source`; the
-`commands` array is a legacy field, often empty). Examples from Lion Throne:
+`game_data/events.json` — 243 entries. Fields:
 
 ```
-# win condition (trigger: combat_end, cond: game.check_dead('Sidney'))
+nid, name, trigger, level_nid (null = fires in any chapter),
+condition (Python eval string), _source (the script: list of "command;arg;arg" lines),
+only_once, priority
+```
+
+⚠️ **The script lives in `_source`** (list of semicolon-delimited command
+lines). The `commands` field is a legacy serialization and is typically an
+empty list — write `_source`.
+
+Real examples from this game:
+
+```
+# Win condition — nid "1 WinGame", trigger: combat_end, level_nid: "1",
+#                 condition: game.check_dead('Sidney')
 win_game
 
-# house visit (trigger: Visit — fired by the House1 region, cond: unit.team == 'player')
+# Loss condition — trigger: combat_end, condition: len(game.get_units_in_party()) < 3
+alert;You have lost too many members of your party.
+if;game.game_vars.get('_current_turnwheel_uses', 0) > 0
+activate_turnwheel
+else
+lose_game
+end
+
+# House visit — nid "1 House", trigger: Visit (fired by region House1)
 transition;Close
 change_background;House
 multi_add_portrait;Man4;Left;{unit};Right
@@ -199,40 +324,108 @@ give_item;{unit};Hand Axe
 has_attacked;{unit}
 ```
 
-Trigger vocabulary (see `app/events/triggers.py`): `level_start`, `level_end`,
-`turn_change`, `phase_change`, `combat_start`, `combat_end`, `unit_death`,
-`unit_wait`, `on_talk`, `on_support`, `unit_level_up`, `on_base_convo`,
-`on_startup`, region sub_nids, and more. ~180 event commands cover dialogue,
-camera, movement, spawning (`add_unit`, `move_unit` with unit_groups),
-map changes, shops, items, skills, saving, chapter flow (`win_game`,
-`lose_game`, `activate_turnwheel`). Loss conditions are just events too —
-Lion Throne's "lose if party < 3" is a `combat_end` global-style check with
-`lose_game` in the body.
+Trigger vocabulary (~40, defined in `app/events/triggers.py`; counts are this
+game's usage): `turn_change` (63), `unit_death` (30), `combat_start` (22),
+`combat_end` (16), `level_start` (14), `level_end` (11), region sub_nids
+(`Visit` 12, `Door` 9, ...), `on_talk` (7), `on_base_convo`, `on_turnwheel`,
+`unit_wait`, `unit_level_up`, `on_startup`, etc. Conditions and `{brace}`
+interpolations eval with `game`, `unit`, and helpers like `check_pair(...)`
+in scope.
 
-Full command/component reference also ships as the editor's help docs; the
-source of truth is `app/events/event_commands.py` docstrings.
+Event command vocabulary: **208 commands**, defined with docstrings in
+`app/events/event_commands.py` — dialogue (`speak`, portraits, backgrounds),
+camera, unit spawning/moving (works with level `unit_groups`), map layer
+changes, shops, `give_item`/`give_skill`/`give_exp`, variables
+(`game_var`/`level_var`), flow control (`if`/`elif`/`else`/`end`), chapter
+flow (`win_game`, `lose_game`, `set_next_chapter`, `activate_turnwheel`).
 
-## 6. Demo vs Lion Throne — summary of key diffs
+## 6. Discovering valid values (do this instead of guessing)
 
-- **Layout**: demo chunked, Lion Throne monolithic (`as_chunks`).
-- **Scale**: demo 7 levels (0–5 + DEBUG) / Lion Throne 13 levels, 28 units,
-  102 items, 118 skills (many custom `TLT_*`), 243 events.
-- **Combat feel**: different HIT/AVOID/CRIT equations (table above); crits
-  disabled; `def_double: false` (defenders don't double); `attack_stance_only`,
-  `line_of_sight: true`, `aura_los: true`; `auto_promote: true`;
-  `enemy_leveling: Fixed` vs demo's Dynamic; different EXP curve
-  (`exp_curve 0.22` vs `0.035`, `default_exp 15` vs `11`, `kill_multiplier 2.5`).
-- **Systems toggled** (all `constants.json`): Lion Throne enables
-  give_and_take, convoy_on_death, long_range_storage; disables overworld,
-  kill_wexp/double_wexp; `game_nid: LionThrone` (save-file namespace) vs `LT`.
-- **Engine data version**: Lion Throne saved by 2024.10.25a, demo by
-  2025.03.13a — both load fine in the 2025.03.13a engine used here.
+| you need | where to look |
+|---|---|
+| all item component nids | grep `nid = '` in `app/engine/item_components/*.py` (181 hits; class docstring/`desc` explains each, `expose` shows the value type) |
+| all skill component nids | same pattern in `app/engine/skill_components/*.py` |
+| all event commands + arg signatures | `app/events/event_commands.py` — each class: `nid`, `keywords`, `optional_keywords`, docstring |
+| all event triggers | `app/events/triggers.py` — each class docstring says when it fires and what's in scope |
+| valid AI preset names | `game_data/ai.json` nids |
+| valid team / faction / tag / party nids | `game_data/teams.json`, `factions.json`, `tags.json`, `parties.json` |
+| valid terrain nids & movement classes | `game_data/terrain.json`, `mcost.json` |
+| valid weapon types/ranks | `game_data/weapons.json`, `weapon_ranks.json` |
+| existing icon sheets & indices | `resources/icons16/` etc.; copy `icon_nid`/`icon_index` from a similar existing item/skill |
+| condition-eval helpers (`game.*`, `check_pair`...) | `app/events/event_functions.py` and `app/engine/query_engine.py`; or copy patterns from existing events |
 
-## 7. What needs a rebuild / codegen
+When in doubt, **find the closest existing entity and copy its shape** — the
+demo (`../lt_editor/lt_editor/default.ltproj`) doubles your example pool, in
+per-entity chunked files that are easy to read.
+
+## 7. Workflow: make a change and prove it works
+
+1. **Edit** JSON in `lion_throne.ltproj/` (or add PNGs + manifest entries).
+2. **Native smoke test** (seconds, catches boot-time breakage — bad nids,
+   malformed JSON, missing resources):
+   ```sh
+   uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python smoke_test.py
+   ```
+3. **Rebuild the web bundle** (game data ships inside the pygbag archive —
+   the browser will NOT see edits without this):
+   ```sh
+   uvx pygbag --build --template lt.tmpl .        # from lt_web/; output in build/web/
+   uvx pygbag --ume_block 0 --template lt.tmpl .  # or: build + serve at http://localhost:8000
+   ```
+   (Run from the parent dir as `uvx pygbag --ume_block 0 --template lt_web/lt.tmpl lt_web` if serving alongside other work.)
+4. **Verify in-browser, headlessly.** Boot milestones print to the JS console
+   as `LT_BOOT:` lines; crashes print full tracebacks as `LT_BOOT: BOOT
+   CRASH:`. Boot takes ~7 s to the engine main loop ("entering main loop").
+   Drive it with Playwright (`uv run --no-project --python 3.12 --with
+   playwright python <script>.py`, `channel='chrome'`, headless) or the
+   chrome-devtools MCP tools: navigate, wait for the boot line, send keys,
+   screenshot.
+   **In-game controls for scripted playthroughs**: arrows move · S/Space/Enter
+   confirm · A cancel · W info · Q cycle units · Tab start menu ·
+   1/2/5 game speed ×1/×2/×5 · mouse works. Title → press Tab → menu;
+   New Game → S through difficulty prompts.
+5. Saves/settings persist in browser localStorage (`lt_save:*` keys) — if a
+   data change makes old saves incompatible, clear them
+   (`localStorage.clear()`) or bump `game_nid` awareness accordingly.
+
+## 8. What requires code/codegen vs. JSON only
 
 | change | needed |
 |---|---|
-| any JSON edit (units, items, skills, levels, events, equations, constants) | rebuild web bundle (`uvx pygbag --build --template lt.tmpl .`) — data ships inside the .apk |
-| new PNG assets + manifest entries | same rebuild |
-| new component **type** or event command | edit `app/engine/*_components/` or `app/events/`, rerun `source_generator.generate_all()` (regenerates `skill_system.py` / `item_system.py` / wrappers — the web build runs `sys.frozen`, so generated files must be current), then rebuild |
-| new content from **existing** components | JSON only, no codegen |
+| new/edited units, items, skills, levels, events, equations, constants, terrain — **using existing component types & event commands** | JSON edit + web rebuild. No code. |
+| new PNG assets | PNG + manifest entry + rebuild |
+| **new component type** or **new event command** | Python class in `app/engine/*_components/` or `app/events/event_commands.py`, then rerun codegen: `python -c "from app.engine.codegen import source_generator; source_generator.generate_all()"` — regenerates `app/engine/skill_system.py`, `item_system.py`, `app/events/python_event_command_wrappers.py`. Required because the web build sets `sys.frozen` (`main.py`) which skips runtime codegen. Then rebuild. |
+| engine behavior changes | edit `app/engine/…` directly; keep the web-specific patches listed in `README.md` (async driver loop, sound fallbacks, time_scale, key defaults) intact |
+
+## 9. Demo vs Lion Throne — why the two games feel different (all data!)
+
+Same engine; every behavioral difference is in `game_data`. Verified diffs:
+
+**Layout/scale**: demo is chunked, 7 levels (nids 0-5 + DEBUG), engine-format
+version 2025.03.13a. Lion Throne is monolithic, 13 levels, 28 unique units,
+102 items, 118 skills (incl. custom `TLT_*` family — all built from stock
+components), 243 events, saved by 2024.10.25a (loads fine in this engine).
+
+**`equations.json` diffs** (demo → Lion Throne):
+
+| nid | demo (GBA-like) | Lion Throne |
+|---|---|---|
+| HIT | `SKL*2 + LCK//2` | `SKL*3 + LCK` |
+| AVOID | `SPD*2 + LCK` | `SPD*3 + LCK` |
+| CRIT_HIT | `SKL//2` | `SKL` |
+| CRIT_AVOID | `LCK` | `LCK*2` |
+| CRIT_MULT | `3` | `1` (and constant `crit: false` — crits fully off) |
+
+**`constants.json` diffs** (demo → Lion Throne), the notable ones:
+`crit` true→false; `def_double` true→false (defenders never double);
+`line_of_sight` false→true; `aura_los` false→true; `attack_stance_only`
+false→true; `auto_promote` false→true; `enemy_leveling` Dynamic→Fixed;
+`give_and_take` false→true; `convoy_on_death` false→true;
+`kill_wexp`/`double_wexp` true→false; `attack_zero_dam`/`attack_zero_hit`
+true→false; EXP tuning `exp_curve` 0.035→0.22, `default_exp` 11→15,
+`kill_multiplier` 3.0→2.5; `overworld` true→false; `game_nid` LT→LionThrone;
+`title` → "The Lion Throne".
+
+The takeaway for authoring: **a total-conversion level of behavior change
+required zero engine edits** — that is the property this whole pipeline
+relies on.

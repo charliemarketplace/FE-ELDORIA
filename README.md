@@ -1,5 +1,10 @@
 # lt_web — Lion Throne in the browser
 
+> **Editing game content (units, items, skills, levels, events)?**
+> Read [`CONTENT_GUIDE.md`](CONTENT_GUIDE.md) first — it documents the whole
+> .ltproj data model, cross-references, discovery recipes, and the
+> edit→test→rebuild workflow.
+
 A WebAssembly (pygbag) build of the Lex Talionis engine running *The Lion Throne*,
 with no editor and no embedded audio. Engine source is the game-runtime slice of
 LT-Maker build `83ddbf13` (release 2025.03.13a), taken from the packaged
