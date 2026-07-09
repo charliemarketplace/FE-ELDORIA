@@ -970,5 +970,10 @@
         "nid": "Chapter10Tiles",
         "terrain_grid": {},
         "autotiles": {}
+    },
+    {
+        "nid": "Riverhollow",
+        "terrain_grid": {},
+        "autotiles": {}
     }
 ]

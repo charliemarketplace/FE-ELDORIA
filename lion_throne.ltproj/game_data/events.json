@@ -7935,5 +7935,49 @@
             "lose_game"
         ],
         "nid": "TOWN Lose"
+    },
+    {
+        "name": "Intro",
+        "trigger": "level_start",
+        "level_nid": "RIVER",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "# Riverhollow: first level on a from-scratch generated map image",
+            "transition;Open",
+            "add_portrait;Kestrel;Left",
+            "speak;Kestrel;A bandit scout, watching the only bridge for miles.|Time to clear the crossing.",
+            "remove_portrait;Kestrel"
+        ],
+        "nid": "RIVER Intro"
+    },
+    {
+        "name": "WinGame",
+        "trigger": "combat_end",
+        "level_nid": "RIVER",
+        "condition": "len(game.get_enemy_units()) == 0",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "# Rout",
+            "win_game"
+        ],
+        "nid": "RIVER WinGame"
+    },
+    {
+        "name": "LoseGame",
+        "trigger": "unit_death",
+        "level_nid": "RIVER",
+        "condition": "unit.nid == 'Kestrel'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "lose_game"
+        ],
+        "nid": "RIVER LoseGame"
     }
 ]

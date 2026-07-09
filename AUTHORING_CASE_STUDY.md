@@ -143,6 +143,41 @@ verified. Never commit before the screenshots exist.
   `interact_unit;{unit};<nid>;hit1,hit1,end` (the combat script removes hit
   RNG from the outcome) + conditional prize + `has_attacked;{unit}`.
 
+## From-scratch maps from a single image (the "Riverhollow" pipeline)
+
+A brand-new map does **not** require tile-by-tile art. The engine accepts a
+single full-map PNG as a "tileset" whose sprite grid maps every cell 1:1 —
+the base game's TacticsRoom already works this way (`TacticsFloor.png`,
+240×160). Verified with the RIVER level ("Riverhollow"):
+
+1. Produce a PNG of exactly `width*16 × height*16` px (15×10 tiles = 240×160).
+   Source can be anything: hand-drawn, procedurally drawn (Pillow), or an
+   image-generation model (downscale/crop its output to the exact size).
+2. Save as `resources/tilesets/<Nid>.png` and append
+   `{"nid": "<Nid>", "terrain_grid": {}, "autotiles": {}}` to
+   `resources/tilesets/tilesets.json`.
+3. Append to `resources/tilemaps/tilemap_data/tilemaps.json`: `size [W,H]`,
+   `autotile_fps 29`, `tilesets ["<Nid>"]`, one layer `base` with
+   `sprite_grid {"x,y": ["<Nid>", [x, y]], …}` for every cell and a
+   hand-authored `terrain_grid` (`Plain` / `Road` / `Bridge` / `River` /
+   `Forest` / `Roof` … — nids from `game_data/terrain.json`).
+   ⚠️ These two resource manifests use **LF** line endings, unlike
+   `game_data/*.json` which are CRLF. Same indent-4 / no-trailing-newline.
+4. **Terrain authoring is the real work.** Render an analysis overlay
+   (upscale + 16px gridlines + cell coordinates) and read the image cell by
+   cell. Keep one layout spec drive both the drawing and the terrain grid if
+   generating procedurally — image and gameplay then can't disagree. The
+   overlay caught a real bug on the first pass (a house split by the road).
+5. Level + events on top as usual; the smoke test validates the tileset
+   loads; in-browser the cursor's terrain panel (Road/Bridge/River names,
+   avoid values) proves the terrain grid, and movement ranges prove costs
+   (river impassable, bridge walkable).
+
+Static image = no water animation (autotiles stay empty). Fine for a first
+map. Image-model note: the Gemini API free tier has **zero image-generation
+quota** (`limit: 0` for all `*-image` models; text models work) — image gen
+needs billing enabled, or generate in the AI Studio UI and drop the PNG in.
+
 ## Known cosmetic quirks (pre-existing, not content bugs)
 
 - Menu help footer can show translation-fallback keys like `Talk_desc`

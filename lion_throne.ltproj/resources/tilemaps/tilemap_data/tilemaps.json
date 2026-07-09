@@ -56483,5 +56483,1227 @@
             "Chapter10",
             "Chapter10Tiles"
         ]
+    },
+    {
+        "nid": "Riverhollow",
+        "size": [
+            15,
+            10
+        ],
+        "autotile_fps": 29,
+        "layers": [
+            {
+                "nid": "base",
+                "visible": true,
+                "foreground": false,
+                "terrain_grid": {
+                    "0,0": "Forest",
+                    "1,0": "Forest",
+                    "2,0": "Plain",
+                    "3,0": "Plain",
+                    "4,0": "Plain",
+                    "5,0": "Plain",
+                    "6,0": "Plain",
+                    "7,0": "Plain",
+                    "8,0": "Plain",
+                    "9,0": "Plain",
+                    "10,0": "Plain",
+                    "11,0": "Plain",
+                    "12,0": "River",
+                    "13,0": "River",
+                    "14,0": "Forest",
+                    "0,1": "Forest",
+                    "1,1": "Plain",
+                    "2,1": "Roof",
+                    "3,1": "Roof",
+                    "4,1": "Plain",
+                    "5,1": "Plain",
+                    "6,1": "Plain",
+                    "7,1": "Plain",
+                    "8,1": "Plain",
+                    "9,1": "Plain",
+                    "10,1": "Plain",
+                    "11,1": "Plain",
+                    "12,1": "River",
+                    "13,1": "River",
+                    "14,1": "Plain",
+                    "0,2": "Plain",
+                    "1,2": "Plain",
+                    "2,2": "House",
+                    "3,2": "House",
+                    "4,2": "Plain",
+                    "5,2": "Plain",
+                    "6,2": "Plain",
+                    "7,2": "Plain",
+                    "8,2": "Roof",
+                    "9,2": "Roof",
+                    "10,2": "Plain",
+                    "11,2": "Plain",
+                    "12,2": "River",
+                    "13,2": "River",
+                    "14,2": "Plain",
+                    "0,3": "Plain",
+                    "1,3": "Plain",
+                    "2,3": "Plain",
+                    "3,3": "Plain",
+                    "4,3": "Plain",
+                    "5,3": "Plain",
+                    "6,3": "Plain",
+                    "7,3": "Plain",
+                    "8,3": "House",
+                    "9,3": "House",
+                    "10,3": "Plain",
+                    "11,3": "Plain",
+                    "12,3": "River",
+                    "13,3": "River",
+                    "14,3": "Plain",
+                    "0,4": "Road",
+                    "1,4": "Road",
+                    "2,4": "Road",
+                    "3,4": "Road",
+                    "4,4": "Road",
+                    "5,4": "Road",
+                    "6,4": "Road",
+                    "7,4": "Road",
+                    "8,4": "Road",
+                    "9,4": "Road",
+                    "10,4": "Road",
+                    "11,4": "Road",
+                    "12,4": "Bridge",
+                    "13,4": "Bridge",
+                    "14,4": "Plain",
+                    "0,5": "Plain",
+                    "1,5": "Plain",
+                    "2,5": "Plain",
+                    "3,5": "Plain",
+                    "4,5": "Plain",
+                    "5,5": "Plain",
+                    "6,5": "Plain",
+                    "7,5": "Plain",
+                    "8,5": "Plain",
+                    "9,5": "Plain",
+                    "10,5": "Plain",
+                    "11,5": "Plain",
+                    "12,5": "River",
+                    "13,5": "River",
+                    "14,5": "Plain",
+                    "0,6": "Plain",
+                    "1,6": "Plain",
+                    "2,6": "Roof",
+                    "3,6": "Roof",
+                    "4,6": "Plain",
+                    "5,6": "Plain",
+                    "6,6": "Plain",
+                    "7,6": "Plain",
+                    "8,6": "Plain",
+                    "9,6": "Plain",
+                    "10,6": "Plain",
+                    "11,6": "Plain",
+                    "12,6": "River",
+                    "13,6": "River",
+                    "14,6": "Plain",
+                    "0,7": "Plain",
+                    "1,7": "Plain",
+                    "2,7": "House",
+                    "3,7": "House",
+                    "4,7": "Plain",
+                    "5,7": "Plain",
+                    "6,7": "Plain",
+                    "7,7": "Plain",
+                    "8,7": "Plain",
+                    "9,7": "Plain",
+                    "10,7": "Plain",
+                    "11,7": "Plain",
+                    "12,7": "River",
+                    "13,7": "River",
+                    "14,7": "Plain",
+                    "0,8": "Forest",
+                    "1,8": "Plain",
+                    "2,8": "Plain",
+                    "3,8": "Plain",
+                    "4,8": "Plain",
+                    "5,8": "Plain",
+                    "6,8": "Plain",
+                    "7,8": "Plain",
+                    "8,8": "Plain",
+                    "9,8": "Plain",
+                    "10,8": "Plain",
+                    "11,8": "Plain",
+                    "12,8": "River",
+                    "13,8": "River",
+                    "14,8": "Plain",
+                    "0,9": "Forest",
+                    "1,9": "Forest",
+                    "2,9": "Plain",
+                    "3,9": "Plain",
+                    "4,9": "Plain",
+                    "5,9": "Plain",
+                    "6,9": "Plain",
+                    "7,9": "Plain",
+                    "8,9": "Forest",
+                    "9,9": "Plain",
+                    "10,9": "Plain",
+                    "11,9": "Plain",
+                    "12,9": "River",
+                    "13,9": "River",
+                    "14,9": "Forest"
+                },
+                "sprite_grid": {
+                    "0,0": [
+                        "Riverhollow",
+                        [
+                            0,
+                            0
+                        ]
+                    ],
+                    "1,0": [
+                        "Riverhollow",
+                        [
+                            1,
+                            0
+                        ]
+                    ],
+                    "2,0": [
+                        "Riverhollow",
+                        [
+                            2,
+                            0
+                        ]
+                    ],
+                    "3,0": [
+                        "Riverhollow",
+                        [
+                            3,
+                            0
+                        ]
+                    ],
+                    "4,0": [
+                        "Riverhollow",
+                        [
+                            4,
+                            0
+                        ]
+                    ],
+                    "5,0": [
+                        "Riverhollow",
+                        [
+                            5,
+                            0
+                        ]
+                    ],
+                    "6,0": [
+                        "Riverhollow",
+                        [
+                            6,
+                            0
+                        ]
+                    ],
+                    "7,0": [
+                        "Riverhollow",
+                        [
+                            7,
+                            0
+                        ]
+                    ],
+                    "8,0": [
+                        "Riverhollow",
+                        [
+                            8,
+                            0
+                        ]
+                    ],
+                    "9,0": [
+                        "Riverhollow",
+                        [
+                            9,
+                            0
+                        ]
+                    ],
+                    "10,0": [
+                        "Riverhollow",
+                        [
+                            10,
+                            0
+                        ]
+                    ],
+                    "11,0": [
+                        "Riverhollow",
+                        [
+                            11,
+                            0
+                        ]
+                    ],
+                    "12,0": [
+                        "Riverhollow",
+                        [
+                            12,
+                            0
+                        ]
+                    ],
+                    "13,0": [
+                        "Riverhollow",
+                        [
+                            13,
+                            0
+                        ]
+                    ],
+                    "14,0": [
+                        "Riverhollow",
+                        [
+                            14,
+                            0
+                        ]
+                    ],
+                    "0,1": [
+                        "Riverhollow",
+                        [
+                            0,
+                            1
+                        ]
+                    ],
+                    "1,1": [
+                        "Riverhollow",
+                        [
+                            1,
+                            1
+                        ]
+                    ],
+                    "2,1": [
+                        "Riverhollow",
+                        [
+                            2,
+                            1
+                        ]
+                    ],
+                    "3,1": [
+                        "Riverhollow",
+                        [
+                            3,
+                            1
+                        ]
+                    ],
+                    "4,1": [
+                        "Riverhollow",
+                        [
+                            4,
+                            1
+                        ]
+                    ],
+                    "5,1": [
+                        "Riverhollow",
+                        [
+                            5,
+                            1
+                        ]
+                    ],
+                    "6,1": [
+                        "Riverhollow",
+                        [
+                            6,
+                            1
+                        ]
+                    ],
+                    "7,1": [
+                        "Riverhollow",
+                        [
+                            7,
+                            1
+                        ]
+                    ],
+                    "8,1": [
+                        "Riverhollow",
+                        [
+                            8,
+                            1
+                        ]
+                    ],
+                    "9,1": [
+                        "Riverhollow",
+                        [
+                            9,
+                            1
+                        ]
+                    ],
+                    "10,1": [
+                        "Riverhollow",
+                        [
+                            10,
+                            1
+                        ]
+                    ],
+                    "11,1": [
+                        "Riverhollow",
+                        [
+                            11,
+                            1
+                        ]
+                    ],
+                    "12,1": [
+                        "Riverhollow",
+                        [
+                            12,
+                            1
+                        ]
+                    ],
+                    "13,1": [
+                        "Riverhollow",
+                        [
+                            13,
+                            1
+                        ]
+                    ],
+                    "14,1": [
+                        "Riverhollow",
+                        [
+                            14,
+                            1
+                        ]
+                    ],
+                    "0,2": [
+                        "Riverhollow",
+                        [
+                            0,
+                            2
+                        ]
+                    ],
+                    "1,2": [
+                        "Riverhollow",
+                        [
+                            1,
+                            2
+                        ]
+                    ],
+                    "2,2": [
+                        "Riverhollow",
+                        [
+                            2,
+                            2
+                        ]
+                    ],
+                    "3,2": [
+                        "Riverhollow",
+                        [
+                            3,
+                            2
+                        ]
+                    ],
+                    "4,2": [
+                        "Riverhollow",
+                        [
+                            4,
+                            2
+                        ]
+                    ],
+                    "5,2": [
+                        "Riverhollow",
+                        [
+                            5,
+                            2
+                        ]
+                    ],
+                    "6,2": [
+                        "Riverhollow",
+                        [
+                            6,
+                            2
+                        ]
+                    ],
+                    "7,2": [
+                        "Riverhollow",
+                        [
+                            7,
+                            2
+                        ]
+                    ],
+                    "8,2": [
+                        "Riverhollow",
+                        [
+                            8,
+                            2
+                        ]
+                    ],
+                    "9,2": [
+                        "Riverhollow",
+                        [
+                            9,
+                            2
+                        ]
+                    ],
+                    "10,2": [
+                        "Riverhollow",
+                        [
+                            10,
+                            2
+                        ]
+                    ],
+                    "11,2": [
+                        "Riverhollow",
+                        [
+                            11,
+                            2
+                        ]
+                    ],
+                    "12,2": [
+                        "Riverhollow",
+                        [
+                            12,
+                            2
+                        ]
+                    ],
+                    "13,2": [
+                        "Riverhollow",
+                        [
+                            13,
+                            2
+                        ]
+                    ],
+                    "14,2": [
+                        "Riverhollow",
+                        [
+                            14,
+                            2
+                        ]
+                    ],
+                    "0,3": [
+                        "Riverhollow",
+                        [
+                            0,
+                            3
+                        ]
+                    ],
+                    "1,3": [
+                        "Riverhollow",
+                        [
+                            1,
+                            3
+                        ]
+                    ],
+                    "2,3": [
+                        "Riverhollow",
+                        [
+                            2,
+                            3
+                        ]
+                    ],
+                    "3,3": [
+                        "Riverhollow",
+                        [
+                            3,
+                            3
+                        ]
+                    ],
+                    "4,3": [
+                        "Riverhollow",
+                        [
+                            4,
+                            3
+                        ]
+                    ],
+                    "5,3": [
+                        "Riverhollow",
+                        [
+                            5,
+                            3
+                        ]
+                    ],
+                    "6,3": [
+                        "Riverhollow",
+                        [
+                            6,
+                            3
+                        ]
+                    ],
+                    "7,3": [
+                        "Riverhollow",
+                        [
+                            7,
+                            3
+                        ]
+                    ],
+                    "8,3": [
+                        "Riverhollow",
+                        [
+                            8,
+                            3
+                        ]
+                    ],
+                    "9,3": [
+                        "Riverhollow",
+                        [
+                            9,
+                            3
+                        ]
+                    ],
+                    "10,3": [
+                        "Riverhollow",
+                        [
+                            10,
+                            3
+                        ]
+                    ],
+                    "11,3": [
+                        "Riverhollow",
+                        [
+                            11,
+                            3
+                        ]
+                    ],
+                    "12,3": [
+                        "Riverhollow",
+                        [
+                            12,
+                            3
+                        ]
+                    ],
+                    "13,3": [
+                        "Riverhollow",
+                        [
+                            13,
+                            3
+                        ]
+                    ],
+                    "14,3": [
+                        "Riverhollow",
+                        [
+                            14,
+                            3
+                        ]
+                    ],
+                    "0,4": [
+                        "Riverhollow",
+                        [
+                            0,
+                            4
+                        ]
+                    ],
+                    "1,4": [
+                        "Riverhollow",
+                        [
+                            1,
+                            4
+                        ]
+                    ],
+                    "2,4": [
+                        "Riverhollow",
+                        [
+                            2,
+                            4
+                        ]
+                    ],
+                    "3,4": [
+                        "Riverhollow",
+                        [
+                            3,
+                            4
+                        ]
+                    ],
+                    "4,4": [
+                        "Riverhollow",
+                        [
+                            4,
+                            4
+                        ]
+                    ],
+                    "5,4": [
+                        "Riverhollow",
+                        [
+                            5,
+                            4
+                        ]
+                    ],
+                    "6,4": [
+                        "Riverhollow",
+                        [
+                            6,
+                            4
+                        ]
+                    ],
+                    "7,4": [
+                        "Riverhollow",
+                        [
+                            7,
+                            4
+                        ]
+                    ],
+                    "8,4": [
+                        "Riverhollow",
+                        [
+                            8,
+                            4
+                        ]
+                    ],
+                    "9,4": [
+                        "Riverhollow",
+                        [
+                            9,
+                            4
+                        ]
+                    ],
+                    "10,4": [
+                        "Riverhollow",
+                        [
+                            10,
+                            4
+                        ]
+                    ],
+                    "11,4": [
+                        "Riverhollow",
+                        [
+                            11,
+                            4
+                        ]
+                    ],
+                    "12,4": [
+                        "Riverhollow",
+                        [
+                            12,
+                            4
+                        ]
+                    ],
+                    "13,4": [
+                        "Riverhollow",
+                        [
+                            13,
+                            4
+                        ]
+                    ],
+                    "14,4": [
+                        "Riverhollow",
+                        [
+                            14,
+                            4
+                        ]
+                    ],
+                    "0,5": [
+                        "Riverhollow",
+                        [
+                            0,
+                            5
+                        ]
+                    ],
+                    "1,5": [
+                        "Riverhollow",
+                        [
+                            1,
+                            5
+                        ]
+                    ],
+                    "2,5": [
+                        "Riverhollow",
+                        [
+                            2,
+                            5
+                        ]
+                    ],
+                    "3,5": [
+                        "Riverhollow",
+                        [
+                            3,
+                            5
+                        ]
+                    ],
+                    "4,5": [
+                        "Riverhollow",
+                        [
+                            4,
+                            5
+                        ]
+                    ],
+                    "5,5": [
+                        "Riverhollow",
+                        [
+                            5,
+                            5
+                        ]
+                    ],
+                    "6,5": [
+                        "Riverhollow",
+                        [
+                            6,
+                            5
+                        ]
+                    ],
+                    "7,5": [
+                        "Riverhollow",
+                        [
+                            7,
+                            5
+                        ]
+                    ],
+                    "8,5": [
+                        "Riverhollow",
+                        [
+                            8,
+                            5
+                        ]
+                    ],
+                    "9,5": [
+                        "Riverhollow",
+                        [
+                            9,
+                            5
+                        ]
+                    ],
+                    "10,5": [
+                        "Riverhollow",
+                        [
+                            10,
+                            5
+                        ]
+                    ],
+                    "11,5": [
+                        "Riverhollow",
+                        [
+                            11,
+                            5
+                        ]
+                    ],
+                    "12,5": [
+                        "Riverhollow",
+                        [
+                            12,
+                            5
+                        ]
+                    ],
+                    "13,5": [
+                        "Riverhollow",
+                        [
+                            13,
+                            5
+                        ]
+                    ],
+                    "14,5": [
+                        "Riverhollow",
+                        [
+                            14,
+                            5
+                        ]
+                    ],
+                    "0,6": [
+                        "Riverhollow",
+                        [
+                            0,
+                            6
+                        ]
+                    ],
+                    "1,6": [
+                        "Riverhollow",
+                        [
+                            1,
+                            6
+                        ]
+                    ],
+                    "2,6": [
+                        "Riverhollow",
+                        [
+                            2,
+                            6
+                        ]
+                    ],
+                    "3,6": [
+                        "Riverhollow",
+                        [
+                            3,
+                            6
+                        ]
+                    ],
+                    "4,6": [
+                        "Riverhollow",
+                        [
+                            4,
+                            6
+                        ]
+                    ],
+                    "5,6": [
+                        "Riverhollow",
+                        [
+                            5,
+                            6
+                        ]
+                    ],
+                    "6,6": [
+                        "Riverhollow",
+                        [
+                            6,
+                            6
+                        ]
+                    ],
+                    "7,6": [
+                        "Riverhollow",
+                        [
+                            7,
+                            6
+                        ]
+                    ],
+                    "8,6": [
+                        "Riverhollow",
+                        [
+                            8,
+                            6
+                        ]
+                    ],
+                    "9,6": [
+                        "Riverhollow",
+                        [
+                            9,
+                            6
+                        ]
+                    ],
+                    "10,6": [
+                        "Riverhollow",
+                        [
+                            10,
+                            6
+                        ]
+                    ],
+                    "11,6": [
+                        "Riverhollow",
+                        [
+                            11,
+                            6
+                        ]
+                    ],
+                    "12,6": [
+                        "Riverhollow",
+                        [
+                            12,
+                            6
+                        ]
+                    ],
+                    "13,6": [
+                        "Riverhollow",
+                        [
+                            13,
+                            6
+                        ]
+                    ],
+                    "14,6": [
+                        "Riverhollow",
+                        [
+                            14,
+                            6
+                        ]
+                    ],
+                    "0,7": [
+                        "Riverhollow",
+                        [
+                            0,
+                            7
+                        ]
+                    ],
+                    "1,7": [
+                        "Riverhollow",
+                        [
+                            1,
+                            7
+                        ]
+                    ],
+                    "2,7": [
+                        "Riverhollow",
+                        [
+                            2,
+                            7
+                        ]
+                    ],
+                    "3,7": [
+                        "Riverhollow",
+                        [
+                            3,
+                            7
+                        ]
+                    ],
+                    "4,7": [
+                        "Riverhollow",
+                        [
+                            4,
+                            7
+                        ]
+                    ],
+                    "5,7": [
+                        "Riverhollow",
+                        [
+                            5,
+                            7
+                        ]
+                    ],
+                    "6,7": [
+                        "Riverhollow",
+                        [
+                            6,
+                            7
+                        ]
+                    ],
+                    "7,7": [
+                        "Riverhollow",
+                        [
+                            7,
+                            7
+                        ]
+                    ],
+                    "8,7": [
+                        "Riverhollow",
+                        [
+                            8,
+                            7
+                        ]
+                    ],
+                    "9,7": [
+                        "Riverhollow",
+                        [
+                            9,
+                            7
+                        ]
+                    ],
+                    "10,7": [
+                        "Riverhollow",
+                        [
+                            10,
+                            7
+                        ]
+                    ],
+                    "11,7": [
+                        "Riverhollow",
+                        [
+                            11,
+                            7
+                        ]
+                    ],
+                    "12,7": [
+                        "Riverhollow",
+                        [
+                            12,
+                            7
+                        ]
+                    ],
+                    "13,7": [
+                        "Riverhollow",
+                        [
+                            13,
+                            7
+                        ]
+                    ],
+                    "14,7": [
+                        "Riverhollow",
+                        [
+                            14,
+                            7
+                        ]
+                    ],
+                    "0,8": [
+                        "Riverhollow",
+                        [
+                            0,
+                            8
+                        ]
+                    ],
+                    "1,8": [
+                        "Riverhollow",
+                        [
+                            1,
+                            8
+                        ]
+                    ],
+                    "2,8": [
+                        "Riverhollow",
+                        [
+                            2,
+                            8
+                        ]
+                    ],
+                    "3,8": [
+                        "Riverhollow",
+                        [
+                            3,
+                            8
+                        ]
+                    ],
+                    "4,8": [
+                        "Riverhollow",
+                        [
+                            4,
+                            8
+                        ]
+                    ],
+                    "5,8": [
+                        "Riverhollow",
+                        [
+                            5,
+                            8
+                        ]
+                    ],
+                    "6,8": [
+                        "Riverhollow",
+                        [
+                            6,
+                            8
+                        ]
+                    ],
+                    "7,8": [
+                        "Riverhollow",
+                        [
+                            7,
+                            8
+                        ]
+                    ],
+                    "8,8": [
+                        "Riverhollow",
+                        [
+                            8,
+                            8
+                        ]
+                    ],
+                    "9,8": [
+                        "Riverhollow",
+                        [
+                            9,
+                            8
+                        ]
+                    ],
+                    "10,8": [
+                        "Riverhollow",
+                        [
+                            10,
+                            8
+                        ]
+                    ],
+                    "11,8": [
+                        "Riverhollow",
+                        [
+                            11,
+                            8
+                        ]
+                    ],
+                    "12,8": [
+                        "Riverhollow",
+                        [
+                            12,
+                            8
+                        ]
+                    ],
+                    "13,8": [
+                        "Riverhollow",
+                        [
+                            13,
+                            8
+                        ]
+                    ],
+                    "14,8": [
+                        "Riverhollow",
+                        [
+                            14,
+                            8
+                        ]
+                    ],
+                    "0,9": [
+                        "Riverhollow",
+                        [
+                            0,
+                            9
+                        ]
+                    ],
+                    "1,9": [
+                        "Riverhollow",
+                        [
+                            1,
+                            9
+                        ]
+                    ],
+                    "2,9": [
+                        "Riverhollow",
+                        [
+                            2,
+                            9
+                        ]
+                    ],
+                    "3,9": [
+                        "Riverhollow",
+                        [
+                            3,
+                            9
+                        ]
+                    ],
+                    "4,9": [
+                        "Riverhollow",
+                        [
+                            4,
+                            9
+                        ]
+                    ],
+                    "5,9": [
+                        "Riverhollow",
+                        [
+                            5,
+                            9
+                        ]
+                    ],
+                    "6,9": [
+                        "Riverhollow",
+                        [
+                            6,
+                            9
+                        ]
+                    ],
+                    "7,9": [
+                        "Riverhollow",
+                        [
+                            7,
+                            9
+                        ]
+                    ],
+                    "8,9": [
+                        "Riverhollow",
+                        [
+                            8,
+                            9
+                        ]
+                    ],
+                    "9,9": [
+                        "Riverhollow",
+                        [
+                            9,
+                            9
+                        ]
+                    ],
+                    "10,9": [
+                        "Riverhollow",
+                        [
+                            10,
+                            9
+                        ]
+                    ],
+                    "11,9": [
+                        "Riverhollow",
+                        [
+                            11,
+                            9
+                        ]
+                    ],
+                    "12,9": [
+                        "Riverhollow",
+                        [
+                            12,
+                            9
+                        ]
+                    ],
+                    "13,9": [
+                        "Riverhollow",
+                        [
+                            13,
+                            9
+                        ]
+                    ],
+                    "14,9": [
+                        "Riverhollow",
+                        [
+                            14,
+                            9
+                        ]
+                    ]
+                }
+            }
+        ],
+        "tilesets": [
+            "Riverhollow"
+        ]
     }
 ]
