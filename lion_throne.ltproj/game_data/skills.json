@@ -3092,5 +3092,25 @@
                 ]
             ]
         ]
+    },
+    {
+        "nid": "TLT_Lionheart",
+        "name": "Lionheart",
+        "desc": "Fights with unshakable resolve. Grants Hit +15 and Avoid +10.",
+        "icon_nid": "Skills",
+        "icon_index": [
+            8,
+            2
+        ],
+        "components": [
+            [
+                "hit",
+                15
+            ],
+            [
+                "avoid",
+                10
+            ]
+        ]
     }
 ]
