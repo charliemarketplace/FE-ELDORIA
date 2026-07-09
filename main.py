@@ -147,6 +147,20 @@ def apply_audio_config():
                 setattr(song, attr, base_url.rstrip('/') + '/' + os.path.basename(path))
 
 
+def get_url_param(name):
+    """Read a query-string parameter from the hosting page's URL."""
+    if sys.platform != 'emscripten':
+        return None
+    try:
+        import platform
+        from urllib.parse import parse_qs
+        qs = parse_qs(str(platform.window.location.search).lstrip('?'))
+        vals = qs.get(name)
+        return vals[0] if vals else None
+    except Exception:
+        return None
+
+
 def js_log(msg):
     """Mirror boot progress to the browser JS console (visible to tooling)."""
     print(msg)
@@ -189,7 +203,17 @@ async def main():
     title = DB.constants.value('title')
     driver.start(title)
     js_log('driver started: %s' % title)
-    game = game_state.start_game()
+    # ?level=<nid> boots straight into that chapter (same path as the
+    # editor's test-play), e.g. /?level=DEBUG — skips title screen and saves.
+    level_nid = get_url_param('level')
+    if level_nid and DB.levels.get(level_nid):
+        js_log('jumping directly to level %s' % level_nid)
+        game = game_state.start_level(level_nid)
+    else:
+        if level_nid:
+            js_log('level %r not found; valid nids: %s'
+                   % (level_nid, [lv.nid for lv in DB.levels]))
+        game = game_state.start_game()
     js_log('game state created, entering main loop')
     await driver.run(game)
 
