@@ -3813,10 +3813,36 @@
                         ]
                     ]
                 }
+            },
+            {
+                "nid": "SickHouse",
+                "visible": false,
+                "foreground": false,
+                "terrain_grid": {
+                    "13,4": "Roof",
+                    "13,5": "House"
+                },
+                "sprite_grid": {
+                    "13,4": [
+                        "SacredStonesBase",
+                        [
+                            11,
+                            25
+                        ]
+                    ],
+                    "13,5": [
+                        "SacredStonesBase",
+                        [
+                            11,
+                            26
+                        ]
+                    ]
+                }
             }
         ],
         "tilesets": [
-            "Prologue"
+            "Prologue",
+            "SacredStonesBase"
         ]
     },
     {

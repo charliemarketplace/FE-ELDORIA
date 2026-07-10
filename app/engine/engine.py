@@ -279,7 +279,9 @@ def get_events():
             terminate()
             return pygame.QUIT
         if event.type == pygame.KEYDOWN and cf.SETTINGS['debug']:
-            if event.key == pygame.K_ESCAPE:
+            # On web, terminating kills the WASM loop with no way to restart
+            # short of a page reload, so Escape must not quit there.
+            if event.key == pygame.K_ESCAPE and sys.platform != 'emscripten':
                 terminate()
                 return pygame.QUIT
         events.append(event)

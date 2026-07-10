@@ -7994,6 +7994,7 @@
         "only_once": false,
         "priority": 20,
         "_source": [
+            "show_layer;SickHouse",
             "transition;Close",
             "change_background;ClearingDark",
             "transition;Open",
