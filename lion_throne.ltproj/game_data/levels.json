@@ -14600,7 +14600,7 @@
         },
         "objective": {
             "simple": "Escape by the north gate",
-            "win": "Any ally escapes by the north gate road",
+            "win": "Any ally escapes by,the north gate road",
             "loss": "Rowan dies"
         },
         "roam": false,
@@ -14864,6 +14864,40 @@
                 "time_left": null,
                 "only_once": false,
                 "interrupt_move": false
+            },
+            {
+                "nid": "House",
+                "region_type": "event",
+                "position": [
+                    1,
+                    0
+                ],
+                "size": [
+                    1,
+                    1
+                ],
+                "sub_nid": "Visit",
+                "condition": "unit.team == 'player'",
+                "time_left": null,
+                "only_once": true,
+                "interrupt_move": false
+            },
+            {
+                "nid": "Armory",
+                "region_type": "event",
+                "position": [
+                    5,
+                    1
+                ],
+                "size": [
+                    1,
+                    1
+                ],
+                "sub_nid": "Armory",
+                "condition": "unit.team == 'player'",
+                "time_left": null,
+                "only_once": false,
+                "interrupt_move": false
             }
         ],
         "unit_groups": [],
@@ -14887,7 +14921,7 @@
         },
         "objective": {
             "simple": "Explore, then depart south",
-            "win": "Rowan departs by the south road",
+            "win": "Rowan departs by,the south road",
             "loss": "Rowan dies"
         },
         "roam": false,
@@ -15125,8 +15159,8 @@
             "enemy2_battle": null
         },
         "objective": {
-            "simple": "Seize the inner reliquary",
-            "win": "Rowan seizes the inner reliquary",
+            "simple": "Seize the sparkling stairs (NW)",
+            "win": "Rowan seizes the,inner reliquary:,the sparkling stairs,in the northwest",
             "loss": "Rowan dies"
         },
         "roam": false,
@@ -15845,7 +15879,7 @@
         },
         "objective": {
             "simple": "Open the three valves, then quench the core",
-            "win": "Rowan quenches the core once all three valves are open",
+            "win": "Rowan quenches,the core once,all three valves,are open",
             "loss": "Rowan dies"
         },
         "roam": false,

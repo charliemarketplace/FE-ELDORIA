@@ -6,7 +6,7 @@ from app.utilities import str_utils
 
 
 def base_config() -> OrderedDict:
-    return OrderedDict([('debug', 1),
+    return OrderedDict([('debug', 0),
                         ('random_seed', -1),
                         ('screen_size', 2),
                         ('fullscreen', 0),

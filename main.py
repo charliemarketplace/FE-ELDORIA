@@ -203,6 +203,10 @@ async def main():
     title = DB.constants.value('title')
     driver.start(title)
     js_log('driver started: %s' % title)
+    # Debug mode is hidden on web (persisted configs may still have it on).
+    # QA can re-enable with ?debug=1 in the URL.
+    import app.engine.config as cf_module
+    cf_module.SETTINGS['debug'] = 1 if get_url_param('debug') else 0
     # ?level=<nid> boots straight into that chapter (same path as the
     # editor's test-play), e.g. /?level=DEBUG — skips title screen and saves.
     level_nid = get_url_param('level')

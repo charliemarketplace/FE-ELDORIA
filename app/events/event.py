@@ -101,6 +101,7 @@ class Event():
         self.priority_counter = 1
         self.do_skip = False
         self.super_skip = False
+        self._last_hurry_up_time = 0
 
         # For transition
         self.transition_state = None
@@ -254,9 +255,23 @@ class Event():
 
         elif event == 'SELECT' or event == 'RIGHT' or event == 'DOWN':
             if self.state == 'dialog':
-                if not cf.SETTINGS['talk_boop']:
-                    get_sound_thread().play_sfx('Select 1')
-                self.hurry_up()
+                # Browser keydown auto-repeat can fire many logical presses
+                # while a key is held, which would blow through lines faster
+                # than they can be read. Finishing the current line is always
+                # allowed; advancing PAST a fully-displayed line is rate-limited
+                # so every line stays on screen long enough to read.
+                current_time = engine.get_time()
+                box = self.text_boxes[-1] if self.text_boxes else None
+                if box and not box.is_done_or_wait():
+                    self._last_hurry_up_time = current_time
+                    if not cf.SETTINGS['talk_boop']:
+                        get_sound_thread().play_sfx('Select 1')
+                    self.hurry_up()
+                elif current_time - self._last_hurry_up_time >= 350:
+                    self._last_hurry_up_time = current_time
+                    if not cf.SETTINGS['talk_boop']:
+                        get_sound_thread().play_sfx('Select 1')
+                    self.hurry_up()
 
         for listener in self.functions_listening_for_input.values():
             listener(event)
