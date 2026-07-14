@@ -30,6 +30,21 @@ class Parser():
                 return base
             self.equations['MOVEMENT'] = debug_movement
 
+        # Safe-zone QoL: quintuple player-team MOVEMENT while a level has set
+        # the game_var 'safe_zone' truthy (event: game_var;safe_zone;1, and
+        # game_var;safe_zone;0 before set_next_chapter). Data-driven per-level
+        # toggle, independent of debug mode; composes with the patch above.
+        if 'MOVEMENT' in self.equations:
+            base_movement_fn = self.equations['MOVEMENT']
+
+            def safe_zone_movement(equations, unit, _base=base_movement_fn):
+                base = _base(equations, unit)
+                from app.engine.game_state import game
+                if unit.team == 'player' and game.game_vars.get('safe_zone'):
+                    return base * 5
+                return base
+            self.equations['MOVEMENT'] = safe_zone_movement
+
         # Now add these equations as local functions
         for nid in self.equations.keys():
             if not nid.startswith('__'):
