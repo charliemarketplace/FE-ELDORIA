@@ -15555,7 +15555,7 @@
             {
                 "nid": "Garrow",
                 "team": "enemy",
-                "ai": "Pursue",
+                "ai": "Guard",
                 "roam_ai": null,
                 "ai_group": null,
                 "starting_position": [
@@ -15568,8 +15568,8 @@
             {
                 "nid": "S4Warrior1",
                 "variant": null,
-                "level": 7,
-                "klass": "Warrior",
+                "level": 6,
+                "klass": "Fighter",
                 "faction": "Soldier",
                 "starting_items": [
                     [
@@ -15579,7 +15579,7 @@
                 ],
                 "starting_skills": [],
                 "team": "enemy",
-                "ai": "Pursue",
+                "ai": "Defend",
                 "roam_ai": null,
                 "ai_group": "",
                 "starting_position": [
@@ -15592,18 +15592,18 @@
             {
                 "nid": "S4Warrior2",
                 "variant": null,
-                "level": 7,
-                "klass": "Warrior",
+                "level": 5,
+                "klass": "Fighter",
                 "faction": "Soldier",
                 "starting_items": [
                     [
-                        "Steel Axe",
+                        "Iron Axe",
                         false
                     ]
                 ],
                 "starting_skills": [],
                 "team": "enemy",
-                "ai": "Pursue",
+                "ai": "Defend",
                 "roam_ai": null,
                 "ai_group": "",
                 "starting_position": [
@@ -15616,12 +15616,12 @@
             {
                 "nid": "S4Warrior3",
                 "variant": null,
-                "level": 7,
-                "klass": "Warrior",
+                "level": 5,
+                "klass": "Fighter",
                 "faction": "Soldier",
                 "starting_items": [
                     [
-                        "Steel Axe",
+                        "Iron Axe",
                         false
                     ]
                 ],
@@ -15640,7 +15640,7 @@
             {
                 "nid": "S4Soldier1",
                 "variant": null,
-                "level": 6,
+                "level": 4,
                 "klass": "Soldier",
                 "faction": "Soldier",
                 "starting_items": [
@@ -15664,7 +15664,7 @@
             {
                 "nid": "S4Soldier2",
                 "variant": null,
-                "level": 7,
+                "level": 5,
                 "klass": "Soldier",
                 "faction": "Soldier",
                 "starting_items": [
@@ -15688,7 +15688,7 @@
             {
                 "nid": "S4Soldier3",
                 "variant": null,
-                "level": 6,
+                "level": 4,
                 "klass": "Soldier",
                 "faction": "Soldier",
                 "starting_items": [
@@ -15699,7 +15699,7 @@
                 ],
                 "starting_skills": [],
                 "team": "enemy",
-                "ai": "Attack",
+                "ai": "Defend",
                 "roam_ai": null,
                 "ai_group": "",
                 "starting_position": [
@@ -15712,7 +15712,7 @@
             {
                 "nid": "S4Thief",
                 "variant": null,
-                "level": 6,
+                "level": 4,
                 "klass": "Thief",
                 "faction": "Cutthroat",
                 "starting_items": [
@@ -15736,8 +15736,8 @@
             {
                 "nid": "S4Halb1",
                 "variant": null,
-                "level": 7,
-                "klass": "Halberdier",
+                "level": 6,
+                "klass": "Soldier",
                 "faction": "Soldier",
                 "starting_items": [
                     [
@@ -15757,8 +15757,8 @@
             {
                 "nid": "S4Halb2",
                 "variant": null,
-                "level": 7,
-                "klass": "Halberdier",
+                "level": 6,
+                "klass": "Soldier",
                 "faction": "Soldier",
                 "starting_items": [
                     [
@@ -15778,7 +15778,7 @@
             {
                 "nid": "S4Mage1",
                 "variant": null,
-                "level": 6,
+                "level": 4,
                 "klass": "Mage",
                 "faction": "Templar",
                 "starting_items": [
@@ -15799,7 +15799,7 @@
             {
                 "nid": "S4Mage2",
                 "variant": null,
-                "level": 6,
+                "level": 4,
                 "klass": "Mage",
                 "faction": "Templar",
                 "starting_items": [
@@ -15820,8 +15820,8 @@
             {
                 "nid": "S4Berserk",
                 "variant": null,
-                "level": 8,
-                "klass": "Warrior",
+                "level": 7,
+                "klass": "Fighter",
                 "faction": "Soldier",
                 "starting_items": [
                     [
@@ -15960,7 +15960,7 @@
             {
                 "nid": "Voss",
                 "team": "enemy",
-                "ai": "Berserk",
+                "ai": "Guard",
                 "roam_ai": null,
                 "ai_group": null,
                 "starting_position": [
@@ -15973,7 +15973,7 @@
             {
                 "nid": "S5Sentinel1",
                 "variant": null,
-                "level": 10,
+                "level": 2,
                 "klass": "Sentinel",
                 "faction": "Elite",
                 "starting_items": [
@@ -16001,7 +16001,7 @@
             {
                 "nid": "S5Sentinel2",
                 "variant": null,
-                "level": 10,
+                "level": 2,
                 "klass": "Sentinel",
                 "faction": "Elite",
                 "starting_items": [
@@ -16029,8 +16029,8 @@
             {
                 "nid": "S5Sage",
                 "variant": null,
-                "level": 8,
-                "klass": "Sage",
+                "level": 6,
+                "klass": "Mage",
                 "faction": "Templar",
                 "starting_items": [
                     [
@@ -16053,8 +16053,8 @@
             {
                 "nid": "S5Halb1",
                 "variant": null,
-                "level": 9,
-                "klass": "Halberdier",
+                "level": 7,
+                "klass": "Soldier",
                 "faction": "Soldier",
                 "starting_items": [
                     [
@@ -16064,7 +16064,7 @@
                 ],
                 "starting_skills": [],
                 "team": "enemy",
-                "ai": "Pursue",
+                "ai": "Defend",
                 "roam_ai": null,
                 "ai_group": "",
                 "starting_position": [
@@ -16077,8 +16077,8 @@
             {
                 "nid": "S5Halb2",
                 "variant": null,
-                "level": 9,
-                "klass": "Halberdier",
+                "level": 7,
+                "klass": "Soldier",
                 "faction": "Soldier",
                 "starting_items": [
                     [
@@ -16101,8 +16101,8 @@
             {
                 "nid": "S5Warrior1",
                 "variant": null,
-                "level": 9,
-                "klass": "Warrior",
+                "level": 7,
+                "klass": "Fighter",
                 "faction": "Soldier",
                 "starting_items": [
                     [
@@ -16112,7 +16112,7 @@
                 ],
                 "starting_skills": [],
                 "team": "enemy",
-                "ai": "Pursue",
+                "ai": "Defend",
                 "roam_ai": null,
                 "ai_group": "",
                 "starting_position": [
@@ -16125,8 +16125,8 @@
             {
                 "nid": "S5Warrior2",
                 "variant": null,
-                "level": 9,
-                "klass": "Warrior",
+                "level": 7,
+                "klass": "Fighter",
                 "faction": "Soldier",
                 "starting_items": [
                     [
@@ -16149,8 +16149,8 @@
             {
                 "nid": "S5Wave1",
                 "variant": null,
-                "level": 10,
-                "klass": "Warrior",
+                "level": 8,
+                "klass": "Fighter",
                 "faction": "Soldier",
                 "starting_items": [
                     [
@@ -16170,8 +16170,8 @@
             {
                 "nid": "S5Wave2",
                 "variant": null,
-                "level": 10,
-                "klass": "Warrior",
+                "level": 8,
+                "klass": "Fighter",
                 "faction": "Soldier",
                 "starting_items": [
                     [

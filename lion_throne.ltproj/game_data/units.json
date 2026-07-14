@@ -3717,7 +3717,7 @@
         "name": "Garrow",
         "desc": "A raid captain paid to loot, not to care what burns.",
         "variant": "",
-        "level": 8,
+        "level": 4,
         "klass": "Halberdier",
         "tags": [
             "Boss"
@@ -3807,7 +3807,7 @@
         "name": "Voss",
         "desc": "An Imperial general who is right about the poison and wrong about how fast to end it.",
         "variant": "",
-        "level": 12,
+        "level": 5,
         "klass": "General",
         "tags": [
             "Boss"
