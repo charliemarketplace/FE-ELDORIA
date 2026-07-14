@@ -109,6 +109,27 @@ class Event():
         # event — can finish the current line but never skip past it.
         # Starts False because that key is often still held at event start.
         self._advance_armed = False
+        # Minimum time (ms) a box must have been fully visible (in WAIT)
+        # before a dismiss press is honored. This is distinct from the
+        # _advance_armed/_last_hurry_up_time rate-limit above: that limit
+        # only throttles *repeated* hurry_up() calls against each other, so
+        # if the box was never hurried its "last" hurry time is still the
+        # sentinel 0, and a single fresh press can dismiss it with zero
+        # grace period. That's exactly what happens for on_talk events:
+        # the multi-step menu chain to reach Talk (open menu, select Talk,
+        # confirm adjacent target) is normally driven by several separate,
+        # genuine key taps, not one held key. One of those taps starts the
+        # event; if the player's *next* habitual tap (still just clearing
+        # out of muscle memory from menuing) lands after the line has
+        # finished typing, it dismisses the box instantly with nothing
+        # blocking it — the line "flies by" even though no key was held
+        # and _advance_armed correctly re-armed between taps. Anchoring a
+        # minimum grace period to when the box *itself* entered WAIT (see
+        # Dialog.wait_entered_time in app/engine/dialog.py) closes that gap
+        # regardless of how the box got there (typed out naturally or via
+        # hurry_up), while leaving the ability to hurry along still-typing
+        # text, and to dismiss it once actually read, untouched.
+        self._min_read_time = 350
 
         # For transition
         self.transition_state = None
@@ -283,7 +304,9 @@ class Event():
                         if not cf.SETTINGS['talk_boop']:
                             get_sound_thread().play_sfx('Select 1')
                         self.hurry_up()
-                elif self._advance_armed and current_time - self._last_hurry_up_time >= 350:
+                elif self._advance_armed and current_time - self._last_hurry_up_time >= 350 \
+                        and not (box and box.wait_entered_time is not None
+                                 and current_time - box.wait_entered_time < self._min_read_time):
                     self._advance_armed = False
                     self._last_hurry_up_time = current_time
                     if not cf.SETTINGS['talk_boop']:

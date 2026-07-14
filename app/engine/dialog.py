@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 import re
-from typing import Callable, List, Dict, Tuple
+from typing import Callable, List, Dict, Optional, Tuple
 
 from app.constants import WINHEIGHT, WINWIDTH
 from app.engine import config as cf
@@ -115,6 +115,12 @@ class Dialog:
         self._state = DialogState.TRANSITION_IN
 
         self.no_wait = False
+        # When this box first finishes typing and enters WAIT (fully visible,
+        # waiting to be dismissed). None until then. Used by Event.take_input
+        # to guarantee a minimum on-screen grace period before a dismiss
+        # press is honored, independent of the box's own hurry/rate-limit
+        # bookkeeping (see app/events/event.py).
+        self.wait_entered_time: Optional[float] = None
 
         # A "plain_text" string consists of text, commands ("{}"), and tags ("<>").
         # This text is immediately broken down into individual characters (including the tags) except
@@ -546,6 +552,7 @@ class Dialog:
                     self.state = DialogState.DONE
                 else:
                     self.state = DialogState.WAIT
+                    self.wait_entered_time = current_time
 
         elif self.state == DialogState.PAUSE:  # Regular pause for periods
             if current_time - self.last_update > self.pause_time:
