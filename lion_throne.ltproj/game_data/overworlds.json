@@ -2,7 +2,7 @@
     {
         "nid": "0",
         "name": "overworld_1",
-        "tilemap": "Chapter 8",
+        "tilemap": "Prologue",
         "music": "Distant Roads",
         "overworld_nodes": [
             {

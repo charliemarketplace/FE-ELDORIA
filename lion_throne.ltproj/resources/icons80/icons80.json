@@ -1,13 +1,5 @@
 [
     {
-        "nid": "Berserker",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Arch_Mogall",
-        "subicon_dict": {}
-    },
-    {
         "nid": "Generic_Portrait_Archer",
         "subicon_dict": {}
     },
@@ -16,15 +8,7 @@
         "subicon_dict": {}
     },
     {
-        "nid": "Generic_Portrait_Ballista",
-        "subicon_dict": {}
-    },
-    {
         "nid": "Generic_Portrait_Bishop",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Brigand",
         "subicon_dict": {}
     },
     {
@@ -44,23 +28,11 @@
         "subicon_dict": {}
     },
     {
-        "nid": "Generic_Portrait_Entombed",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Falcoknight",
-        "subicon_dict": {}
-    },
-    {
         "nid": "Generic_Portrait_Fighter",
         "subicon_dict": {}
     },
     {
         "nid": "Generic_Portrait_General",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Great_Knight",
         "subicon_dict": {}
     },
     {
@@ -76,43 +48,11 @@
         "subicon_dict": {}
     },
     {
-        "nid": "Generic_Portrait_Mage_Knight",
-        "subicon_dict": {}
-    },
-    {
         "nid": "Generic_Portrait_Mercenary",
         "subicon_dict": {}
     },
     {
-        "nid": "Generic_Portrait_Mogall",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Monk",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Myrmidon",
-        "subicon_dict": {}
-    },
-    {
         "nid": "Generic_Portrait_Paladin",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Pegasus_Knight",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Pirate",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Ranger",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Revenant",
         "subicon_dict": {}
     },
     {
@@ -121,10 +61,6 @@
     },
     {
         "nid": "Generic_Portrait_Sentinel",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Shaman",
         "subicon_dict": {}
     },
     {
@@ -140,35 +76,7 @@
         "subicon_dict": {}
     },
     {
-        "nid": "Generic_Portrait_Strategist",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Sword_Bonewalker",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Sword_Wight",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Swordmaster",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Tactician",
-        "subicon_dict": {}
-    },
-    {
         "nid": "Generic_Portrait_Thief",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Troubadour",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Valkyrie",
         "subicon_dict": {}
     },
     {
@@ -176,27 +84,7 @@
         "subicon_dict": {}
     },
     {
-        "nid": "Generic_Portrait_Wagon",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Warlock",
-        "subicon_dict": {}
-    },
-    {
         "nid": "Generic_Portrait_Warrior",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Wyvern_Knight",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Wyvern_Lord",
-        "subicon_dict": {}
-    },
-    {
-        "nid": "Generic_Portrait_Wyvern_Rider",
         "subicon_dict": {}
     }
 ]
