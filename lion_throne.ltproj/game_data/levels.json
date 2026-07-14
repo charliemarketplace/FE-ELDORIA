@@ -1,5 +1,162 @@
 [
     {
+        "nid": "CAPITAL",
+        "name": "Capital City",
+        "tilemap": "Capital",
+        "bg_tilemap": null,
+        "party": "Emberwake",
+        "music": {
+            "player_phase": null,
+            "enemy_phase": null,
+            "other_phase": null,
+            "enemy2_phase": null,
+            "player_battle": null,
+            "enemy_battle": null,
+            "other_battle": null,
+            "enemy2_battle": null
+        },
+        "objective": {
+            "simple": "Muster your companions",
+            "win": "Ready the party, then depart through the city gate",
+            "loss": ""
+        },
+        "roam": false,
+        "roam_unit": null,
+        "go_to_overworld": false,
+        "should_record": true,
+        "tags": [],
+        "units": [
+            {
+                "nid": "Rowan",
+                "team": "player",
+                "ai": "None",
+                "roam_ai": null,
+                "ai_group": null,
+                "starting_position": [
+                    12,
+                    9
+                ],
+                "starting_traveler": null,
+                "generic": false
+            },
+            {
+                "nid": "Halvard",
+                "team": "other",
+                "ai": "None",
+                "roam_ai": null,
+                "ai_group": null,
+                "starting_position": [
+                    19,
+                    13
+                ],
+                "starting_traveler": null,
+                "generic": false
+            },
+            {
+                "nid": "Maren",
+                "team": "other",
+                "ai": "None",
+                "roam_ai": null,
+                "ai_group": null,
+                "starting_position": [
+                    20,
+                    13
+                ],
+                "starting_traveler": null,
+                "generic": false
+            }
+        ],
+        "regions": [
+            {
+                "nid": "Armory",
+                "region_type": "event",
+                "position": [
+                    5,
+                    4
+                ],
+                "size": [
+                    1,
+                    1
+                ],
+                "sub_nid": "Armory",
+                "condition": "unit.team == 'player'",
+                "time_left": null,
+                "only_once": false,
+                "interrupt_move": false
+            },
+            {
+                "nid": "Vendor",
+                "region_type": "event",
+                "position": [
+                    15,
+                    11
+                ],
+                "size": [
+                    1,
+                    1
+                ],
+                "sub_nid": "Vendor",
+                "condition": "unit.team == 'player'",
+                "time_left": null,
+                "only_once": false,
+                "interrupt_move": false
+            },
+            {
+                "nid": "Train",
+                "region_type": "event",
+                "position": [
+                    5,
+                    13
+                ],
+                "size": [
+                    1,
+                    1
+                ],
+                "sub_nid": "Train",
+                "condition": "unit.team == 'player'",
+                "time_left": null,
+                "only_once": false,
+                "interrupt_move": false
+            },
+            {
+                "nid": "Study",
+                "region_type": "event",
+                "position": [
+                    19,
+                    4
+                ],
+                "size": [
+                    1,
+                    1
+                ],
+                "sub_nid": "Study",
+                "condition": "unit.team == 'player'",
+                "time_left": null,
+                "only_once": false,
+                "interrupt_move": false
+            },
+            {
+                "nid": "Depart",
+                "region_type": "event",
+                "position": [
+                    13,
+                    18
+                ],
+                "size": [
+                    1,
+                    1
+                ],
+                "sub_nid": "Depart",
+                "condition": "unit.team == 'player'",
+                "time_left": null,
+                "only_once": false,
+                "interrupt_move": false
+            }
+        ],
+        "unit_groups": [],
+        "ai_groups": []
+    },
+    {
         "nid": "S1",
         "name": "Emberhollow",
         "tilemap": "Prologue",
