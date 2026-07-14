@@ -30,7 +30,9 @@ class EventState(State):
 
     def take_input(self, event):
         if self.event:
-            if self.event.state == 'dialog' and event == 'INFO':
+            if self.event.state == 'dialog' and (event == 'INFO' or event == 'UP'):
+                # INFO is the engine's standard dialog-log key; UP (and mouse
+                # wheel up) added as an intuitive "scroll back to re-read".
                 game.state.change('dialog_log')
             else:
                 self.event.take_input(event)

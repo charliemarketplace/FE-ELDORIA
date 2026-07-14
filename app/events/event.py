@@ -20,6 +20,7 @@ from app.engine.game_state import GameState
 from app.engine.movement import movement_funcs
 from app.engine.objects.overworld import OverworldNodeObject
 from app.engine.objects.unit import UnitObject
+from app.engine.input_manager import get_input_manager
 from app.engine.sound import get_sound_thread
 from app.events import event_commands, triggers
 from app.events.event_processor import EventProcessor
@@ -102,6 +103,12 @@ class Event():
         self.do_skip = False
         self.super_skip = False
         self._last_hurry_up_time = 0
+        # Advancing past a fully-displayed line requires a fresh key press
+        # (a release must be seen first). Browser keydown auto-repeat never
+        # releases, so a held confirm — e.g. the press that started this
+        # event — can finish the current line but never skip past it.
+        # Starts False because that key is often still held at event start.
+        self._advance_armed = False
 
         # For transition
         self.transition_state = None
@@ -249,6 +256,13 @@ class Event():
                 self.transition_state = None
 
     def take_input(self, event):
+        # Re-arm once every advance key is released (runs every frame,
+        # including frames with no logical event). Mouse clicks never set
+        # keys_pressed, so they re-arm immediately.
+        inp = get_input_manager()
+        if not (inp.is_pressed('SELECT') or inp.is_pressed('RIGHT') or inp.is_pressed('DOWN')):
+            self._advance_armed = True
+
         if event == 'START' or event == 'BACK':
             get_sound_thread().play_sfx('Select 4')
             self.skip(event == 'START')
@@ -257,17 +271,20 @@ class Event():
             if self.state == 'dialog':
                 # Browser keydown auto-repeat can fire many logical presses
                 # while a key is held, which would blow through lines faster
-                # than they can be read. Finishing the current line is always
-                # allowed; advancing PAST a fully-displayed line is rate-limited
-                # so every line stays on screen long enough to read.
+                # than they can be read. Each discrete press does at most one
+                # thing (finish the current line OR advance past it), and
+                # advancing is additionally rate-limited against tap-spam.
                 current_time = engine.get_time()
                 box = self.text_boxes[-1] if self.text_boxes else None
                 if box and not box.is_done_or_wait():
-                    self._last_hurry_up_time = current_time
-                    if not cf.SETTINGS['talk_boop']:
-                        get_sound_thread().play_sfx('Select 1')
-                    self.hurry_up()
-                elif current_time - self._last_hurry_up_time >= 350:
+                    if self._advance_armed:
+                        self._advance_armed = False
+                        self._last_hurry_up_time = current_time
+                        if not cf.SETTINGS['talk_boop']:
+                            get_sound_thread().play_sfx('Select 1')
+                        self.hurry_up()
+                elif self._advance_armed and current_time - self._last_hurry_up_time >= 350:
+                    self._advance_armed = False
                     self._last_hurry_up_time = current_time
                     if not cf.SETTINGS['talk_boop']:
                         get_sound_thread().play_sfx('Select 1')
