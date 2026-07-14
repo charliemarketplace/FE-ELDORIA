@@ -68,5 +68,10 @@
         "nid": "Cindervault",
         "terrain_grid": {},
         "autotiles": {}
+    },
+    {
+        "nid": "Capital",
+        "terrain_grid": {},
+        "autotiles": {}
     }
 ]
