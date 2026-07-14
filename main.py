@@ -213,6 +213,12 @@ async def main():
     if level_nid and DB.levels.get(level_nid):
         js_log('jumping directly to level %s' % level_nid)
         game = game_state.start_level(level_nid)
+        if cf_module.SETTINGS['debug']:
+            # QA QoL: fill out the previously-recruitable roster and
+            # autolevel to the chapter's power band when jumping straight
+            # into a level with debug mode on. See app/engine/debug_jump.py.
+            from app.engine import debug_jump
+            debug_jump.install(game, level_nid)
     else:
         if level_nid:
             js_log('level %r not found; valid nids: %s'

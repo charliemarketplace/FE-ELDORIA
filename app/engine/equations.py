@@ -1,6 +1,7 @@
 import re, functools
 
 from app.data.database.database import DB
+from app.engine import config as cf
 
 class Parser():
     def __init__(self):
@@ -14,6 +15,20 @@ class Parser():
         for nid in list(self.equations.keys()):
             expression = self.equations[nid]
             self.fix(nid, expression, self.replacement_dict)
+
+        # Debug-mode QoL: triple player-team MOVEMENT so QA can traverse
+        # maps quickly while ?debug=1 is set. No-op for every other team
+        # and a no-op entirely when debug is off. See app/engine/config.py
+        # SETTINGS['debug'] (set from the ?debug= URL param in main.py).
+        if 'MOVEMENT' in self.equations:
+            base_movement_fn = self.equations['MOVEMENT']
+
+            def debug_movement(equations, unit, _base=base_movement_fn):
+                base = _base(equations, unit)
+                if cf.SETTINGS['debug'] and unit.team == 'player':
+                    return base * 3
+                return base
+            self.equations['MOVEMENT'] = debug_movement
 
         # Now add these equations as local functions
         for nid in self.equations.keys():
