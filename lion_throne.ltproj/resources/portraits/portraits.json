@@ -190,5 +190,53 @@
             44
         ],
         "info_offset": 0
+    },
+    {
+        "nid": "Kael",
+        "blinking_offset": [
+            24,
+            25
+        ],
+        "smiling_offset": [
+            24,
+            35
+        ],
+        "info_offset": 0
+    },
+    {
+        "nid": "Elara",
+        "blinking_offset": [
+            24,
+            22
+        ],
+        "smiling_offset": [
+            24,
+            34
+        ],
+        "info_offset": 0
+    },
+    {
+        "nid": "Ren",
+        "blinking_offset": [
+            26,
+            26
+        ],
+        "smiling_offset": [
+            26,
+            36
+        ],
+        "info_offset": 0
+    },
+    {
+        "nid": "Briar",
+        "blinking_offset": [
+            26,
+            24
+        ],
+        "smiling_offset": [
+            26,
+            34
+        ],
+        "info_offset": 0
     }
 ]
