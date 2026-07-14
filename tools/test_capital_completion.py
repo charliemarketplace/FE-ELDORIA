@@ -40,8 +40,6 @@ from app.engine import item_funcs
 from app.engine import game_state
 from app.engine.game_state import GameState
 from app.engine.source_type import SourceType
-from app.engine.objects.unit import UnitObject
-from app.data.database.level_units import UniqueUnit
 import app.engine.sprites as engine_sprites
 
 
@@ -106,65 +104,46 @@ companions = ['Kael', 'Elara', 'Ren', 'Briar']
 # positions read verbatim from CAPITAL Intro's _source (add_unit;<nid>;<pos>;immediate)
 positions = {'Kael': (10, 9), 'Elara': (14, 9), 'Ren': (11, 8), 'Briar': (16, 8)}
 
-# --- First: prove the real add_unit precondition, as documented in
-# event_commands.AddUnit's own docstring: "The unit must be in the
-# chapter's data or otherwise have been loaded into memory (see
-# load_unit or make_generic)." event_functions.add_unit's very first
-# line is self._get_unit(unit) -> game.get_unit(nid) -> unit_registry.get(nid).
+# --- Prove the real add_unit precondition now holds, per event_commands.AddUnit's
+# own docstring: "The unit must be in the chapter's data or otherwise have been
+# loaded into memory (see load_unit or make_generic)." event_functions.add_unit's
+# very first line is self._get_unit(unit) -> game.get_unit(nid) -> unit_registry.get(nid).
+# CAPITAL's levels.json units array now includes Kael/Elara/Ren/Briar with
+# starting_position: null (the arena/scripted-duel pattern), so
+# game.level_setup()'s `for unit in self._current_level.units: self.full_register(unit)`
+# (app/engine/game_state.py) already registered all 4 into game.unit_registry at
+# start_level('CAPITAL') above -- with starting_position None meaning they are NOT
+# yet placed on the map (unit.position is None), exactly like an off-map unit
+# waiting for a scripted add_unit to bring it in.
 pre_registered = {nid: game.get_unit(nid) for nid in companions}
-print('  game.get_unit(nid) for each companion BEFORE any load_unit call:')
+print('  game.get_unit(nid) for each companion right after start_level(CAPITAL) '
+      '(now non-None, thanks to the levels.json fix -- no load_unit/manual registration needed):')
 for nid in companions:
-    print('    %s -> %r' % (nid, pre_registered[nid]))
+    print('    %s -> %r (position=%r)' % (nid, pre_registered[nid], pre_registered[nid].position if pre_registered[nid] else None))
 
 capital_level_unit_nids = {u.nid for u in DB.levels.get('CAPITAL').units}
-events_json_path = os.path.join('lion_throne.ltproj', 'game_data', 'events.json')
-with open(events_json_path, 'r', encoding='utf-8') as fp:
-    events_raw = fp.read()
-load_unit_calls_anywhere = events_raw.count('load_unit')
-
-if all(u is None for u in pre_registered.values()) and not capital_level_unit_nids & set(companions) \
-        and load_unit_calls_anywhere == 0:
-    gap(
-        '2. CAPITAL Intro add_unit precondition',
-        "GENUINE CONTENT BUG (verified by execution, not guessed): CAPITAL Intro's _source calls "
-        "add_unit;Kael;10,9;immediate (and same for Elara/Ren/Briar) with no load_unit (or make_generic) "
-        "anywhere first. Verified: (a) grep of the whole events.json for 'load_unit' returns 0 matches in "
-        "this entire game; (b) CAPITAL's levels.json unit placement list is only "
-        "[Rowan, Halvard, Maren] -- Kael/Elara/Ren/Briar never appear in ANY level's units array; "
-        "(c) actually called game.get_unit(nid) for all 4 companions right after a real "
-        "game_state.start_level('CAPITAL') and got None for all 4, confirming they are not in "
-        "game.unit_registry. event_functions.add_unit's first statement is "
-        "`new_unit = self._get_unit(unit)` -> `self.game.get_unit(self._resolve_nid(unit))` -> "
-        "`self.unit_registry.get(unit_nid)` -> None, then `if not new_unit: self.logger.error(...); return` "
-        "-- the command silently no-ops. game_var;kael_joined;1 fires unconditionally right after "
-        "add_unit in the script regardless of whether add_unit succeeded, so in real gameplay the "
-        "companion's *_joined flag is set to 1 even though the unit was never added to the map or the "
-        "unit registry -- the player believes they recruited someone who does not exist as a UnitObject. "
-        "This same gap means S1 Intro's join condition "
-        "`game.game_vars.get('kael_joined') and game.get_unit('Kael') and ...` would also never pass in an "
-        "unmodified playthrough, since game.get_unit('Kael') is permanently None. "
-        "To continue testing the rest of the CAPITAL flow (checks 3-7 below), this script performs the "
-        "missing registration itself via action.do(action.RegisterUnit(...)) -- the Action-wrapped "
-        "equivalent of what event_functions.load_unit does (UniqueUnit(nid, 'player', 'None', None) -> "
-        "UnitObject.from_prefab(...) -> full_register) -- and calls that out explicitly below. This is a "
-        "deviation from the literal (broken) event script, done only so downstream mechanics (class "
-        "change, skill grant, shop, save/reload, chapter transition) can still be exercised and proven."
-    )
+check('2. all 4 companions resolve via game.get_unit() with no manual registration',
+      all(u is not None for u in pre_registered.values()),
+      'game.get_unit(nid) for %s = %s' % (companions, {n: repr(u) for n, u in pre_registered.items()}))
+check('2. companions are in CAPITAL levels.json units (real fix, not a workaround)',
+      set(companions).issubset(capital_level_unit_nids),
+      'CAPITAL levels.json units nids = %s' % sorted(capital_level_unit_nids))
+check('2. companions registered but NOT yet on map before add_unit runs',
+      all(u.position is None for u in pre_registered.values()),
+      'positions before add_unit = %s' % {n: u.position for n, u in pre_registered.items()})
 
 gold_before_intro = game.get_party().money
 action.do(action.SetGameVar('safe_zone', 1))
 action.do(action.GainMoney(game.current_party, 3000))
 action.do(action.UpdateRecords('money', (game.current_party, 3000)))
 
-print('  Registering + placing companions via action.RegisterUnit + action.ArriveOnMap '
-      '(the missing load_unit step) so add_unit\'s real placement path -- action.ArriveOnMap, '
-      'the same Action _place_unit uses for entry_type=="immediate" -- can be exercised for real:')
+print('  Placing companions via action.ArriveOnMap -- the exact Action '
+      'app/events/event.py Event._place_unit uses for entry_type=="immediate", i.e. '
+      'add_unit\'s real placement path -- on the units already registered from the '
+      'fixed level data (no action.RegisterUnit / UnitObject.from_prefab needed):')
 for nid in companions:
-    prefab = UniqueUnit(nid, 'player', 'None', None)
-    unit_obj = UnitObject.from_prefab(prefab, game.current_mode)
-    unit_obj.party = game.current_party
-    action.do(action.RegisterUnit(unit_obj))
-    action.do(action.ArriveOnMap(unit_obj, positions[nid]))
+    unit = game.get_unit(nid)
+    action.do(action.ArriveOnMap(unit, positions[nid]))
     action.do(action.SetGameVar('%s_joined' % nid.lower(), 1))
 
 party_units_after = {u.nid for u in game.get_units_in_party()}
