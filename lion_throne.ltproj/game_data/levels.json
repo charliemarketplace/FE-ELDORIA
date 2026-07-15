@@ -142,40 +142,6 @@
                 "interrupt_move": false
             },
             {
-                "nid": "Train",
-                "region_type": "event",
-                "position": [
-                    5,
-                    13
-                ],
-                "size": [
-                    1,
-                    1
-                ],
-                "sub_nid": "Train",
-                "condition": "unit.team == 'player'",
-                "time_left": null,
-                "only_once": false,
-                "interrupt_move": false
-            },
-            {
-                "nid": "Study",
-                "region_type": "event",
-                "position": [
-                    20,
-                    4
-                ],
-                "size": [
-                    1,
-                    1
-                ],
-                "sub_nid": "Study",
-                "condition": "unit.team == 'player'",
-                "time_left": null,
-                "only_once": false,
-                "interrupt_move": false
-            },
-            {
                 "nid": "Depart",
                 "region_type": "event",
                 "position": [

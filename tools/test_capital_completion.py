@@ -165,12 +165,12 @@ for nid in companions:
 
 # ---------------------------------------------------------------------------
 # 3. Class change 2 of the 4 companions via the real Action (action.ClassChange)
+#    (CAPITAL Train no longer exists -- class assignment is now an automatic
+#    per-unit wizard appended to CAPITAL Intro's own _source, see below)
 # ---------------------------------------------------------------------------
 print('\n--- [3] Class change 2 companions via action.ClassChange (real Action change_class uses) ---')
-train_event = next(e for e in DB.events if e.nid == 'CAPITAL Train')
-train_script = '\n'.join(train_event._source)
-assert 'change_class' in train_script
-assert 'Fighter,Mercenary,Archer,Mage,Cleric' in train_script
+assert 'change_class;Kael;Fighter,Mercenary,Archer,Mage,Cleric' in intro_script
+assert 'change_class;Elara;Fighter,Mercenary,Archer,Mage,Cleric' in intro_script
 
 class_targets = {'Kael': 'Fighter', 'Elara': 'Mage'}
 classed_before = {}
@@ -204,16 +204,19 @@ for nid, target_klass in class_targets.items():
           (nid, before['HP'], after['HP'], before['STR'], after['STR'], before['SPD'], after['SPD']))
 
 # ---------------------------------------------------------------------------
-# 4. Grant a feat skill (exact nids read from CAPITAL Study's _source) via action.AddSkill
+# 4. Grant a feat skill (exact nids read from CAPITAL Intro's feat-wizard
+#    lines) via action.AddSkill. CAPITAL Study no longer exists -- feats are
+#    now part of the same automatic per-unit wizard as class assignment.
 # ---------------------------------------------------------------------------
 print('\n--- [4] Grant a feat skill via action.AddSkill (real Action give_skill uses) ---')
-study_event = next(e for e in DB.events if e.nid == 'CAPITAL Study')
-study_script = '\n'.join(study_event._source)
-# The exact feat skill nid list, read verbatim out of the FeatPick choice line.
-feat_line = next(l for l in study_event._source if l.startswith('choice;FeatPick;'))
+# The exact feat skill nid list, read verbatim out of the FeatPick_Kael choice line.
+feat_line = next(l for l in intro_event._source if l.startswith('choice;FeatPick_Kael;'))
 feat_nids = [tok.split('|')[0] for tok in feat_line.split(';')[3].split(',')]
-check('4. feat nids parsed from CAPITAL Study', len(feat_nids) == 5 and all(n in DB.skills for n in feat_nids),
+check('4. feat nids parsed from CAPITAL Intro', len(feat_nids) == 5 and all(n in DB.skills for n in feat_nids),
       'parsed feat nids = %s' % feat_nids)
+for nid in companions:
+    assert 'give_skill;%s;{v:FeatPick_%s};persistent' % (nid, nid) in intro_script, \
+        'expected the {v:...} syntax fix for %s, not the old broken {game.game_vars[...]} form' % nid
 
 feat_unit_nid = 'Kael'
 feat_skill_nid = feat_nids[0]  # 'fMaximum HP +5'
