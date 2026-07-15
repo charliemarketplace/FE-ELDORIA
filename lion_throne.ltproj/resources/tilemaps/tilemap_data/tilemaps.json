@@ -21138,5 +21138,4226 @@
         "tilesets": [
             "Capital"
         ]
+    },
+    {
+        "nid": "EldoriaWorldMap",
+        "size": [
+            30,
+            20
+        ],
+        "autotile_fps": 29,
+        "layers": [
+            {
+                "nid": "base",
+                "visible": true,
+                "foreground": false,
+                "terrain_grid": {},
+                "sprite_grid": {
+                    "5,1": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            1
+                        ]
+                    ],
+                    "3,1": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            1
+                        ]
+                    ],
+                    "1,1": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            1
+                        ]
+                    ],
+                    "5,18": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            18
+                        ]
+                    ],
+                    "3,18": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            18
+                        ]
+                    ],
+                    "1,18": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            18
+                        ]
+                    ],
+                    "29,16": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            16
+                        ]
+                    ],
+                    "0,2": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            2
+                        ]
+                    ],
+                    "27,16": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            16
+                        ]
+                    ],
+                    "0,19": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            19
+                        ]
+                    ],
+                    "17,0": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            0
+                        ]
+                    ],
+                    "26,3": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            3
+                        ]
+                    ],
+                    "15,0": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            0
+                        ]
+                    ],
+                    "24,3": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            3
+                        ]
+                    ],
+                    "17,17": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            17
+                        ]
+                    ],
+                    "22,3": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            3
+                        ]
+                    ],
+                    "15,17": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            17
+                        ]
+                    ],
+                    "13,17": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            17
+                        ]
+                    ],
+                    "23,4": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            4
+                        ]
+                    ],
+                    "21,4": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            4
+                        ]
+                    ],
+                    "19,4": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            4
+                        ]
+                    ],
+                    "18,8": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            8
+                        ]
+                    ],
+                    "16,8": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            8
+                        ]
+                    ],
+                    "14,8": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            8
+                        ]
+                    ],
+                    "11,12": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            12
+                        ]
+                    ],
+                    "10,13": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            13
+                        ]
+                    ],
+                    "8,13": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            13
+                        ]
+                    ],
+                    "7,0": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            0
+                        ]
+                    ],
+                    "5,0": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            0
+                        ]
+                    ],
+                    "3,0": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            0
+                        ]
+                    ],
+                    "7,17": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            17
+                        ]
+                    ],
+                    "5,17": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            17
+                        ]
+                    ],
+                    "3,17": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            17
+                        ]
+                    ],
+                    "4,1": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            1
+                        ]
+                    ],
+                    "2,1": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            1
+                        ]
+                    ],
+                    "29,15": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            15
+                        ]
+                    ],
+                    "0,1": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            1
+                        ]
+                    ],
+                    "4,18": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            18
+                        ]
+                    ],
+                    "2,18": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            18
+                        ]
+                    ],
+                    "0,18": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            18
+                        ]
+                    ],
+                    "28,2": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            2
+                        ]
+                    ],
+                    "26,2": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            2
+                        ]
+                    ],
+                    "24,2": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            2
+                        ]
+                    ],
+                    "28,19": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            19
+                        ]
+                    ],
+                    "17,16": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            16
+                        ]
+                    ],
+                    "26,19": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            19
+                        ]
+                    ],
+                    "24,19": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            19
+                        ]
+                    ],
+                    "25,3": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            3
+                        ]
+                    ],
+                    "23,3": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            3
+                        ]
+                    ],
+                    "21,3": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            3
+                        ]
+                    ],
+                    "13,4": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            4
+                        ]
+                    ],
+                    "20,7": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            7
+                        ]
+                    ],
+                    "18,7": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            7
+                        ]
+                    ],
+                    "14,12": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            12
+                        ]
+                    ],
+                    "12,12": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            12
+                        ]
+                    ],
+                    "10,12": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            12
+                        ]
+                    ],
+                    "9,16": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            16
+                        ]
+                    ],
+                    "7,16": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            16
+                        ]
+                    ],
+                    "5,16": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            16
+                        ]
+                    ],
+                    "6,0": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            0
+                        ]
+                    ],
+                    "4,0": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            0
+                        ]
+                    ],
+                    "2,0": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            0
+                        ]
+                    ],
+                    "6,17": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            17
+                        ]
+                    ],
+                    "4,17": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            17
+                        ]
+                    ],
+                    "2,17": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            17
+                        ]
+                    ],
+                    "28,1": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            1
+                        ]
+                    ],
+                    "3,4": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            4
+                        ]
+                    ],
+                    "1,4": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            4
+                        ]
+                    ],
+                    "28,18": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            18
+                        ]
+                    ],
+                    "27,2": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            2
+                        ]
+                    ],
+                    "25,2": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            2
+                        ]
+                    ],
+                    "27,19": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            19
+                        ]
+                    ],
+                    "25,19": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            19
+                        ]
+                    ],
+                    "23,19": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            19
+                        ]
+                    ],
+                    "15,3": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            3
+                        ]
+                    ],
+                    "24,6": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            6
+                        ]
+                    ],
+                    "13,3": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            3
+                        ]
+                    ],
+                    "22,6": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            6
+                        ]
+                    ],
+                    "20,6": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            6
+                        ]
+                    ],
+                    "21,7": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            7
+                        ]
+                    ],
+                    "19,7": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            7
+                        ]
+                    ],
+                    "16,11": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            11
+                        ]
+                    ],
+                    "14,11": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            11
+                        ]
+                    ],
+                    "12,11": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            11
+                        ]
+                    ],
+                    "11,15": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            15
+                        ]
+                    ],
+                    "9,15": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            15
+                        ]
+                    ],
+                    "8,16": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            16
+                        ]
+                    ],
+                    "6,16": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            16
+                        ]
+                    ],
+                    "4,16": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            16
+                        ]
+                    ],
+                    "5,3": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            3
+                        ]
+                    ],
+                    "3,3": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            3
+                        ]
+                    ],
+                    "1,3": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            3
+                        ]
+                    ],
+                    "29,1": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            1
+                        ]
+                    ],
+                    "27,1": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            1
+                        ]
+                    ],
+                    "2,4": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            4
+                        ]
+                    ],
+                    "29,18": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            18
+                        ]
+                    ],
+                    "0,4": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            4
+                        ]
+                    ],
+                    "27,18": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            18
+                        ]
+                    ],
+                    "17,2": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            2
+                        ]
+                    ],
+                    "26,5": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            5
+                        ]
+                    ],
+                    "15,2": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            2
+                        ]
+                    ],
+                    "24,5": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            5
+                        ]
+                    ],
+                    "17,19": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            19
+                        ]
+                    ],
+                    "22,5": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            5
+                        ]
+                    ],
+                    "15,19": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            19
+                        ]
+                    ],
+                    "23,6": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            6
+                        ]
+                    ],
+                    "21,6": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            6
+                        ]
+                    ],
+                    "19,6": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            6
+                        ]
+                    ],
+                    "18,10": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            10
+                        ]
+                    ],
+                    "16,10": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            10
+                        ]
+                    ],
+                    "11,14": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            14
+                        ]
+                    ],
+                    "12,15": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            15
+                        ]
+                    ],
+                    "10,15": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            15
+                        ]
+                    ],
+                    "8,15": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            15
+                        ]
+                    ],
+                    "7,2": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            2
+                        ]
+                    ],
+                    "5,2": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            2
+                        ]
+                    ],
+                    "3,2": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            2
+                        ]
+                    ],
+                    "7,19": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            19
+                        ]
+                    ],
+                    "29,0": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            0
+                        ]
+                    ],
+                    "5,19": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            19
+                        ]
+                    ],
+                    "3,19": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            19
+                        ]
+                    ],
+                    "4,3": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            3
+                        ]
+                    ],
+                    "2,3": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            3
+                        ]
+                    ],
+                    "29,17": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            17
+                        ]
+                    ],
+                    "0,3": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            3
+                        ]
+                    ],
+                    "28,4": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            4
+                        ]
+                    ],
+                    "17,1": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            1
+                        ]
+                    ],
+                    "26,4": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            4
+                        ]
+                    ],
+                    "17,18": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            18
+                        ]
+                    ],
+                    "25,5": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            5
+                        ]
+                    ],
+                    "23,5": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            5
+                        ]
+                    ],
+                    "21,5": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            5
+                        ]
+                    ],
+                    "13,6": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            6
+                        ]
+                    ],
+                    "22,9": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            9
+                        ]
+                    ],
+                    "20,9": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            9
+                        ]
+                    ],
+                    "18,9": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            9
+                        ]
+                    ],
+                    "14,14": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            14
+                        ]
+                    ],
+                    "12,14": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            14
+                        ]
+                    ],
+                    "10,14": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            14
+                        ]
+                    ],
+                    "9,1": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            1
+                        ]
+                    ],
+                    "7,1": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            1
+                        ]
+                    ],
+                    "9,18": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            18
+                        ]
+                    ],
+                    "7,18": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            18
+                        ]
+                    ],
+                    "6,2": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            2
+                        ]
+                    ],
+                    "4,2": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            2
+                        ]
+                    ],
+                    "2,2": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            2
+                        ]
+                    ],
+                    "6,19": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            19
+                        ]
+                    ],
+                    "4,19": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            19
+                        ]
+                    ],
+                    "2,19": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            19
+                        ]
+                    ],
+                    "28,3": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            3
+                        ]
+                    ],
+                    "3,6": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            6
+                        ]
+                    ],
+                    "1,6": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            6
+                        ]
+                    ],
+                    "27,4": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            4
+                        ]
+                    ],
+                    "25,4": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            4
+                        ]
+                    ],
+                    "15,5": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            5
+                        ]
+                    ],
+                    "24,8": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            8
+                        ]
+                    ],
+                    "13,5": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            5
+                        ]
+                    ],
+                    "22,8": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            8
+                        ]
+                    ],
+                    "20,8": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            8
+                        ]
+                    ],
+                    "21,9": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            9
+                        ]
+                    ],
+                    "19,9": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            9
+                        ]
+                    ],
+                    "16,13": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            13
+                        ]
+                    ],
+                    "14,13": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            13
+                        ]
+                    ],
+                    "12,13": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            13
+                        ]
+                    ],
+                    "11,0": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            0
+                        ]
+                    ],
+                    "9,0": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            0
+                        ]
+                    ],
+                    "11,17": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            17
+                        ]
+                    ],
+                    "9,17": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            17
+                        ]
+                    ],
+                    "10,1": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            1
+                        ]
+                    ],
+                    "8,1": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            1
+                        ]
+                    ],
+                    "6,1": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            1
+                        ]
+                    ],
+                    "8,18": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            18
+                        ]
+                    ],
+                    "6,18": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            18
+                        ]
+                    ],
+                    "5,5": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            5
+                        ]
+                    ],
+                    "3,5": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            5
+                        ]
+                    ],
+                    "1,5": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            5
+                        ]
+                    ],
+                    "29,3": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            3
+                        ]
+                    ],
+                    "27,3": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            3
+                        ]
+                    ],
+                    "2,6": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            6
+                        ]
+                    ],
+                    "0,6": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            6
+                        ]
+                    ],
+                    "17,4": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            4
+                        ]
+                    ],
+                    "26,7": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            7
+                        ]
+                    ],
+                    "15,4": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            4
+                        ]
+                    ],
+                    "24,7": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            7
+                        ]
+                    ],
+                    "22,7": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            7
+                        ]
+                    ],
+                    "23,8": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            8
+                        ]
+                    ],
+                    "21,8": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            8
+                        ]
+                    ],
+                    "19,8": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            8
+                        ]
+                    ],
+                    "18,12": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            12
+                        ]
+                    ],
+                    "16,12": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            12
+                        ]
+                    ],
+                    "11,16": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            16
+                        ]
+                    ],
+                    "12,0": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            0
+                        ]
+                    ],
+                    "10,0": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            0
+                        ]
+                    ],
+                    "8,0": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            0
+                        ]
+                    ],
+                    "12,17": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            17
+                        ]
+                    ],
+                    "10,17": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            17
+                        ]
+                    ],
+                    "8,17": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            17
+                        ]
+                    ],
+                    "7,4": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            4
+                        ]
+                    ],
+                    "5,4": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            4
+                        ]
+                    ],
+                    "29,2": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            2
+                        ]
+                    ],
+                    "4,5": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            5
+                        ]
+                    ],
+                    "2,5": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            5
+                        ]
+                    ],
+                    "29,19": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            19
+                        ]
+                    ],
+                    "0,5": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            5
+                        ]
+                    ],
+                    "28,6": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            6
+                        ]
+                    ],
+                    "17,3": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            3
+                        ]
+                    ],
+                    "26,6": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            6
+                        ]
+                    ],
+                    "1,9": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            9
+                        ]
+                    ],
+                    "25,7": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            7
+                        ]
+                    ],
+                    "23,7": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            7
+                        ]
+                    ],
+                    "13,8": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            8
+                        ]
+                    ],
+                    "22,11": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            11
+                        ]
+                    ],
+                    "20,11": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            11
+                        ]
+                    ],
+                    "18,11": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            11
+                        ]
+                    ],
+                    "19,12": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            12
+                        ]
+                    ],
+                    "14,16": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            16
+                        ]
+                    ],
+                    "12,16": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            16
+                        ]
+                    ],
+                    "10,16": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            16
+                        ]
+                    ],
+                    "11,3": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            3
+                        ]
+                    ],
+                    "9,3": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            3
+                        ]
+                    ],
+                    "7,3": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            3
+                        ]
+                    ],
+                    "6,4": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            4
+                        ]
+                    ],
+                    "4,4": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            4
+                        ]
+                    ],
+                    "28,5": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            5
+                        ]
+                    ],
+                    "3,8": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            8
+                        ]
+                    ],
+                    "1,8": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            8
+                        ]
+                    ],
+                    "29,6": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            6
+                        ]
+                    ],
+                    "27,6": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            6
+                        ]
+                    ],
+                    "25,6": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            6
+                        ]
+                    ],
+                    "0,9": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            9
+                        ]
+                    ],
+                    "15,7": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            7
+                        ]
+                    ],
+                    "24,10": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            10
+                        ]
+                    ],
+                    "13,7": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            7
+                        ]
+                    ],
+                    "22,10": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            10
+                        ]
+                    ],
+                    "20,10": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            10
+                        ]
+                    ],
+                    "21,11": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            11
+                        ]
+                    ],
+                    "19,11": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            11
+                        ]
+                    ],
+                    "16,15": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            15
+                        ]
+                    ],
+                    "14,15": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            15
+                        ]
+                    ],
+                    "11,2": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            2
+                        ]
+                    ],
+                    "9,2": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            2
+                        ]
+                    ],
+                    "11,19": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            19
+                        ]
+                    ],
+                    "9,19": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            19
+                        ]
+                    ],
+                    "10,3": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            3
+                        ]
+                    ],
+                    "8,3": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            3
+                        ]
+                    ],
+                    "6,3": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            3
+                        ]
+                    ],
+                    "5,7": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            7
+                        ]
+                    ],
+                    "3,7": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            7
+                        ]
+                    ],
+                    "1,7": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            7
+                        ]
+                    ],
+                    "29,5": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            5
+                        ]
+                    ],
+                    "27,5": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            5
+                        ]
+                    ],
+                    "2,8": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            8
+                        ]
+                    ],
+                    "0,8": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            8
+                        ]
+                    ],
+                    "17,6": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            6
+                        ]
+                    ],
+                    "26,9": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            9
+                        ]
+                    ],
+                    "15,6": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            6
+                        ]
+                    ],
+                    "24,9": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            9
+                        ]
+                    ],
+                    "23,10": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            10
+                        ]
+                    ],
+                    "21,10": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            10
+                        ]
+                    ],
+                    "19,10": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            10
+                        ]
+                    ],
+                    "20,14": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            14
+                        ]
+                    ],
+                    "18,14": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            14
+                        ]
+                    ],
+                    "16,14": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            14
+                        ]
+                    ],
+                    "11,1": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            1
+                        ]
+                    ],
+                    "12,2": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            2
+                        ]
+                    ],
+                    "11,18": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            18
+                        ]
+                    ],
+                    "10,2": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            2
+                        ]
+                    ],
+                    "8,2": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            2
+                        ]
+                    ],
+                    "12,19": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            19
+                        ]
+                    ],
+                    "10,19": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            19
+                        ]
+                    ],
+                    "8,19": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            19
+                        ]
+                    ],
+                    "7,6": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            6
+                        ]
+                    ],
+                    "5,6": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            6
+                        ]
+                    ],
+                    "29,4": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            4
+                        ]
+                    ],
+                    "4,7": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            7
+                        ]
+                    ],
+                    "2,7": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            7
+                        ]
+                    ],
+                    "0,7": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            7
+                        ]
+                    ],
+                    "28,8": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            8
+                        ]
+                    ],
+                    "17,5": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            5
+                        ]
+                    ],
+                    "26,8": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            8
+                        ]
+                    ],
+                    "1,11": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            11
+                        ]
+                    ],
+                    "25,9": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            9
+                        ]
+                    ],
+                    "23,9": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            9
+                        ]
+                    ],
+                    "13,10": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            10
+                        ]
+                    ],
+                    "22,13": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            13
+                        ]
+                    ],
+                    "20,13": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            13
+                        ]
+                    ],
+                    "18,13": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            13
+                        ]
+                    ],
+                    "19,14": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            14
+                        ]
+                    ],
+                    "14,1": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            1
+                        ]
+                    ],
+                    "12,1": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            1
+                        ]
+                    ],
+                    "14,18": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            18
+                        ]
+                    ],
+                    "12,18": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            18
+                        ]
+                    ],
+                    "10,18": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            18
+                        ]
+                    ],
+                    "11,5": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            5
+                        ]
+                    ],
+                    "9,5": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            5
+                        ]
+                    ],
+                    "7,5": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            5
+                        ]
+                    ],
+                    "8,6": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            6
+                        ]
+                    ],
+                    "6,6": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            6
+                        ]
+                    ],
+                    "4,6": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            6
+                        ]
+                    ],
+                    "28,7": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            7
+                        ]
+                    ],
+                    "3,10": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            10
+                        ]
+                    ],
+                    "1,10": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            10
+                        ]
+                    ],
+                    "29,8": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            8
+                        ]
+                    ],
+                    "27,8": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            8
+                        ]
+                    ],
+                    "25,8": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            8
+                        ]
+                    ],
+                    "0,11": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            11
+                        ]
+                    ],
+                    "17,9": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            9
+                        ]
+                    ],
+                    "15,9": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            9
+                        ]
+                    ],
+                    "24,12": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            12
+                        ]
+                    ],
+                    "13,9": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            9
+                        ]
+                    ],
+                    "22,12": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            12
+                        ]
+                    ],
+                    "20,12": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            12
+                        ]
+                    ],
+                    "21,13": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            13
+                        ]
+                    ],
+                    "19,13": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            13
+                        ]
+                    ],
+                    "18,0": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            0
+                        ]
+                    ],
+                    "16,0": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            0
+                        ]
+                    ],
+                    "14,0": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            0
+                        ]
+                    ],
+                    "16,17": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            17
+                        ]
+                    ],
+                    "14,17": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            17
+                        ]
+                    ],
+                    "11,4": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            4
+                        ]
+                    ],
+                    "9,4": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            4
+                        ]
+                    ],
+                    "10,5": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            5
+                        ]
+                    ],
+                    "8,5": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            5
+                        ]
+                    ],
+                    "6,5": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            5
+                        ]
+                    ],
+                    "5,9": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            9
+                        ]
+                    ],
+                    "3,9": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            9
+                        ]
+                    ],
+                    "29,7": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            7
+                        ]
+                    ],
+                    "27,7": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            7
+                        ]
+                    ],
+                    "2,10": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            10
+                        ]
+                    ],
+                    "0,10": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            10
+                        ]
+                    ],
+                    "28,11": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            11
+                        ]
+                    ],
+                    "17,8": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            8
+                        ]
+                    ],
+                    "26,11": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            11
+                        ]
+                    ],
+                    "15,8": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            8
+                        ]
+                    ],
+                    "24,11": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            11
+                        ]
+                    ],
+                    "23,12": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            12
+                        ]
+                    ],
+                    "21,12": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            12
+                        ]
+                    ],
+                    "20,16": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            16
+                        ]
+                    ],
+                    "18,16": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            16
+                        ]
+                    ],
+                    "16,16": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            16
+                        ]
+                    ],
+                    "12,4": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            4
+                        ]
+                    ],
+                    "10,4": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            4
+                        ]
+                    ],
+                    "8,4": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            4
+                        ]
+                    ],
+                    "9,8": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            8
+                        ]
+                    ],
+                    "7,8": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            8
+                        ]
+                    ],
+                    "5,8": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            8
+                        ]
+                    ],
+                    "4,9": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            9
+                        ]
+                    ],
+                    "2,9": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            9
+                        ]
+                    ],
+                    "28,10": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            10
+                        ]
+                    ],
+                    "17,7": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            7
+                        ]
+                    ],
+                    "26,10": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            10
+                        ]
+                    ],
+                    "1,13": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            13
+                        ]
+                    ],
+                    "27,11": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            11
+                        ]
+                    ],
+                    "25,11": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            11
+                        ]
+                    ],
+                    "23,11": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            11
+                        ]
+                    ],
+                    "13,12": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            12
+                        ]
+                    ],
+                    "22,15": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            15
+                        ]
+                    ],
+                    "20,15": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            15
+                        ]
+                    ],
+                    "18,15": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            15
+                        ]
+                    ],
+                    "19,16": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            16
+                        ]
+                    ],
+                    "14,3": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            3
+                        ]
+                    ],
+                    "12,3": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            3
+                        ]
+                    ],
+                    "11,7": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            7
+                        ]
+                    ],
+                    "9,7": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            7
+                        ]
+                    ],
+                    "7,7": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            7
+                        ]
+                    ],
+                    "8,8": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            8
+                        ]
+                    ],
+                    "6,8": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            8
+                        ]
+                    ],
+                    "4,8": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            8
+                        ]
+                    ],
+                    "28,9": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            9
+                        ]
+                    ],
+                    "3,12": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            12
+                        ]
+                    ],
+                    "1,12": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            12
+                        ]
+                    ],
+                    "29,10": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            10
+                        ]
+                    ],
+                    "27,10": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            10
+                        ]
+                    ],
+                    "25,10": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            10
+                        ]
+                    ],
+                    "0,13": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            13
+                        ]
+                    ],
+                    "17,11": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            11
+                        ]
+                    ],
+                    "15,11": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            11
+                        ]
+                    ],
+                    "24,14": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            14
+                        ]
+                    ],
+                    "13,11": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            11
+                        ]
+                    ],
+                    "22,14": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            14
+                        ]
+                    ],
+                    "21,15": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            15
+                        ]
+                    ],
+                    "19,15": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            15
+                        ]
+                    ],
+                    "18,2": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            2
+                        ]
+                    ],
+                    "16,2": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            2
+                        ]
+                    ],
+                    "14,2": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            2
+                        ]
+                    ],
+                    "18,19": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            19
+                        ]
+                    ],
+                    "16,19": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            19
+                        ]
+                    ],
+                    "14,19": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            19
+                        ]
+                    ],
+                    "11,6": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            6
+                        ]
+                    ],
+                    "9,6": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            6
+                        ]
+                    ],
+                    "10,7": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            7
+                        ]
+                    ],
+                    "8,7": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            7
+                        ]
+                    ],
+                    "6,7": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            7
+                        ]
+                    ],
+                    "5,11": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            11
+                        ]
+                    ],
+                    "3,11": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            11
+                        ]
+                    ],
+                    "29,9": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            9
+                        ]
+                    ],
+                    "27,9": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            9
+                        ]
+                    ],
+                    "2,12": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            12
+                        ]
+                    ],
+                    "0,12": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            12
+                        ]
+                    ],
+                    "28,13": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            13
+                        ]
+                    ],
+                    "17,10": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            10
+                        ]
+                    ],
+                    "26,13": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            13
+                        ]
+                    ],
+                    "15,10": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            10
+                        ]
+                    ],
+                    "24,13": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            13
+                        ]
+                    ],
+                    "23,14": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            14
+                        ]
+                    ],
+                    "21,14": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            14
+                        ]
+                    ],
+                    "20,1": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            1
+                        ]
+                    ],
+                    "18,1": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            1
+                        ]
+                    ],
+                    "16,1": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            1
+                        ]
+                    ],
+                    "20,18": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            18
+                        ]
+                    ],
+                    "18,18": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            18
+                        ]
+                    ],
+                    "16,18": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            18
+                        ]
+                    ],
+                    "12,6": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            6
+                        ]
+                    ],
+                    "10,6": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            6
+                        ]
+                    ],
+                    "9,10": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            10
+                        ]
+                    ],
+                    "7,10": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            10
+                        ]
+                    ],
+                    "5,10": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            10
+                        ]
+                    ],
+                    "6,11": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            11
+                        ]
+                    ],
+                    "4,11": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            11
+                        ]
+                    ],
+                    "2,11": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            11
+                        ]
+                    ],
+                    "28,12": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            12
+                        ]
+                    ],
+                    "26,12": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            12
+                        ]
+                    ],
+                    "1,15": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            15
+                        ]
+                    ],
+                    "27,13": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            13
+                        ]
+                    ],
+                    "25,13": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            13
+                        ]
+                    ],
+                    "23,13": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            13
+                        ]
+                    ],
+                    "22,0": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            0
+                        ]
+                    ],
+                    "15,14": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            14
+                        ]
+                    ],
+                    "20,0": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            0
+                        ]
+                    ],
+                    "13,14": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            14
+                        ]
+                    ],
+                    "22,17": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            17
+                        ]
+                    ],
+                    "20,17": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            17
+                        ]
+                    ],
+                    "18,17": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            17
+                        ]
+                    ],
+                    "19,1": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            1
+                        ]
+                    ],
+                    "19,18": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            18
+                        ]
+                    ],
+                    "16,5": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            5
+                        ]
+                    ],
+                    "14,5": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            5
+                        ]
+                    ],
+                    "12,5": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            5
+                        ]
+                    ],
+                    "11,9": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            9
+                        ]
+                    ],
+                    "9,9": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            9
+                        ]
+                    ],
+                    "7,9": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            9
+                        ]
+                    ],
+                    "8,10": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            10
+                        ]
+                    ],
+                    "6,10": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            10
+                        ]
+                    ],
+                    "4,10": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            10
+                        ]
+                    ],
+                    "3,14": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            14
+                        ]
+                    ],
+                    "1,14": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            14
+                        ]
+                    ],
+                    "29,12": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            12
+                        ]
+                    ],
+                    "27,12": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            12
+                        ]
+                    ],
+                    "25,12": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            12
+                        ]
+                    ],
+                    "0,15": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            15
+                        ]
+                    ],
+                    "17,13": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            13
+                        ]
+                    ],
+                    "15,13": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            13
+                        ]
+                    ],
+                    "24,16": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            16
+                        ]
+                    ],
+                    "13,13": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            13
+                        ]
+                    ],
+                    "22,16": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            16
+                        ]
+                    ],
+                    "21,0": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            0
+                        ]
+                    ],
+                    "19,0": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            0
+                        ]
+                    ],
+                    "21,17": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            17
+                        ]
+                    ],
+                    "19,17": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            17
+                        ]
+                    ],
+                    "18,4": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            4
+                        ]
+                    ],
+                    "16,4": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            4
+                        ]
+                    ],
+                    "14,4": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            4
+                        ]
+                    ],
+                    "11,8": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            8
+                        ]
+                    ],
+                    "10,9": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            9
+                        ]
+                    ],
+                    "8,9": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            9
+                        ]
+                    ],
+                    "6,9": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            9
+                        ]
+                    ],
+                    "7,13": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            13
+                        ]
+                    ],
+                    "5,13": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            13
+                        ]
+                    ],
+                    "3,13": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            13
+                        ]
+                    ],
+                    "29,11": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            11
+                        ]
+                    ],
+                    "2,14": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            14
+                        ]
+                    ],
+                    "0,14": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            14
+                        ]
+                    ],
+                    "28,15": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            15
+                        ]
+                    ],
+                    "17,12": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            12
+                        ]
+                    ],
+                    "26,15": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            15
+                        ]
+                    ],
+                    "15,12": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            12
+                        ]
+                    ],
+                    "24,15": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            15
+                        ]
+                    ],
+                    "25,16": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            16
+                        ]
+                    ],
+                    "23,16": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            16
+                        ]
+                    ],
+                    "21,16": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            16
+                        ]
+                    ],
+                    "13,0": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            0
+                        ]
+                    ],
+                    "20,3": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            3
+                        ]
+                    ],
+                    "18,3": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            3
+                        ]
+                    ],
+                    "16,3": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            3
+                        ]
+                    ],
+                    "12,8": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            8
+                        ]
+                    ],
+                    "10,8": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            8
+                        ]
+                    ],
+                    "9,12": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            12
+                        ]
+                    ],
+                    "7,12": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            12
+                        ]
+                    ],
+                    "5,12": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            12
+                        ]
+                    ],
+                    "6,13": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            13
+                        ]
+                    ],
+                    "4,13": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            13
+                        ]
+                    ],
+                    "2,13": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            13
+                        ]
+                    ],
+                    "1,0": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            0
+                        ]
+                    ],
+                    "28,14": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            14
+                        ]
+                    ],
+                    "26,14": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            14
+                        ]
+                    ],
+                    "1,17": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            17
+                        ]
+                    ],
+                    "27,15": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            15
+                        ]
+                    ],
+                    "25,15": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            15
+                        ]
+                    ],
+                    "23,15": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            15
+                        ]
+                    ],
+                    "22,2": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            2
+                        ]
+                    ],
+                    "15,16": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            16
+                        ]
+                    ],
+                    "20,2": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            2
+                        ]
+                    ],
+                    "13,16": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            16
+                        ]
+                    ],
+                    "22,19": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            19
+                        ]
+                    ],
+                    "20,19": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            19
+                        ]
+                    ],
+                    "19,3": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            3
+                        ]
+                    ],
+                    "16,7": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            7
+                        ]
+                    ],
+                    "14,7": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            7
+                        ]
+                    ],
+                    "12,7": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            7
+                        ]
+                    ],
+                    "11,11": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            11
+                        ]
+                    ],
+                    "9,11": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            11
+                        ]
+                    ],
+                    "7,11": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            11
+                        ]
+                    ],
+                    "8,12": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            12
+                        ]
+                    ],
+                    "6,12": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            12
+                        ]
+                    ],
+                    "4,12": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            12
+                        ]
+                    ],
+                    "3,16": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            16
+                        ]
+                    ],
+                    "1,16": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            16
+                        ]
+                    ],
+                    "29,14": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            14
+                        ]
+                    ],
+                    "0,0": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            0
+                        ]
+                    ],
+                    "27,14": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            14
+                        ]
+                    ],
+                    "25,14": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            14
+                        ]
+                    ],
+                    "0,17": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            17
+                        ]
+                    ],
+                    "26,1": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            1
+                        ]
+                    ],
+                    "24,1": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            1
+                        ]
+                    ],
+                    "17,15": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            15
+                        ]
+                    ],
+                    "22,1": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            1
+                        ]
+                    ],
+                    "15,15": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            15
+                        ]
+                    ],
+                    "24,18": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            18
+                        ]
+                    ],
+                    "13,15": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            15
+                        ]
+                    ],
+                    "22,18": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            18
+                        ]
+                    ],
+                    "23,2": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            2
+                        ]
+                    ],
+                    "21,2": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            2
+                        ]
+                    ],
+                    "26,18": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            18
+                        ]
+                    ],
+                    "19,2": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            2
+                        ]
+                    ],
+                    "21,19": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            19
+                        ]
+                    ],
+                    "19,19": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            19
+                        ]
+                    ],
+                    "18,6": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            6
+                        ]
+                    ],
+                    "16,6": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            6
+                        ]
+                    ],
+                    "14,6": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            6
+                        ]
+                    ],
+                    "11,10": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            10
+                        ]
+                    ],
+                    "10,11": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            11
+                        ]
+                    ],
+                    "8,11": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            11
+                        ]
+                    ],
+                    "7,15": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            15
+                        ]
+                    ],
+                    "5,15": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            15
+                        ]
+                    ],
+                    "3,15": [
+                        "EldoriaWorldMap",
+                        [
+                            3,
+                            15
+                        ]
+                    ],
+                    "29,13": [
+                        "EldoriaWorldMap",
+                        [
+                            29,
+                            13
+                        ]
+                    ],
+                    "2,16": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            16
+                        ]
+                    ],
+                    "0,16": [
+                        "EldoriaWorldMap",
+                        [
+                            0,
+                            16
+                        ]
+                    ],
+                    "28,0": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            0
+                        ]
+                    ],
+                    "26,0": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            0
+                        ]
+                    ],
+                    "24,0": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            0
+                        ]
+                    ],
+                    "28,17": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            17
+                        ]
+                    ],
+                    "17,14": [
+                        "EldoriaWorldMap",
+                        [
+                            17,
+                            14
+                        ]
+                    ],
+                    "26,17": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            17
+                        ]
+                    ],
+                    "24,17": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            17
+                        ]
+                    ],
+                    "25,1": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            1
+                        ]
+                    ],
+                    "23,1": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            1
+                        ]
+                    ],
+                    "21,1": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            1
+                        ]
+                    ],
+                    "25,18": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            18
+                        ]
+                    ],
+                    "23,18": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            18
+                        ]
+                    ],
+                    "21,18": [
+                        "EldoriaWorldMap",
+                        [
+                            21,
+                            18
+                        ]
+                    ],
+                    "13,2": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            2
+                        ]
+                    ],
+                    "20,5": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            5
+                        ]
+                    ],
+                    "13,19": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            19
+                        ]
+                    ],
+                    "18,5": [
+                        "EldoriaWorldMap",
+                        [
+                            18,
+                            5
+                        ]
+                    ],
+                    "14,10": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            10
+                        ]
+                    ],
+                    "12,10": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            10
+                        ]
+                    ],
+                    "10,10": [
+                        "EldoriaWorldMap",
+                        [
+                            10,
+                            10
+                        ]
+                    ],
+                    "9,14": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            14
+                        ]
+                    ],
+                    "7,14": [
+                        "EldoriaWorldMap",
+                        [
+                            7,
+                            14
+                        ]
+                    ],
+                    "5,14": [
+                        "EldoriaWorldMap",
+                        [
+                            5,
+                            14
+                        ]
+                    ],
+                    "6,15": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            15
+                        ]
+                    ],
+                    "4,15": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            15
+                        ]
+                    ],
+                    "2,15": [
+                        "EldoriaWorldMap",
+                        [
+                            2,
+                            15
+                        ]
+                    ],
+                    "1,2": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            2
+                        ]
+                    ],
+                    "28,16": [
+                        "EldoriaWorldMap",
+                        [
+                            28,
+                            16
+                        ]
+                    ],
+                    "26,16": [
+                        "EldoriaWorldMap",
+                        [
+                            26,
+                            16
+                        ]
+                    ],
+                    "27,0": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            0
+                        ]
+                    ],
+                    "25,0": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            0
+                        ]
+                    ],
+                    "1,19": [
+                        "EldoriaWorldMap",
+                        [
+                            1,
+                            19
+                        ]
+                    ],
+                    "23,0": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            0
+                        ]
+                    ],
+                    "27,17": [
+                        "EldoriaWorldMap",
+                        [
+                            27,
+                            17
+                        ]
+                    ],
+                    "25,17": [
+                        "EldoriaWorldMap",
+                        [
+                            25,
+                            17
+                        ]
+                    ],
+                    "23,17": [
+                        "EldoriaWorldMap",
+                        [
+                            23,
+                            17
+                        ]
+                    ],
+                    "15,1": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            1
+                        ]
+                    ],
+                    "24,4": [
+                        "EldoriaWorldMap",
+                        [
+                            24,
+                            4
+                        ]
+                    ],
+                    "13,1": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            1
+                        ]
+                    ],
+                    "22,4": [
+                        "EldoriaWorldMap",
+                        [
+                            22,
+                            4
+                        ]
+                    ],
+                    "15,18": [
+                        "EldoriaWorldMap",
+                        [
+                            15,
+                            18
+                        ]
+                    ],
+                    "20,4": [
+                        "EldoriaWorldMap",
+                        [
+                            20,
+                            4
+                        ]
+                    ],
+                    "13,18": [
+                        "EldoriaWorldMap",
+                        [
+                            13,
+                            18
+                        ]
+                    ],
+                    "19,5": [
+                        "EldoriaWorldMap",
+                        [
+                            19,
+                            5
+                        ]
+                    ],
+                    "16,9": [
+                        "EldoriaWorldMap",
+                        [
+                            16,
+                            9
+                        ]
+                    ],
+                    "14,9": [
+                        "EldoriaWorldMap",
+                        [
+                            14,
+                            9
+                        ]
+                    ],
+                    "12,9": [
+                        "EldoriaWorldMap",
+                        [
+                            12,
+                            9
+                        ]
+                    ],
+                    "11,13": [
+                        "EldoriaWorldMap",
+                        [
+                            11,
+                            13
+                        ]
+                    ],
+                    "9,13": [
+                        "EldoriaWorldMap",
+                        [
+                            9,
+                            13
+                        ]
+                    ],
+                    "8,14": [
+                        "EldoriaWorldMap",
+                        [
+                            8,
+                            14
+                        ]
+                    ],
+                    "6,14": [
+                        "EldoriaWorldMap",
+                        [
+                            6,
+                            14
+                        ]
+                    ],
+                    "4,14": [
+                        "EldoriaWorldMap",
+                        [
+                            4,
+                            14
+                        ]
+                    ]
+                }
+            }
+        ],
+        "tilesets": [
+            "EldoriaWorldMap"
+        ]
     }
 ]

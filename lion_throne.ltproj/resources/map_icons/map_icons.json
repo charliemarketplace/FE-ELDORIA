@@ -1,3 +1,15 @@
 [
-    "BanditEmblem"
+    "BanditEmblem",
+    "castle",
+    "cathedral",
+    "citadel",
+    "forest_temple",
+    "fort",
+    "map_node",
+    "palace",
+    "pyramid",
+    "ruins",
+    "tower",
+    "town",
+    "woods"
 ]

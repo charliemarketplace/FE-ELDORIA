@@ -73,5 +73,10 @@
         "nid": "Capital",
         "terrain_grid": {},
         "autotiles": {}
+    },
+    {
+        "nid": "EldoriaWorldMap",
+        "terrain_grid": {},
+        "autotiles": {}
     }
 ]

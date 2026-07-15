@@ -61,7 +61,7 @@
     ],
     [
         "overworld",
-        false
+        true
     ],
     [
         "overworld_start",

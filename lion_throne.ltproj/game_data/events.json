@@ -1253,7 +1253,6 @@
             "speak;Rowan;Rested, armed, and out of reasons to wait. Emberhollow's this way. Let's move.",
             "remove_portrait;Rowan",
             "game_var;safe_zone;0",
-            "set_next_chapter;S1",
             "win_game"
         ]
     }
