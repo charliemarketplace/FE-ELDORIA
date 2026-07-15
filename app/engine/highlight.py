@@ -29,7 +29,6 @@ class HighlightController():
         self.current_hover = None
 
         self.formation_highlights = []
-        self.escape_highlights = []
 
     def check_in_move(self, position):
         return position in self.highlights['move']
@@ -127,13 +126,13 @@ class HighlightController():
         # Handle interactable-region Highlight (glow any event region the player can
         # walk up to and act on, so map art imprecision never hides a valid interaction;
         # 'Secret' is excluded on purpose since it's meant to be a hidden discovery)
-        escape_image = SPRITES.get('highlight_yellow')
+        region_glow_image = SPRITES.get('highlight_yellow')
         rect = (self.update_idx//4 * TILEWIDTH, 0, TILEWIDTH, TILEHEIGHT)
-        escape_image = engine.subsurface(escape_image, rect)
+        region_glow_image = engine.subsurface(region_glow_image, rect)
         for region in game.level.regions:
             if (region.region_type == RegionType.EVENT and region.sub_nid != 'Secret'):
                 for position in region.get_all_positions():
-                    surf.blit(escape_image, (position[0] * TILEWIDTH - cull_rect[0], position[1] * TILEHEIGHT - cull_rect[1]))
+                    surf.blit(region_glow_image, (position[0] * TILEWIDTH - cull_rect[0], position[1] * TILEHEIGHT - cull_rect[1]))
 
         # Regular highlights
         for name, highlight_set in self.highlights.items():

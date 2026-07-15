@@ -1,14 +1,28 @@
-# lt_web — Lion Throne in the browser
+# Eldoria — a Lex Talionis browser game
 
+> **This repo is a fork of `lt_web` (which runs *The Lion Throne*).** Eldoria
+> was created by cloning that project, trimming its content down to just the
+> EMBER campaign (7 levels: `CAPITAL`, `S1`, `S2`, `SHUB`, `S3`, `S4`, `S5`),
+> and rebranding (`title`/`game_nid` → "Eldoria"/"ELDORIA"). The engine and
+> workflow are shared with `lt_web`; only the game content and a handful of
+> engine patches (`app/engine/equations.py` SAFE-zone movement, dialogue
+> timing fixes, interactable-region highlighting) are Eldoria-specific.
+>
 > **Editing game content (units, items, skills, levels, events)?**
 > Read [`CONTENT_GUIDE.md`](CONTENT_GUIDE.md) first — it documents the whole
 > .ltproj data model, cross-references, discovery recipes, and the
 > edit→test→rebuild workflow. Then [`AUTHORING_CASE_STUDY.md`](AUTHORING_CASE_STUDY.md)
 > for the proven end-to-end process (incl. headless browser verification and
-> AI-generated map art). API keys for generation tooling live in `.env`
-> (gitignored, never committed).
+> AI-generated map art). **Both of those docs were written for the original
+> `lt_web`/Lion Throne project and describe its content (13 levels, demo
+> chapters `TRIAL`/`TOWN`/`RIVER`/`DEBUG`, 243 events, etc.) — those specific
+> facts do not apply to Eldoria's actual content.** Re-verify any concrete
+> number or nid against the live files (`lion_throne.ltproj/game_data/*.json`)
+> rather than trusting either doc; the *techniques* they describe (JSON model,
+> event authoring, AI art pipeline) still apply as-is. API keys for
+> generation tooling live in `.env` (gitignored, never committed).
 
-A WebAssembly (pygbag) build of the Lex Talionis engine running *The Lion Throne*,
+A WebAssembly (pygbag) build of the Lex Talionis engine running *Eldoria*,
 with no editor and no embedded audio. Engine source is the game-runtime slice of
 LT-Maker build `83ddbf13` (release 2025.03.13a), taken from the packaged
 distribution in `../LT_Engine/lion-throne/`.
@@ -51,11 +65,12 @@ uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions pyth
 
 - Level jump for testing: `http://localhost:8000/?level=<nid>` boots
   directly into that chapter (editor test-play path), skipping the title
-  screen — e.g. `?level=DEBUG` opens the hidden DEBUG sandbox chapter in
-  ~9 s. Wrong nids log the valid list to the JS console and fall back to
-  the title screen. AI-authored test chapters: `TRIAL` (arena skirmish),
-  `TOWN` (talk/shops/arena, reach-the-gate win), `RIVER` (from-scratch
-  AI-generated map)
+  screen — e.g. `?level=CAPITAL` opens the hub level, `?level=S1` opens the
+  first EMBER chapter, in ~9 s. Eldoria's levels are `CAPITAL`, `S1`, `S2`,
+  `SHUB`, `S3`, `S4`, `S5`. Wrong nids log the valid list to the JS console
+  and fall back to the title screen. (`lt_web`'s demo/test chapters —
+  `DEBUG`/`TRIAL`/`TOWN`/`RIVER` — were trimmed out of this fork and do not
+  exist here.)
 - Default controls (GBA-style QWAS, rebindable in-game): arrows move,
   S/Space/Enter confirm (A), A cancel (B), W info (R), Q cycle units (L),
   Tab options menu (Start); full mouse support unchanged

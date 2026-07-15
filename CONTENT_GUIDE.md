@@ -7,6 +7,17 @@ how to discover valid values instead of guessing. All facts below were
 verified against the actual files on 2026-07-08; paths are given so you can
 re-verify anything.
 
+> ⚠️ **This doc predates the Eldoria fork and describes the sibling `lt_web`
+> project (running *The Lion Throne*), which this repo (`Eldoria/`) was
+> cloned from.** The JSON data model, cross-reference rules, and
+> edit→test→rebuild workflow described here apply unchanged. But concrete
+> Lion-Throne-specific facts and numbers (13 levels, 243 events, the demo
+> chapters `DEBUG`/`TRIAL`/`TOWN`/`RIVER`, `title`/`game_nid`) describe the
+> *other* project's content, not Eldoria's. Eldoria has 7 levels (`CAPITAL`,
+> `S1`, `S2`, `SHUB`, `S3`, `S4`, `S5`) and 54 events — re-verify any number
+> against the live files in `lion_throne.ltproj/game_data/` rather than
+> trusting this doc.
+
 ## 0. Orientation — what you are looking at
 
 This repo (`lt_web/`) is a **browser (WebAssembly) build of the Lex Talionis
@@ -295,7 +306,9 @@ while inside), `formation` (prep-screen deployment slots), `time` (expires).
 
 ### 5.3 Events — the actual game logic
 
-`game_data/events.json` — 243 entries. Fields:
+`game_data/events.json` — 243 entries in `lt_web`/Lion Throne, 54 in Eldoria
+(re-count via `len(json.load(open(...)))` rather than trusting either number).
+Fields:
 
 ```
 nid, name, trigger, level_nid (null = fires in any chapter),
@@ -381,7 +394,8 @@ per-entity chunked files that are easy to read.
    ```
    (Run from the parent dir as `uvx pygbag --ume_block 0 --template lt_web/lt.tmpl lt_web` if serving alongside other work.)
 4. **Jump straight to the level under test**: open
-   `http://localhost:8000/?level=<nid>` (e.g. `?level=DEBUG`) — boots
+   `http://localhost:8000/?level=<nid>` (e.g. `?level=CAPITAL` or
+   `?level=S1` in Eldoria; `?level=DEBUG` in the sibling `lt_web` repo) — boots
    directly into that chapter via `game_state.start_level`, skipping the
    title screen (~9 s page-load to map). Unknown nids log the valid list to
    the JS console and fall back to the title screen. Implemented in
