@@ -417,16 +417,18 @@ function show_infobox() {
             box-shadow: 0 3px 10px rgba(0,0,0,.4);
         }
 
-        #tc_shoulders {
+        .tc_shoulder {
             position: fixed;
             bottom: 248px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 14px;
-            pointer-events: none;
+            width: 60px;
+            height: 34px;
+            border-radius: 8px;
+            font-size: 13px;
+            pointer-events: auto;
         }
+
+        .tc_shoulder[data-tc="l"] { left: 25%; transform: translateX(-50%); }
+        .tc_shoulder[data-tc="r"] { left: 75%; transform: translateX(-50%); }
 
         .tc_btn, .tc_dbtn, .tc_speed_btn {
             touch-action: none;
@@ -475,19 +477,13 @@ function show_infobox() {
             box-shadow: inset 0 2px 6px rgba(0,0,0,.5);
         }
 
-        .tc_shoulder {
-            width: 60px;
-            height: 34px;
-            border-radius: 8px;
-            font-size: 13px;
-        }
-
         #tc_dpad {
             position: fixed;
-            left: 50px;
+            left: 25%;
+            transform: translateX(-50%);
             bottom: 55px;
-            width: 174px;
-            height: 174px;
+            width: 162px;
+            height: 162px;
             pointer-events: auto;
         }
 
@@ -499,17 +495,18 @@ function show_infobox() {
             border-radius: 8px;
         }
 
-        .tc_up    { top: 0px;   left: 60px; }
-        .tc_down  { top: 120px; left: 60px; }
-        .tc_left  { top: 60px;  left: 0px; }
-        .tc_right { top: 60px;  left: 120px; }
+        .tc_up    { top: 0px;   left: 54px; }
+        .tc_down  { top: 108px; left: 54px; }
+        .tc_left  { top: 54px;  left: 0px; }
+        .tc_right { top: 54px;  left: 108px; }
 
         #tc_ab {
             position: fixed;
-            right: 24px;
-            bottom: 95px;
-            width: 160px;
-            height: 150px;
+            left: 75%;
+            transform: translateX(-50%);
+            bottom: 105px;
+            width: 138px;
+            height: 62px;
             pointer-events: auto;
         }
 
@@ -522,8 +519,8 @@ function show_infobox() {
             font-weight: bold;
         }
 
-        .tc_b { left: 30px; bottom: 12px; }
-        .tc_a { right: 0px; bottom: 60px; }
+        .tc_b { left: 0px;  bottom: 0px; }
+        .tc_a { right: 0px; bottom: 0px; }
 
         #tc_start {
             display: flex;
