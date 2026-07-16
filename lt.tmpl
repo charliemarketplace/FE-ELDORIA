@@ -408,9 +408,13 @@ function show_infobox() {
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 8px;
             pointer-events: auto;
             z-index: 81;
+            background: var(--lt-panel);
+            border: 1px solid var(--lt-border);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,.4);
         }
 
         #tc_shoulders {
@@ -432,17 +436,26 @@ function show_infobox() {
             -webkit-appearance: none;
             appearance: none;
             font-family: Georgia, serif;
+            transition: transform .06s ease-out, background .06s ease-out, opacity .06s ease-out;
         }
 
         .tc_speed_btn {
             pointer-events: auto;
-            background: var(--lt-panel);
-            color: var(--lt-gold);
-            border: 1px solid var(--lt-border);
-            border-radius: 6px;
-            font-size: 13px;
-            padding: 4px 10px;
-            opacity: .82;
+            background: transparent;
+            color: var(--lt-dim);
+            border: none;
+            border-right: 1px solid var(--lt-border);
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: .5px;
+            padding: 7px 13px;
+        }
+
+        .tc_speed_btn:last-child { border-right: none; }
+
+        .tc_speed_btn.tc_speed_current {
+            background: var(--lt-gold);
+            color: #171a2b;
         }
 
         .tc_btn {
@@ -457,6 +470,8 @@ function show_infobox() {
             opacity: 1;
             background: var(--lt-gold);
             color: #171a2b;
+            transform: scale(0.92);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,.5);
         }
 
         .tc_shoulder {
@@ -577,9 +592,9 @@ height="{{cookiecutter.height}}px"
 
     <div id="touch_controls">
         <div id="tc_speed">
-            <button class="tc_speed_btn" data-tc="x1">1x</button>
-            <button class="tc_speed_btn" data-tc="x2">2x</button>
-            <button class="tc_speed_btn" data-tc="x5">5x</button>
+            <button class="tc_speed_btn tc_speed_current" data-tc="x1">&#9654; 1&times;</button>
+            <button class="tc_speed_btn" data-tc="x2">&#9654;&#9654; 2&times;</button>
+            <button class="tc_speed_btn" data-tc="x5">&#9654;&#9654;&#9654; 5&times;</button>
         </div>
 
         <div id="tc_shoulders">
@@ -775,6 +790,11 @@ frameborder="1"
             try { el.setPointerCapture(e.pointerId); } catch (err) {}
             el.classList.add("tc_active");
             tc_fire("keydown", desc);
+            if (el.classList.contains("tc_speed_btn")) {
+                document.querySelectorAll("#tc_speed .tc_speed_btn").forEach(
+                    (b) => b.classList.remove("tc_speed_current"));
+                el.classList.add("tc_speed_current");
+            }
         };
         const release = (e) => {
             el.classList.remove("tc_active");

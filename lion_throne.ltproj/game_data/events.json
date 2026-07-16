@@ -293,6 +293,7 @@
         "only_once": false,
         "priority": 20,
         "_source": [
+            "game_var;safe_zone;1",
             "give_money;1200",
             "if;game.game_vars.get('kael_joined') and game.get_unit('Kael') and game.get_unit('Kael').team == 'player'",
             "add_unit;Kael;11,1;immediate",
@@ -490,6 +491,7 @@
             "speak;Rowan;Rested, armed, and out of reasons to wait. South it is.",
             "remove_portrait;Rowan",
             "end",
+            "game_var;safe_zone;0",
             "win_game"
         ],
         "nid": "SHUB Depart"
