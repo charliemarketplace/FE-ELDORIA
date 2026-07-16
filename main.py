@@ -192,6 +192,14 @@ async def main():
 
     js_log('metadata ok, loading resources...')
     RESOURCES.load(proj, CURRENT_SERIALIZATION_VERSION)
+    # Prime the fragile action/aura_funcs/unit/combat_calcs/item_funcs/icons/
+    # unit_funcs/skill_system import cluster at a clean, non-circular entry
+    # point BEFORE DB.load() below gets a chance to reach it cold via its own
+    # lazy item/skill component loading. action.py's own imports transitively
+    # resolve nearly the entire cluster non-circularly, so importing it here
+    # first avoids the circular-import crash that lazy-loading would otherwise
+    # hit first under pygbag's import machinery (see tools/verify_boot_import_order.py).
+    import app.engine.action  # noqa: F401
     js_log('resources loaded, loading database...')
     DB.load(proj, CURRENT_SERIALIZATION_VERSION)
     js_log('database loaded')

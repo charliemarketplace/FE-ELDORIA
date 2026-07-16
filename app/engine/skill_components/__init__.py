@@ -1,7 +1,7 @@
 import os
 import importlib
 
-for module in os.listdir(os.path.dirname(__file__)):
+for module in sorted(os.listdir(os.path.dirname(__file__))):
     if module == '__init__.py' or module[-3:] != '.py':
         continue
     print("Importing Skill Components in %s..." % module)

@@ -14,9 +14,14 @@ This was never caught by any other native test this session because every
 other test script pre-imports app.engine.action/unit_funcs/etc. (directly
 or via game_state) BEFORE calling DB.load(), which primes sys.modules and
 hides the ordering bug entirely. This script deliberately mimics main.py's
-real boot order -- import DB and RESOURCES only, nothing else from
-app.engine -- so DB.load() is the very first thing to pull in the whole
-action/skill_system/item_funcs cluster, exactly like the browser boot.
+PRE-FIX cold boot order -- import DB and RESOURCES only, nothing else from
+app.engine, before calling DB.load() -- NOT main.py's current (now-fixed)
+boot order, which primes the cluster via an explicit `import app.engine.action`
+before DB.load(). Staying on the cold/unprimed order here is deliberate: it
+is the strongest possible regression guard on the underlying circular-import
+fragility itself, so DB.load() is the very first thing to pull in the whole
+action/skill_system/item_funcs cluster, exactly like the original crashing
+browser boot.
 
 Run with:
   uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/verify_boot_import_order.py
