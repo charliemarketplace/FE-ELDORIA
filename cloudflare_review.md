@@ -2,6 +2,8 @@
 
 *Research writeup, 2026-07-15. No Cloudflare resources were created; nothing in the repo was modified. Numbers marked ⚠ should be re-checked against live docs before relying on them.*
 
+*Update, 2026-07-16: implemented. Live manual deploy confirmed at `https://eldoria.carlos-rafael-mercado4.workers.dev`. Cloudflare's native Git integration is now connected to `charliemarketplace/FE-ELDORIA` (`main` branch) with build command `curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH="$HOME/.local/bin:$PATH" && uvx pygbag --ume_block 0 --template lt.tmpl --build .` and deploy command `npx wrangler deploy`. The `.github/workflows/deploy.yml` GitHub Actions workflow remains committed as a manual (`workflow_dispatch`-only) fallback in case the Cloudflare build container can't bootstrap `uv`.*
+
 ---
 
 ## Summary / Recommendation
