@@ -1314,6 +1314,19 @@
             "speak;Rowan;Rested, armed, and out of reasons to wait. Emberhollow's this way. Let's move.",
             "remove_portrait;Rowan",
             "game_var;safe_zone;0",
+            "reveal_overworld_node;CAPITAL;immediate",
+            "reveal_overworld_node;S1;immediate",
+            "reveal_overworld_node;S2;immediate",
+            "reveal_overworld_node;SHUB;immediate",
+            "reveal_overworld_node;S3;immediate",
+            "reveal_overworld_node;S4;immediate",
+            "reveal_overworld_node;S5;immediate",
+            "reveal_overworld_road;CAPITAL;S1;immediate",
+            "reveal_overworld_road;S1;S2;immediate",
+            "reveal_overworld_road;S2;SHUB;immediate",
+            "reveal_overworld_road;SHUB;S3;immediate",
+            "reveal_overworld_road;S3;S4;immediate",
+            "reveal_overworld_road;S4;S5;immediate",
             "win_game"
         ]
     }

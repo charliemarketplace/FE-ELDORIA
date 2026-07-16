@@ -384,6 +384,148 @@ function show_infobox() {
         .tool_btn:hover { opacity: 1; }
         #export_btn { right: 56px; }
         #import_btn { right: 98px; }
+
+        /* --- Mobile touch controls: hidden by default, shown only on
+           touch-primary, phone-sized screens (see media query below) --- */
+        #touch_controls {
+            display: none;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 80;
+            pointer-events: none;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        @media (pointer: coarse) and (max-width: 900px) {
+            #touch_controls { display: block; }
+        }
+
+        #tc_speed {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            pointer-events: auto;
+            z-index: 81;
+        }
+
+        #tc_main_row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 16px 10px 16px;
+        }
+
+        #tc_shoulders {
+            position: fixed;
+            bottom: 168px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            pointer-events: none;
+        }
+
+        .tc_btn, .tc_dbtn, .tc_speed_btn {
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-appearance: none;
+            appearance: none;
+            font-family: Georgia, serif;
+        }
+
+        .tc_speed_btn {
+            pointer-events: auto;
+            background: var(--lt-panel);
+            color: var(--lt-gold);
+            border: 1px solid var(--lt-border);
+            border-radius: 6px;
+            font-size: 13px;
+            padding: 4px 10px;
+            opacity: .82;
+        }
+
+        .tc_btn {
+            pointer-events: auto;
+            background: var(--lt-panel);
+            color: var(--lt-text);
+            border: 1px solid var(--lt-border);
+            opacity: .82;
+        }
+
+        .tc_btn.tc_active, .tc_speed_btn.tc_active {
+            opacity: 1;
+            background: var(--lt-gold);
+            color: #171a2b;
+        }
+
+        .tc_shoulder {
+            width: 60px;
+            height: 34px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        #tc_dpad {
+            position: relative;
+            width: 132px;
+            height: 132px;
+            pointer-events: auto;
+        }
+
+        .tc_dbtn {
+            position: absolute;
+            width: 46px;
+            height: 46px;
+            font-size: 18px;
+            border-radius: 8px;
+        }
+
+        .tc_up    { top: 0px;  left: 43px; }
+        .tc_down  { top: 86px; left: 43px; }
+        .tc_left  { top: 43px; left: 0px; }
+        .tc_right { top: 43px; left: 86px; }
+
+        #tc_ab {
+            position: relative;
+            width: 140px;
+            height: 96px;
+            pointer-events: auto;
+        }
+
+        .tc_round {
+            position: absolute;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .tc_b { left: 0px; bottom: 0px; }
+        .tc_a { right: 0px; bottom: 30px; }
+
+        #tc_start {
+            display: flex;
+            justify-content: center;
+            padding-bottom: 10px;
+            pointer-events: none;
+        }
+
+        .tc_start_btn {
+            pointer-events: auto;
+            border-radius: 14px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            padding: 6px 24px;
+        }
     </style>
 
     <script src="{{cookiecutter.cdn}}/browserfs.min.js"></script>
@@ -434,6 +576,37 @@ height="{{cookiecutter.height}}px"
         </table>
         <div class="foot">Press any key or click the game to dismiss &middot; <b>?</b> reopens this card<br>
         Saves persist in this browser &middot; &#128190; downloads them &middot; &#128194; imports a download</div>
+    </div>
+
+    <div id="touch_controls">
+        <div id="tc_speed">
+            <button class="tc_speed_btn" data-tc="x1">1x</button>
+            <button class="tc_speed_btn" data-tc="x2">2x</button>
+            <button class="tc_speed_btn" data-tc="x5">5x</button>
+        </div>
+
+        <div id="tc_shoulders">
+            <button class="tc_btn tc_shoulder" data-tc="l">L</button>
+            <button class="tc_btn tc_shoulder" data-tc="r">R</button>
+        </div>
+
+        <div id="tc_main_row">
+            <div id="tc_dpad">
+                <button class="tc_btn tc_dbtn tc_up" data-tc="up">&#9650;</button>
+                <button class="tc_btn tc_dbtn tc_left" data-tc="left">&#9664;</button>
+                <button class="tc_btn tc_dbtn tc_right" data-tc="right">&#9654;</button>
+                <button class="tc_btn tc_dbtn tc_down" data-tc="down">&#9660;</button>
+            </div>
+
+            <div id="tc_ab">
+                <button class="tc_btn tc_round tc_b" data-tc="b">B</button>
+                <button class="tc_btn tc_round tc_a" data-tc="a">A</button>
+            </div>
+        </div>
+
+        <div id="tc_start">
+            <button class="tc_btn tc_start_btn" data-tc="start">Start</button>
+        </div>
     </div>
 
     <div id=html></div>
@@ -564,6 +737,60 @@ frameborder="1"
     // Dismiss the controls card on first interaction with the game
     document.addEventListener("keydown", hide_controls, { once: true });
     document.getElementById("canvas").addEventListener("mousedown", hide_controls, { once: true });
+
+    // --- Mobile touch controls: translate taps into the same synthetic
+    // keyboard events the engine already listens for (see app/engine/config.py
+    // key_SELECT/BACK/INFO/AUX/START and driver.py's 1/2/5 speed hotkeys).
+    // keydown fires on touch-start and keyup on touch-end/cancel so a held
+    // button matches pygame.key.get_pressed()'s continuous state, same as a
+    // held physical key (e.g. holding Cancel for fast cursor).
+    const TC_KEYS = {
+        up:    { code: "ArrowUp",    key: "ArrowUp",    keyCode: 38 },
+        down:  { code: "ArrowDown",  key: "ArrowDown",  keyCode: 40 },
+        left:  { code: "ArrowLeft",  key: "ArrowLeft",  keyCode: 37 },
+        right: { code: "ArrowRight", key: "ArrowRight", keyCode: 39 },
+        a:     { code: "Space",      key: " ",          keyCode: 32 },  // confirm
+        b:     { code: "KeyA",       key: "a",          keyCode: 65 },  // cancel
+        l:     { code: "KeyQ",       key: "q",          keyCode: 81 },  // cycle units
+        r:     { code: "KeyW",       key: "w",          keyCode: 87 },  // unit info
+        start: { code: "Tab",        key: "Tab",         keyCode: 9  },
+        x1:    { code: "Digit1",     key: "1",          keyCode: 49 },
+        x2:    { code: "Digit2",     key: "2",          keyCode: 50 },
+        x5:    { code: "Digit5",     key: "5",          keyCode: 53 },
+    };
+
+    function tc_fire(type, desc) {
+        const ev = new KeyboardEvent(type, { bubbles: true, cancelable: true, key: desc.key, code: desc.code });
+        try {
+            Object.defineProperty(ev, "keyCode", { get: () => desc.keyCode });
+            Object.defineProperty(ev, "which", { get: () => desc.keyCode });
+        } catch (e) { /* ignore on browsers that disallow redefining */ }
+        const canvas = document.getElementById("canvas");
+        if (canvas) canvas.dispatchEvent(ev);
+        document.dispatchEvent(ev);
+    }
+
+    function tc_bind(el) {
+        const desc = TC_KEYS[el.dataset.tc];
+        if (!desc) return;
+        const press = (e) => {
+            e.preventDefault();
+            try { el.setPointerCapture(e.pointerId); } catch (err) {}
+            el.classList.add("tc_active");
+            tc_fire("keydown", desc);
+        };
+        const release = (e) => {
+            el.classList.remove("tc_active");
+            tc_fire("keyup", desc);
+        };
+        el.addEventListener("pointerdown", press);
+        el.addEventListener("pointerup", release);
+        el.addEventListener("pointercancel", release);
+        el.addEventListener("pointerleave", release);
+        el.addEventListener("contextmenu", (e) => e.preventDefault());
+    }
+
+    document.querySelectorAll("#touch_controls [data-tc]").forEach(tc_bind);
 
     async function custom_onload(debug_hidden) {
         // this is called before anything python is loaded
