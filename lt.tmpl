@@ -413,16 +413,9 @@ function show_infobox() {
             z-index: 81;
         }
 
-        #tc_main_row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding: 0 16px 10px 16px;
-        }
-
         #tc_shoulders {
             position: fixed;
-            bottom: 254px;
+            bottom: 248px;
             left: 0;
             right: 0;
             display: flex;
@@ -474,29 +467,33 @@ function show_infobox() {
         }
 
         #tc_dpad {
-            position: relative;
-            width: 168px;
-            height: 168px;
+            position: fixed;
+            left: 50px;
+            bottom: 80px;
+            width: 192px;
+            height: 192px;
             pointer-events: auto;
         }
 
         .tc_dbtn {
             position: absolute;
-            width: 58px;
-            height: 58px;
+            width: 56px;
+            height: 56px;
             font-size: 20px;
             border-radius: 8px;
         }
 
-        .tc_up    { top: 0px;   left: 55px; }
-        .tc_down  { top: 110px; left: 55px; }
-        .tc_left  { top: 55px;  left: 0px; }
-        .tc_right { top: 55px;  left: 110px; }
+        .tc_up    { top: 0px;   left: 68px; }
+        .tc_down  { top: 136px; left: 68px; }
+        .tc_left  { top: 68px;  left: 0px; }
+        .tc_right { top: 68px;  left: 136px; }
 
         #tc_ab {
-            position: relative;
-            width: 150px;
-            height: 130px;
+            position: fixed;
+            right: 24px;
+            bottom: 95px;
+            width: 160px;
+            height: 150px;
             pointer-events: auto;
         }
 
@@ -509,8 +506,8 @@ function show_infobox() {
             font-weight: bold;
         }
 
-        .tc_b { left: 0px; bottom: 10px; }
-        .tc_a { right: 0px; bottom: 58px; }
+        .tc_b { left: 0px; bottom: 12px; }
+        .tc_a { right: 0px; bottom: 60px; }
 
         #tc_start {
             display: flex;
