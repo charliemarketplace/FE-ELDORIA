@@ -1,0 +1,13 @@
+{
+  "name": "eldoria-deploy",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Wrangler tooling for deploying the pygbag web build of Eldoria to Cloudflare Workers.",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}

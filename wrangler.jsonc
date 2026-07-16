@@ -1,0 +1,8 @@
+{
+  "name": "eldoria",
+  "compatibility_date": "2026-07-15",
+  "account_id": "d2c1f6ecabf50c2dadc7ec5aebbd2aa5",
+  "assets": {
+    "directory": "./build/web"
+  }
+}
