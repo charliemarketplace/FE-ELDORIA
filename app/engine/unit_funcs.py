@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Set, TYPE_CHECKING
 from app.data.database.database import DB
 from app.data.database.difficulty_modes import GrowthOption
-from app.engine import item_funcs, skill_system
+import app.engine.item_funcs as item_funcs
+import app.engine.skill_system as skill_system
 from app.engine.game_state import game
 from app.events import triggers
 from app.utilities import utils, static_random

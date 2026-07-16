@@ -3,7 +3,11 @@ from app.engine.game_state import game
 from app.utilities import utils
 from app.data.database.database import DB
 from app.data.database import weapons
-from app.engine import equations, item_system, item_funcs, skill_system, line_of_sight
+import app.engine.equations as equations
+import app.engine.item_system as item_system
+import app.engine.item_funcs as item_funcs
+import app.engine.skill_system as skill_system
+import app.engine.line_of_sight as line_of_sight
 from app.engine.combat.utils import resolve_weapon
 
 def get_weapon_rank_bonus(unit, item):

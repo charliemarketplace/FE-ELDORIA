@@ -7,8 +7,12 @@ from app.data.database.database import DB
 from app.data.database.difficulty_modes import GrowthOption
 from app.data.database.level_units import GenericUnit, UniqueUnit
 from app.data.database.units import UnitPrefab
-from app.engine import (combat_calcs, equations, item_funcs, item_system,
-                        skill_system, unit_funcs)
+import app.engine.combat_calcs as combat_calcs
+import app.engine.equations as equations
+import app.engine.item_funcs as item_funcs
+import app.engine.item_system as item_system
+import app.engine.skill_system as skill_system
+import app.engine.unit_funcs as unit_funcs
 from app.engine.objects.difficulty_mode import DifficultyModeObject
 from app.engine.objects.item import ItemObject
 from app.engine.objects.skill import SkillObject

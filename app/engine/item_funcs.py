@@ -4,7 +4,9 @@ import math
 from typing import TYPE_CHECKING, Dict, List, Set
 
 from app.data.database.database import DB
-from app.engine import item_system, skill_system, text_funcs
+import app.engine.item_system as item_system
+import app.engine.skill_system as skill_system
+import app.engine.text_funcs as text_funcs
 from app.engine.objects.item import ItemObject
 from app.engine.objects.skill import SkillObject
 from app.utilities import utils

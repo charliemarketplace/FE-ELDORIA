@@ -15,8 +15,15 @@ from app.data.database.database import DB
 from app.events.regions import RegionType
 from app.events import triggers
 from app.data.resources.resources import RESOURCES
-from app.engine import (aura_funcs, banner, equations, item_funcs, item_system,
-                        particles, skill_system, unit_funcs, animations)
+import app.engine.aura_funcs as aura_funcs
+import app.engine.banner as banner
+import app.engine.equations as equations
+import app.engine.item_funcs as item_funcs
+import app.engine.item_system as item_system
+import app.engine.particles as particles
+import app.engine.skill_system as skill_system
+import app.engine.unit_funcs as unit_funcs
+import app.engine.animations as animations
 from app.engine.game_state import game
 from app.engine.objects.item import ItemObject
 from app.engine.objects.skill import SkillObject

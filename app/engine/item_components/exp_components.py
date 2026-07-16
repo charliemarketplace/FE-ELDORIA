@@ -5,7 +5,8 @@ from app.data.database.database import DB
 from app.data.database.item_components import ItemComponent, ItemTags
 from app.data.database.components import ComponentType
 
-from app.engine import skill_system, action
+import app.engine.skill_system as skill_system
+import app.engine.action as action
 from app.utilities import utils
 
 def determine_all_defenders(playback: list, attacker) -> set:

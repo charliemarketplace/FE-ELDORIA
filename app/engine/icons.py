@@ -6,7 +6,10 @@ from app.data.database.database import DB
 
 from app.engine.sprites import SPRITES
 from app.engine.fonts import FONT
-from app.engine import engine, skill_system, image_mods, unit_funcs
+import app.engine.engine as engine
+import app.engine.skill_system as skill_system
+import app.engine.image_mods as image_mods
+import app.engine.unit_funcs as unit_funcs
 
 def get_icon_by_name(name) -> engine.Surface:
     image, index = None, None
