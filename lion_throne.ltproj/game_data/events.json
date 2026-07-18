@@ -1343,5 +1343,117 @@
             "reveal_overworld_road;S3;S4;immediate",
             "reveal_overworld_road;S4;S5;immediate"
         ]
+    },
+    {
+        "name": "SwitchWest",
+        "trigger": "SwitchWest",
+        "level_nid": "S3",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "show_layer;SwitchWest",
+            "speak;Iska;The wall gave way. There's a path through, west."
+        ],
+        "nid": "S3 SwitchWest"
+    },
+    {
+        "name": "SwitchNorth",
+        "trigger": "SwitchNorth",
+        "level_nid": "S3",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "show_layer;SwitchNorth",
+            "speak;Sable;Something clicked open, up north."
+        ],
+        "nid": "S3 SwitchNorth"
+    },
+    {
+        "name": "SwitchSouth",
+        "trigger": "SwitchSouth",
+        "level_nid": "S3",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "show_layer;SwitchSouth",
+            "speak;Rowan;The switch held. Rubble's clear to the south."
+        ],
+        "nid": "S3 SwitchSouth"
+    },
+    {
+        "name": "SwitchCenter",
+        "trigger": "SwitchCenter",
+        "level_nid": "S3",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "show_layer;SwitchCenter",
+            "speak;Iska;Both walls, at once. Whatever this thing was rigged to, it's open now."
+        ],
+        "nid": "S3 SwitchCenter"
+    },
+    {
+        "name": "ChestWest",
+        "trigger": "ChestWest",
+        "level_nid": "S3",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "give_item;{unit};Silence",
+            "speak;Sable;A relic, still humming. Careful with it."
+        ],
+        "nid": "S3 ChestWest"
+    },
+    {
+        "name": "ChestNorth",
+        "trigger": "ChestNorth",
+        "level_nid": "S3",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "give_item;{unit};Mend",
+            "speak;Rowan;Someone hid this well."
+        ],
+        "nid": "S3 ChestNorth"
+    },
+    {
+        "name": "ChestSouth",
+        "trigger": "ChestSouth",
+        "level_nid": "S3",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "give_item;{unit};Blind",
+            "speak;Iska;Whatever this does, I don't like the look of it."
+        ],
+        "nid": "S3 ChestSouth"
+    },
+    {
+        "name": "ChestCenter",
+        "trigger": "ChestCenter",
+        "level_nid": "S3",
+        "condition": "True",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "give_item;{unit};Brave Lance",
+            "speak;Rowan;Two switches for this. Whoever hid it wanted it kept."
+        ],
+        "nid": "S3 ChestCenter"
     }
 ]
