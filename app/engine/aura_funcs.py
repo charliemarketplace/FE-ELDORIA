@@ -36,12 +36,16 @@ def pull_auras(unit, game, test=False):
     for aura_data in game.board.get_auras(unit.position):
         child_aura_uid, target = aura_data
         child_skill = game.get_skill(child_aura_uid)
+        if not child_skill or not child_skill.parent_skill:
+            continue
         owner_nid = child_skill.parent_skill.owner_nid
         owner = game.get_unit(owner_nid)
         if owner is not unit:
             apply_aura(owner, unit, child_skill, target, test)
 
 def apply_aura(owner, unit, child_skill, target, test=False):
+    if not child_skill or not child_skill.parent_skill:
+        return
     if target == 'enemy' and skill_system.check_enemy(owner, unit) or \
             target == 'ally' and skill_system.check_ally(owner, unit) or \
             target == 'unit':
@@ -59,6 +63,8 @@ def apply_aura(owner, unit, child_skill, target, test=False):
             act.do()
 
 def remove_aura(unit, child_skill, test=False):
+    if not child_skill or not child_skill.parent_skill:
+        return
     if child_skill in unit.all_skills:
         logging.debug("Removing Aura %s from %s", child_skill, unit)
         if test:
@@ -69,6 +75,9 @@ def remove_aura(unit, child_skill, test=False):
             act.do()
 
 def propagate_aura(unit, skill, game):
+    if not skill.subskill:
+        logging.error("Aura skill %s has no subskill (its 'aura' component points at a missing skill nid); skipping propagation", skill.nid)
+        return
     game.board.reset_aura(skill.subskill)
     aura_range = skill.aura_range.value
     aura_range = set(range(1, aura_range + 1))
@@ -85,6 +94,9 @@ def repopulate_aura(unit, skill, game):
     Called only on loading a level in order to
     re-populate the game.board with the aura connections
     """
+    if not skill.subskill:
+        logging.error("Aura skill %s has no subskill (its 'aura' component points at a missing skill nid); skipping propagation", skill.nid)
+        return
     game.board.reset_aura(skill.subskill)
     aura_range = skill.aura_range.value
     aura_range = set(range(1, aura_range + 1))
@@ -93,6 +105,8 @@ def repopulate_aura(unit, skill, game):
         game.board.add_aura(pos, skill.subskill, skill.aura_target.value)
 
 def release_aura(unit, skill, game):
+    if not skill.subskill:
+        return
     logging.debug("Releasing Aura %s (owned by %s)", skill, unit)
     for pos in list(game.board.get_aura_positions(skill.subskill)):
         game.board.remove_aura(pos, skill.subskill)
