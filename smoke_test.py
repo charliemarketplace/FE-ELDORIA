@@ -16,6 +16,26 @@ DB.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
 print('TITLE:', DB.constants.value('title'))
 print('levels:', len(DB.levels), '| units:', len(DB.units), '| items:', len(DB.items), '| skills:', len(DB.skills))
 
+# Content-integrity check: every item/skill/unit/level field that references
+# another piece of content (e.g. a skill's "ability" component pointing at an
+# item nid) must resolve to something that actually exists. A dangling
+# reference here doesn't fail to load -- it silently returns None at runtime
+# and crashes the game the first time that content is actually used (e.g. a
+# missing ability item crashes on the unit's next status upkeep). Catching it
+# at build time instead of during someone's playthrough is the whole point.
+from app.data.validation.db_validation import DBChecker
+checker = DBChecker(DB, RESOURCES)
+content_errors = checker.validate_for_errors()
+content_warnings = checker.validate_for_warnings()
+for warning in content_warnings:
+    print('CONTENT_WARNING:', warning)
+if content_errors:
+    for error in content_errors:
+        print('CONTENT_ERROR:', error)
+    print('CONTENT_VALIDATION_FAILED: %d error(s), %d warning(s)' % (len(content_errors), len(content_warnings)))
+    sys.exit(1)
+print('CONTENT_VALIDATION_OK (%d warning(s))' % len(content_warnings))
+
 # Engine modules create surfaces at import time; init a dummy display first
 import pygame
 pygame.init()

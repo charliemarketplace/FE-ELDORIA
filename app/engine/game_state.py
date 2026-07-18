@@ -1479,13 +1479,20 @@ class GameState():
 
     def get_open_formation_spots(self) -> List[Pos]:
         """
-        Gets all open formation spots on the current level.
+        Gets all open formation spots on the current level, ordered so that
+        units fill in from the center outward instead of raster-filling
+        row by row.
 
         Returns:
             List[Pos]: A list of tuples representing the coordinates of open formation spots.
         """
         all_formation_spots = self.get_all_formation_spots()
-        return sorted({pos for pos in all_formation_spots if not self.board.get_unit(pos)})
+        open_spots = {pos for pos in all_formation_spots if not self.board.get_unit(pos)}
+        if not all_formation_spots:
+            return sorted(open_spots)
+        cx = sum(pos[0] for pos in all_formation_spots) / len(all_formation_spots)
+        cy = sum(pos[1] for pos in all_formation_spots) / len(all_formation_spots)
+        return sorted(open_spots, key=lambda pos: ((pos[0] - cx) ** 2 + (pos[1] - cy) ** 2, pos))
 
     def get_next_formation_spot(self) -> Optional[Pos]:
         legal_spots = self.get_open_formation_spots()

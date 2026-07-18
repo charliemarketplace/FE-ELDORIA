@@ -457,3 +457,181 @@ true→false; EXP tuning `exp_curve` 0.035→0.22, `default_exp` 11→15,
 The takeaway for authoring: **a total-conversion level of behavior change
 required zero engine edits** — that is the property this whole pipeline
 relies on.
+
+## 10. Switches, layer reveals, and gated progression/loot
+
+A recurring content pattern — "step on a switch, something elsewhere
+unlocks" (a wall opens, a door opens, a chest becomes reachable, a boss
+event arms) — is not a single engine feature. It's the same three building
+blocks from §5.2/§5.3 (region → event → world-state mutation) composed
+twice: once for the trigger, once for whatever downstream thing checks the
+resulting state. There is no dedicated "Switch" mechanic in the engine;
+`Switch` is just a conventional `sub_nid` string, same as `Visit` or
+`Search`.
+
+### 10.1 The two gating flavors used in this project
+
+**A. Layer-reveal gating** (terrain literally changes) — worked example:
+`S3` ("The Last Reliquary"). The tilemap prefab
+(`resources/tilemaps/tilemap.json`, nid `"Chapter 3"`) has extra layers
+beyond `base`, each with a `terrain_grid` that overrides specific tiles when
+shown: `SwitchWest`/`SwitchNorth`/`SwitchSouth`/`SwitchCenter` (each turns
+one or two `Wall` tiles into passable `Floor`/`Stairs` elsewhere on the map,
+plus redraws the switch's own tile as "activated"), `DoorWest`/`DoorEast`
+(same idea, opens a `Door` tile), and `ChestWest`/`ChestNorth`/`ChestSouth`/
+`ChestCenter` (sprite-only, no terrain change — purely a "chest is here"
+decoration layer; the underlying `Chest` terrain tile is already part of
+`base` and is walkable from level start, it's just unreachable until a wall
+opens). All layers start with a `visible` flag in the tilemap prefab; a
+level event calls `show_layer;<LayerNid>` to flip it on permanently (there's
+also `hide_layer` to flip one off — e.g. for a bridge that burns down).
+
+The region + event pair, once per switch:
+
+```json
+// levels.json, S3's "regions" list
+{"nid": "SwitchWest", "region_type": "event", "position": [2, 9], "size": [1, 1],
+ "sub_nid": "SwitchWest", "condition": "unit.team == 'player'",
+ "time_left": null, "only_once": true, "interrupt_move": false}
+```
+```
+# events.json, level_nid "S3", trigger "SwitchWest"
+show_layer;SwitchWest
+speak;Iska;The wall gave way. There's a path through, west.
+```
+
+Then a second, independent region+event sits on the now-reachable chest
+tile itself and hands out the loot on visit — it needs no extra gating
+condition, because the tile is *physically* unreachable until the switch
+fires (see §10.2 on proving that):
+
+```json
+{"nid": "ChestWest", "region_type": "event", "position": [2, 12], "size": [1, 1],
+ "sub_nid": "ChestWest", "condition": "unit.team == 'player'",
+ "time_left": null, "only_once": true, "interrupt_move": false}
+```
+```
+# events.json, level_nid "S3", trigger "ChestWest"
+give_item;{unit};Silence
+speak;Sable;A relic, still humming. Careful with it.
+```
+
+S3 has four independent switch→chest pairs (West/North/South/Center) plus
+two separately-authored `Door` layers gating the critical path — read
+`S3`'s full `regions` list and its `S3 Switch*`/`S3 Chest*` events for all
+four worked examples side by side.
+
+**B. `game_var` gating** (no terrain change, just a flag) — worked example:
+`S5`, regions `Valve1`/`Valve2`/`Valve3` (`region_type: "event"`,
+`only_once: true`). Each fires an event that sets a boolean
+(`game_var;valve1;1`), then checks all three together:
+
+```
+game_var;valve1;1
+speak;Iska;Valve's open. Pressure's already dropping on this side.
+if;game.game_vars.get('valve1') and game.game_vars.get('valve2') and game.game_vars.get('valve3')
+speak;Rowan;All three are open. To the core, before Voss cracks it.
+end
+```
+
+A separate region (`VaultCore`, sub_nid `Quench`) checks the same three
+`game_vars` in its own `condition` string to decide whether interacting
+with it should succeed. Use this flavor when the "unlock" isn't a physical
+wall — a scripted event, a boss becoming vulnerable, a chapter objective
+flipping — or when N switches need to jointly gate one thing in an order
+-independent way (raw layer-reveals can do this too by all targeting the
+same layer, but a shared `game_var` check is clearer to read).
+
+Nothing stops combining both in one switch: `S3`'s `SwitchCenter` region
+shows a single layer that breaches two separate walls at once (a `show_layer`
+layer can have more than one tile in its `terrain_grid`), and a `game_var`
+could additionally be set there if some other event later needs to know
+"has the center switch been thrown" without re-deriving it from terrain.
+
+### 10.2 Don't ship an unreachable switch or a soft-lock — prove reachability first
+
+The bug this section exists to prevent: S3 originally shipped with the
+`Switch`/`Chest` art layers in place but **zero regions or events** wired
+to them — a player could see the switches and chests but nothing happened,
+and the chests were unreachable. The fix wasn't guessing at plausible tile
+coordinates; it was running an actual reachability simulation over the raw
+`terrain_grid` data before authoring a single region, using each tile's
+`mtype` from `game_data/terrain.json` (`Wall` = impassable, everything else
+= passable for a basic ground unit — good enough for placement purposes;
+it ignores movement-type-specific costs, which don't matter for a yes/no
+reachability check):
+
+```python
+import json
+from collections import deque
+
+tm = json.load(open('lion_throne.ltproj/resources/tilemaps/tilemap.json'))
+terrain = json.load(open('lion_throne.ltproj/game_data/terrain.json'))
+mtype = {t['nid']: t.get('mtype') for t in terrain}
+chapter = next(t for t in tm if t['nid'] == '<TilemapNid>')
+layers = {l['nid']: l for l in chapter['layers']}
+W, H = chapter['size']
+
+def build_grid(active_layers):
+    grid = {}
+    for lname in ['base'] + active_layers:
+        for k, v in layers[lname].get('terrain_grid', {}).items():
+            x, y = map(int, k.split(','))
+            grid[(x, y)] = v
+    return grid
+
+def walkable(grid, pos):
+    return grid.get(pos) is not None and mtype.get(grid[pos]) != 'Wall'
+
+def bfs(grid, start):
+    seen, q = {start}, deque([start])
+    while q:
+        x, y = q.popleft()
+        for dx, dy in [(1,0),(-1,0),(0,1),(0,-1)]:
+            np = (x+dx, y+dy)
+            if 0 <= np[0] < W and 0 <= np[1] < H and np not in seen and walkable(grid, np):
+                seen.add(np); q.append(np)
+    return seen
+```
+
+Use it to check, for every switch→gated-thing pair you're about to author:
+1. **The switch's own trigger tile is reachable with nothing else
+   triggered** (`bfs(build_grid([]), start_pos)` — or whatever's already
+   guaranteed shown, e.g. `Door*` layers here since those open
+   unconditionally at `level_start`) — otherwise you've authored an
+   unreachable switch, a soft-lock.
+2. **The gated tile is *not* reachable before the switch fires** — otherwise
+   the "puzzle" does nothing and the switch is inert set dressing.
+3. **The gated tile *is* reachable once only that one switch's layer is
+   shown** — confirms the switch actually controls that gate and isn't
+   coincidentally already open some other way, and that you haven't
+   accidentally required two switches when you only meant to require one
+   (or vice versa — `SwitchCenter` here was deliberately required for
+   `ChestCenter` alone, discoverable by noticing its two breach tiles sit
+   on both sides of a fully wall-enclosed room, per §10.1).
+
+This is cheap (milliseconds, pure Python, no game boot needed) and it's the
+difference between a puzzle and a bug. Do it *before* picking tile
+coordinates for regions, not after — let the reachability data tell you
+where the trigger and the reward actually are, rather than eyeballing
+sprite positions in the layer's `sprite_grid`.
+
+### 10.3 After authoring: verify at runtime, not just at load time
+
+`smoke_test.py`'s content validator (see the top-level `DBChecker` wiring)
+catches dangling nid references (an event `give_item`-ing an item that
+doesn't exist, a component pointing at a missing skill) but it does **not**
+execute events or simulate movement — a region on the wrong tile, a
+`show_layer` with a typo'd layer nid, or a wrong item nid in `give_item`
+will load fine and only fail when a player actually steps there. There is
+currently no automated headless test that drives a level turn-by-turn and
+fires region interactions; if you're authoring a new switch/gate, the
+verified way to catch this is a throwaway headless script (native, dummy
+SDL driver) that boots the level via `game_state.start_level(<nid>)`,
+places/moves a unit onto the trigger tile, fires the region's event the
+same way the engine's region-interaction menu does (trigger nid
+`on_region_interact`, see `app/events/triggers.py`), and re-checks
+reachability/inventory afterward. This is slower than the static BFS check
+in §10.2 (needs a real engine boot) — use the BFS check to get placement
+right the first time, and a runtime script to confirm the wiring (region
+sub_nid ↔ event trigger ↔ layer/item nid) actually fires end-to-end.

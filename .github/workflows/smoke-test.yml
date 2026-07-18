@@ -1,0 +1,24 @@
+name: Smoke test
+
+# Headless regression gate: loads the full game data, runs the content
+# validator (dangling nid references fail the build), imports the heavy
+# engine modules, and exercises the silent-audio path. Catches the class
+# of bug where a data edit references content that doesn't exist -- which
+# loads fine but crashes mid-playthrough the first time it's used.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Run headless smoke test
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python smoke_test.py

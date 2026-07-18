@@ -1601,5 +1601,54 @@
                 ]
             ]
         ]
+    },
+    {
+        "nid": "Aura_Defense_Child",
+        "name": "Defense Aura",
+        "desc": "Grants DEF +2.",
+        "icon_nid": "Skills",
+        "icon_index": [
+            7,
+            4
+        ],
+        "components": [
+            [
+                "hidden",
+                null
+            ],
+            [
+                "stat_change",
+                [
+                    [
+                        "DEF",
+                        2
+                    ]
+                ]
+            ]
+        ]
+    },
+    {
+        "nid": "Aura_Charisma_Child",
+        "name": "Charisma",
+        "desc": "Grants Hit/Avoid +15.",
+        "icon_nid": "Skills",
+        "icon_index": [
+            1,
+            9
+        ],
+        "components": [
+            [
+                "hidden",
+                null
+            ],
+            [
+                "hit",
+                15
+            ],
+            [
+                "avoid",
+                15
+            ]
+        ]
     }
 ]

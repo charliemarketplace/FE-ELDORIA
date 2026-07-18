@@ -332,17 +332,23 @@ class GameBoard(object):
         return grid
 
     def reset_aura(self, child_skill: SkillObject):
+        if not child_skill:
+            return
         if child_skill.uid in self.known_auras:
             self.known_auras[child_skill.uid].clear()
 
     def add_aura(self, pos: Pos, child_skill: SkillObject, target: str):
         # Target is one of ('Ally', 'Enemy', 'Unit')
+        if not child_skill:
+            return
         self.aura_grid.get(pos).add((child_skill.uid, target))
         if child_skill.uid not in self.known_auras:
             self.known_auras[child_skill.uid] = set()
         self.known_auras[child_skill.uid].add(pos)
 
     def remove_aura(self, pos: Pos, child_skill: SkillObject):
+        if not child_skill:
+            return
         for aura_data in list(self.aura_grid.get(pos)):
             if aura_data[0] == child_skill.uid:
                 self.aura_grid.get(pos).discard(aura_data)
@@ -353,4 +359,6 @@ class GameBoard(object):
         return self.aura_grid.get(pos)
 
     def get_aura_positions(self, child_skill: SkillObject) -> Set[Pos]:
+        if not child_skill:
+            return set()
         return self.known_auras.get(child_skill.uid, set())
