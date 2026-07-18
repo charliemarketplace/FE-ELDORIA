@@ -380,8 +380,8 @@ def get_extra_abilities(unit):
             if component.defines('extra_ability'):
                 if component.ignore_conditional or condition(skill, unit):
                     new_item = component.extra_ability(unit)
-                    ability_name = new_item.name
-                    abilities[ability_name] = new_item
+                    if new_item:
+                        abilities[new_item.name] = new_item
     return abilities
 
 def ai_priority_multiplier(unit) -> float:

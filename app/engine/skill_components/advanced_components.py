@@ -1,4 +1,5 @@
 from __future__ import annotations
+import logging
 from typing import TYPE_CHECKING
 
 from app.data.database.components import ComponentType
@@ -67,6 +68,9 @@ class Ability(SkillComponent):
             return game.item_registry[item_uid]
         else:
             new_item = item_funcs.create_item(unit, self.value)
+            if not new_item:
+                logging.error("Ability skill %s could not create its item %s", self.skill.nid, self.value)
+                return None
             self.skill.data['ability_item_uid'] = new_item.uid
             game.register_item(new_item)
             return new_item
