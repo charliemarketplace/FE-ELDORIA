@@ -1,0 +1,72 @@
+name: Ledger item
+description: A backlog item from the Expansion Ledger, or any bug/content/doc/infra task sized to resolve in one pass.
+title: "[category] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill in what you know. It's fine to leave "Skill" blank if none exists yet — that's useful signal on its own (it usually means the doc gap should get written before or alongside the fix).
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Matches the labels used in the Expansion Ledger.
+      options:
+        - content (level/unit/item/skill authoring)
+        - engine (Python, app/)
+        - bug-watch (recurring or latent bug class)
+        - testing (smoke test / CI / verification)
+        - infra (deploy, CI, Cloudflare, wrangler)
+        - docs (CONTENT_GUIDE.md, case studies, skills)
+        - mobile-ux
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What's broken, missing, or should exist. One or two sentences.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context / why it matters
+      description: Where this came from (a bug report, a playtest note, a TODO found in code, a doc gap) and what it blocks or risks if left alone.
+
+  - type: textarea
+    id: surface-area
+    attributes:
+      label: Files or systems likely touched
+      description: Best guess at surface area — data files (lion_throne.ltproj/game_data/*.json), engine modules (app/engine/...), the codegen'd component systems, event scripts, CI workflows, etc. Doesn't need to be exact — it's here so the eventual fix's actual footprint can be compared against the guess.
+      placeholder: e.g. app/engine/skill_components/advanced_components.py, lion_throne.ltproj/game_data/skills.json
+
+  - type: textarea
+    id: skill
+    attributes:
+      label: Skill needed to resolve this
+      description: Which existing Skill (or CONTENT_GUIDE.md section) documents this pattern already? If none does, name the Skill/doc that should get written as part of closing this issue — resolving a ledger item usually means both making the change AND leaving behind (or updating) the skill that explains how to make it and verify it again next time.
+      placeholder: e.g. "switches-and-gating (CONTENT_GUIDE §10)" or "none yet — needs a new-component-or-command skill"
+
+  - type: textarea
+    id: test-plan
+    attributes:
+      label: Narrow test plan
+      description: How will we know this actually works, without doing a full manual playtest? A smoke_test.py addition, a headless repro script, a specific `?level=<nid>&debug=1` jump, a BFS reachability check, a targeted unit/engine test — name the concrete, scoped check this issue's fix should be provable against.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: monitoring
+    attributes:
+      label: Monitoring
+      description: Is this a one-off fix, or a pattern worth watching after it's closed?
+      options:
+        - One-off — closes cleanly, no follow-up needed
+        - Long-term watch — pattern could recur elsewhere, leave a note/test behind
+    validations:
+      required: true
