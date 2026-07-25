@@ -82,11 +82,44 @@ def pick_band(avg: float, bands: List[dict]) -> dict:
     return highest
 
 
-def sample_squad(band: dict, count: int, game) -> List[dict]:
+def _range_for_target(template: dict, target_level) -> tuple:
+    """Narrows a template's declared level_range so the rolled level actually
+    tracks the party.
+
+    Picking a band by party average is coarse: within a band the level was
+    previously rolled uniformly across the template's whole declared range,
+    so a small squad could easily average well outside LEVEL_TOLERANCE of the
+    party -- a party averaging 1.86 drawing a squad averaging 4.00, for
+    instance. The band decides WHICH enemies show up; the party average has
+    to decide how strong they are, or "scaled to the party" is not true.
+
+    The comparison happens in EFFECTIVE level terms (power_band adds a flat
+    bonus for promoted classes), so a promoted template is offset back into
+    raw-level terms before clamping -- otherwise a tier-2 class would be
+    pushed to level 1 to hit a low-level party's effective average.
+    """
+    lo, hi = template['level_range']
+    if target_level is None:
+        return lo, hi
+    promotion_offset = effective_level(0, template.get('klass'))
+    target_raw = target_level - promotion_offset
+    want_lo = int(round(target_raw)) - LEVEL_TOLERANCE
+    want_hi = int(round(target_raw)) + LEVEL_TOLERANCE
+    new_lo, new_hi = max(lo, want_lo), min(hi, want_hi)
+    if new_lo > new_hi:
+        # The template cannot reach the party's band at all; sit at whichever
+        # end of its own range comes closest rather than inverting the range.
+        return (lo, lo) if want_hi < lo else (hi, hi)
+    return new_lo, new_hi
+
+
+def sample_squad(band: dict, count: int, game, target_level=None) -> List[dict]:
     """Weighted-samples `count` templates from band['templates'], each
-    filled in with a concrete level rolled uniformly from its declared
-    level_range (inclusive). Uses only game.get_random_weighted_choice /
-    game.get_random -- the turnwheel-safe `other_random` stream."""
+    filled in with a concrete level rolled from its declared level_range,
+    narrowed toward `target_level` (the party's average effective level) so
+    the squad actually scales to the party rather than to the band alone.
+    Uses only game.get_random_weighted_choice / game.get_random -- the
+    turnwheel-safe `other_random` stream."""
     templates = band['templates']
     if not templates:
         raise ValueError("sample_squad: band %r has no templates" % band.get('nid'))
@@ -94,7 +127,7 @@ def sample_squad(band: dict, count: int, game) -> List[dict]:
     picked = []
     for _ in range(count):
         template = game.get_random_weighted_choice(templates, weights)
-        lo, hi = template['level_range']
+        lo, hi = _range_for_target(template, target_level)
         level = lo if lo == hi else game.get_random(lo, hi)
         picked.append({
             'klass': template['klass'],
@@ -106,7 +139,7 @@ def sample_squad(band: dict, count: int, game) -> List[dict]:
     return picked
 
 
-def instantiate_squad(slots: Sequence, band: dict, game) -> List:
+def instantiate_squad(slots: Sequence, band: dict, game, target_level=None) -> List:
     """Fills each procedural slot (a level-prefab GenericUnit with
     procedural=True) with a freshly-sampled squad member. klass/level/
     faction/ai/starting_items come from the sampled template;
@@ -118,7 +151,7 @@ def instantiate_squad(slots: Sequence, band: dict, game) -> List:
     LevelObject.units."""
     from app.engine.generic_unit import create_generic_unit
 
-    templates = sample_squad(band, len(slots), game)
+    templates = sample_squad(band, len(slots), game, target_level=target_level)
     units = []
     for slot, template in zip(slots, templates):
         unit = create_generic_unit(

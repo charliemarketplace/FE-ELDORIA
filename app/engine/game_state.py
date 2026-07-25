@@ -386,7 +386,7 @@ class GameState():
         party = [u for u in self.get_all_units_in_party(self.current_party) if not u.dead]
         avg = enemy_pool.party_average_effective_level(party)
         band = enemy_pool.pick_band(avg, bands)
-        generated = enemy_pool.instantiate_squad(slots, band, self)
+        generated = enemy_pool.instantiate_squad(slots, band, self, target_level=avg)
         for unit in generated:
             unit.party = self.current_party
             self._current_level.units.append(unit, overwrite=True)
