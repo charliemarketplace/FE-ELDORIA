@@ -41,3 +41,6 @@ jobs:
 
       - name: Level re-entry from the overworld
         run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_level_reentry.py
+
+      - name: Merchant entity, Donate XP, and prep-market feat pricing
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_merchant.py

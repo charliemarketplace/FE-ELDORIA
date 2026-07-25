@@ -8,6 +8,7 @@ from app.engine import config as cf
 from app.engine import (convoy_funcs, engine, gui, image_mods,
                         item_funcs, item_system, menus, text_funcs,
                         trade, skill_system)
+from app.engine import merchant as merchant_engine
 from app.engine.background import SpriteBackground
 from app.engine.combat import interaction
 from app.engine.fluid_scroll import FluidScroll
@@ -31,6 +32,8 @@ class PrepMainState(MapState):
         options = ['Manage', 'Formation', 'Options', 'Save', 'Fight']
         if game.level_vars.get('_prep_pick'):
             options.insert(0, 'Pick Units')
+        if game.game_vars.get('_prep_donate'):
+            options.insert(0, 'Donate XP')
         if cf.SETTINGS['debug']:
             options.insert(0, 'Debug')
         ignore = [False for option in options]
@@ -118,6 +121,8 @@ class PrepMainState(MapState):
             selection = self.menu.get_current()
             if selection == 'Debug':
                 game.state.change('debug')
+            elif selection == 'Donate XP':
+                game.state.change('prep_donate_xp')
             elif selection == 'Pick Units':
                 game.memory['next_state'] = 'prep_pick_units'
                 game.state.change('transition_to')
@@ -180,6 +185,22 @@ class PrepMainState(MapState):
         if self.menu:
             self.menu.draw(surf)
         return surf
+
+class PrepDonateXPState(State):
+    """
+    Instant, non-visual state: pools every roster unit's exp (plus the
+    Merchant's own banked exp) into the Merchant, per
+    `app.engine.merchant.donate_xp`, then pops itself. Any levels gained
+    queue a `feat_choice` screen each (handled by `donate_xp` itself), so
+    those become the new top of the state stack before control returns to
+    `prep_main`.
+    """
+    name = 'prep_donate_xp'
+
+    def start(self):
+        merchant_engine.donate_xp()
+        game.state.back()
+
 
 class PrepPickUnitsState(State):
     name = 'prep_pick_units'
@@ -1456,6 +1477,14 @@ class PrepMarketState(State):
                 item = self.menu.get_current()
                 if item:
                     value = item_funcs.buy_price(self.unit, item)
+                    # Prep-menu-market-only Merchant feat pricing (see
+                    # CONTENT_GUIDE.md "The Merchant"). Guarded on a Merchant
+                    # actually existing so saves that have never created one,
+                    # and the event-driven `shop` command (CAPITAL Vendor,
+                    # general_states.ShopState), are unaffected.
+                    merchant = game.get_unit(merchant_engine.MERCHANT_NID)
+                    if merchant:
+                        value = int(value * skill_system.modify_buy_price(merchant, item))
                     if game.get_money() - value >= 0 and self.menu.get_stock() != 0:
                         get_sound_thread().play_sfx('GoldExchange')
                         game.set_money(game.get_money() - value)
@@ -1484,6 +1513,9 @@ class PrepMarketState(State):
                 item = self.menu.get_current()
                 if item:
                     value = item_funcs.sell_price(self.unit, item)
+                    merchant = game.get_unit(merchant_engine.MERCHANT_NID)
+                    if merchant and value:
+                        value = int(value * skill_system.modify_sell_price(merchant, item))
                     if value:
                         get_sound_thread().play_sfx('GoldExchange')
                         game.set_money(game.get_money() + value)

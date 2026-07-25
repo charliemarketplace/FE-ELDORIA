@@ -120,6 +120,7 @@ class StateMachine():
              'status_upkeep': status_upkeep.StatusUpkeepState,
              'status_endstep': status_upkeep.StatusUpkeepState,
              'prep_main': prep.PrepMainState,
+             'prep_donate_xp': prep.PrepDonateXPState,
              'prep_pick_units': prep.PrepPickUnitsState,
              'prep_formation': prep.PrepFormationState,
              'prep_formation_select': prep.PrepFormationSelectState,
