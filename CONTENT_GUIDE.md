@@ -1096,3 +1096,155 @@ knobs per shop. Concretely, that argues for option 2 over option 1: a
 single hook inside `item_funcs.buy_price`/`sell_price` keeps the discount
 half of that relationship automatically uniform across every shop,
 leaving only the stock lists as the per-shop authored piece.
+
+## 14. Skill checks: a non-combat d20 roll that branches the story
+
+A **Skill Check** lets one unit attempt a non-combat contest against
+another — persuading a bandit to stand down, talking a guard out of
+sounding an alarm, intimidating a prisoner — resolved on a d20 instead of
+combat's hit/damage math, with the result branching an event exactly like a
+`Choice` does.
+
+The chain mirrors recruitment (§12) closely:
+
+`add_skill_check;A;B;DC` → `SkillCheckAbility`
+(`app/engine/abilities.py`) makes `A` show a "Skill Check" option when
+adjacent to `B` → selecting it rolls the die and fires
+`game.events.trigger(triggers.OnSkillCheck(unit, u, unit.position, result))`,
+trigger nid `on_skill_check`, with `result` already containing the outcome.
+
+Author-facing recipe:
+
+```
+"add_skill_check;Iska;Warden;14",   # Iska may attempt a DC 14 check on Warden
+...
+```
+
+then, in a separate `on_skill_check` event (condition `unit2.nid ==
+'Warden'`):
+
+```
+"if;result['success']",
+    "speak;Warden;...Fine. Go on, then.",
+    "change_ai;Warden;None",
+"else",
+    "speak;Warden;Nice try.",
+    "add_group;WardenAlarm",
+"end",
+"remove_skill_check;Iska;Warden"
+```
+
+`result` is the exact dict `query_engine.roll_d20` returns —
+`{'natural', 'total', 'success', 'band'}` — available in the event's
+condition/body scope like any other trigger field (see `unit1`/`unit2` used
+the same way in the `on_talk` recipe in §12). `band` is `'crit_fail'` on a
+natural 1 and `'crit_success'` on a natural 20 regardless of DC, so a
+one-in-twenty botch or triumph can be given its own branch:
+
+```
+"if;result['band'] == 'crit_success'",
+    ...
+"elif;result['band'] == 'crit_fail'",
+    ...
+"elif;result['success']",
+    ...
+"else",
+    ...
+"end"
+```
+
+**The modifier is `PERSUASION = SKL + LCK`** (`game_data/equations.json`),
+not a new stat — there is no Charisma stat in this project (`stats.json` is
+the ten vanilla FE stats), and equations are the data-only way to derive a
+new number from existing ones (§4.3 shows the same pattern for `HIT`/`AVOID`).
+Want a different flavor of check (e.g. an intimidation check that should
+scale off `STR` instead)? Add another `DB.equations` entry and point that
+check's `SkillCheckAbility` modifier lookup at it — no new stat, no engine
+change.
+
+**Always `remove_skill_check` after the check resolves**, same reasoning as
+`remove_talk` in §12: `SkillCheckAbility.do()` deliberately does *not* remove
+the registration itself (it relies on the event to decide whether the check
+was one-shot or retryable — e.g. keep it registered on a `crit_fail` to
+allow a second attempt, but always remove it once the outcome is accepted).
+
+**The roll draws from the turnwheel-safe `other_random` stream, never
+`combat_random`** — `query_engine.roll_d20` uses `game.get_random`
+specifically so a skill check never perturbs replay of surrounding combat
+rolls (see the Trap in `BACKLOG_AUDIT.md` §2 about `static_random.get_randint`
+desyncing the turnwheel; this is why `roll_d20` was built on `get_random`
+instead). Do not add a second RNG call path for skill checks — always go
+through `query_engine.roll_d20`.
+
+`tools/test_skill_check.py` is the headless proof: the ability is absent
+with no registered pair and present once one is registered; a pinned seed
+reproduces a deterministic pass and a deterministic fail across the same DC;
+the `on_skill_check` trigger actually fires and carries the roll result;
+`AddSkillCheck`/`RemoveSkillCheck` are turnwheel-reversible; and 100 checks
+leave `combat_random` state byte-for-byte unchanged.
+
+## 15. Dungeon floors: multi-floor levels without the overworld
+
+A "dungeon floor" is just an ordinary level chained directly to the next
+one **without** routing through the overworld map — e.g. Floor 1 → Floor 2
+→ Floor 3 of the same dungeon, back-to-back, with the party's HP/guard/mana
+carried across instead of being reset to full at the floor transition (which
+is the default behavior for every other level-to-level transition).
+
+Three pieces, all data-only:
+
+1. **`go_to_overworld: false`** on the floor's `levels.json` entry (or simply
+   omit it — this is already the field's default). This suppresses the
+   overworld hop that would otherwise happen at `win_game`.
+2. **`set_next_chapter;<next-floor-nid>`** in the floor's win event, run
+   *before* `win_game`. This sets the game_var `_goto_level`, which
+   `EventState.level_end()` (`app/events/event_state.py`) reads to pick the
+   next level to load, instead of falling through to the overworld or the
+   next array entry in `levels.json`.
+3. **`"preserve_state_on_transition": true`** on the *departing* floor's
+   `levels.json` entry, if that floor's damage should carry into the next
+   one. `EventState.level_end()` reads this flag off the level you are
+   *leaving* (`DB.levels.get(game.level.nid).preserve_state_on_transition`)
+   and passes it through to `game.clean_up(preserve_hp=...)`.
+
+```json
+// Floor 1's levels.json entry
+{
+  "nid": "DUNGEON1", "name": "Dungeon — Floor 1",
+  "go_to_overworld": false,
+  "preserve_state_on_transition": true,
+  ...
+}
+```
+
+```
+# DUNGEON1's win event, before win_game
+"set_next_chapter;DUNGEON2",
+"win_game"
+```
+
+**Party composition, inventory, and exp were already preserved across every
+level transition** — that machinery predates this feature and needed no
+changes. The only things `clean_up()` was unconditionally resetting on
+every transition (independent of the destination) were **HP, guard gauge,
+and mana** (`GameState.clean_up`, `app/engine/game_state.py`) — that full
+heal is what `preserve_state_on_transition` now makes optional, floor by
+floor. Leave the flag `false` (or omit it, since that's the default) on any
+level where the traditional full-heal-on-arrival is still wanted — e.g. the
+first floor of a dungeon coming from the overworld, or the last floor before
+returning to it.
+
+⚠️ Chaining without the overworld already worked end-to-end before this —
+`set_next_chapter` → `_goto_level` → `EventState.level_end()` picking it up
+is pre-existing plumbing (see `BACKLOG_AUDIT.md` §1/§4: "no event anywhere
+uses `set_next_chapter`" was true only in the sense that no *content*
+exercised it yet, not that the engine path was missing). What this feature
+adds is solely the `preserve_state_on_transition` opt-in on top of that
+already-working chain.
+
+`tools/test_dungeon_floor.py` is the headless proof: `clean_up(preserve_hp=True)`
+leaves a damaged unit damaged while the default (`preserve_hp=False`)
+full-heals it; a level with `preserve_state_on_transition: true` routes
+`preserve_hp=True` through `EventState.level_end()` (and `false`/default
+routes `preserve_hp=False`); and party composition, inventory, and exp
+survive the transition either way.

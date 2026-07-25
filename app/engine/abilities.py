@@ -67,6 +67,28 @@ class TalkAbility(Ability):
         # if did_trigger:
             # action.do(action.RemoveTalk(unit.nid, u.nid))
 
+class SkillCheckAbility(Ability):
+    name = 'Skill Check'
+
+    @staticmethod
+    def targets(unit) -> set:
+        adj_units = game.target_system.get_adj_units(unit)
+        return set([u.position for u in adj_units if action.find_skill_check(unit.nid, u.nid) is not None])
+
+    @staticmethod
+    def do(unit):
+        u = game.board.get_unit(game.cursor.position)
+        dc = action.find_skill_check(unit.nid, u.nid)
+        game.state.back()
+        action.do(action.HasTraded(unit))
+        modifier = equations.parser.persuasion(unit)
+        result = game.query_engine.roll_d20(unit=unit, modifier=modifier, dc=dc)
+        game.events.trigger(triggers.OnSkillCheck(unit, u, unit.position, result))
+        # Rely on the skill check event itself to remove the registration
+        # (action.RemoveSkillCheck), same pattern TalkAbility uses for
+        # RemoveTalk -- lets the event author decide whether the check can
+        # be retried (e.g. on a crit_fail) or is one-shot.
+
 class SupportAbility(Ability):
     name = 'Support'
 

@@ -13,6 +13,13 @@ class OverworldNodePrefab(Prefab):
         self.icon: str = icon or MapIconCatalog.DEFAULT()           # icon nid (see map_icons.json for a manifest)
         self.level: Optional[str] = None          # level associated
         self.menu_options: NodeEventCatalogue = NodeEventCatalogue()      #Events that can be activated in the node's menu
+        # Entry requirement: node cannot be launched into until the party has
+        # at least `req_unit_count` units at internal level >= `req_unit_level`.
+        # 0 means no requirement (always permitted). Absent from older JSON
+        # entries -- Prefab.restore() keeps these defaults when the keys are
+        # missing, so existing nodes are unaffected.
+        self.req_unit_count: int = 0
+        self.req_unit_level: int = 1
 
     def save_attr(self, name, value):
         if name == 'menu_options':

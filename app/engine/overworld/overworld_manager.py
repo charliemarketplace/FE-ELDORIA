@@ -60,6 +60,55 @@ class OverworldManager(OverworldManagerInterface):
         self._initialize_objects()
         self._initialize_graphs()
 
+    def node_requirement_met(self, node: OverworldNodeObject) -> bool:
+        """Whether the party currently satisfies a node's unit-count/level
+        requirement (OverworldNodePrefab.req_unit_count/req_unit_level).
+
+        req_unit_count <= 0 means the node has no requirement and is always
+        permitted. Otherwise counts party units whose get_internal_level()
+        is >= req_unit_level -- deliberately NOT the raw `unit.level`, which
+        resets to 1 on promotion (app.engine.objects.unit.UnitObject.
+        get_internal_level accounts for levels gained in prior tiers) -- and
+        compares that count against req_unit_count.
+        """
+        prefab = getattr(node, 'prefab', node)
+        req_count = getattr(prefab, 'req_unit_count', 0)
+        if req_count <= 0:
+            return True
+        req_level = getattr(prefab, 'req_unit_level', 1)
+        from app.engine.game_state import game
+        qualifying = sum(1 for unit in game.get_units_in_party() if unit.get_internal_level() >= req_level)
+        return qualifying >= req_count
+
+    def get_node_safety(self, level_nid: NID) -> str:
+        """Rolls (once) whether a revisited node's level is 'Safe' or
+        'Unsafe', caching the result in game.game_vars['_node_safety']
+        (keyed by level nid) so re-selecting the node never re-rolls.
+
+        Uses game.get_random_weighted_choice, which draws from the
+        turnwheel-safe `other_random` stream (see action.RecordOtherRandomState)
+        -- never app.utilities.static_random.get_randint directly, which
+        draws from the `combat_random` stream and would desync turnwheel
+        replay of real combat rolls.
+
+        On an 'Unsafe' outcome (fresh roll or cached), sets
+        game.game_vars['_pending_unsafe_encounter'] = level_nid so the level
+        side can react (e.g. spawn a generated enemy squad) on entry.
+
+        A node's first-ever clear is always reached via the next_level /
+        is_next_level path, never this method, so the first roll a level
+        ever sees only happens on revisit -- by construction, first-ever
+        clears are always Safe.
+        """
+        from app.engine.game_state import game
+        safety = game.game_vars.setdefault('_node_safety', {})
+        if level_nid not in safety:
+            safety[level_nid] = game.get_random_weighted_choice(['Safe', 'Unsafe'], [1, 1])
+        outcome = safety[level_nid]
+        if outcome == 'Unsafe':
+            game.game_vars['_pending_unsafe_encounter'] = level_nid
+        return outcome
+
     @property
     def music(self) -> SongPrefab:
         return self._overworld.music

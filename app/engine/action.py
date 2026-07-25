@@ -2865,6 +2865,90 @@ class RemoveTalk(Action):
             game.talk_options.append((self.unit1, self.unit2))
 
 
+def get_skill_check_options() -> list:
+    """Returns a snapshot (a fresh list copy) of the skill-check registry: a
+    list of `[unit1_nid, unit2_nid, dc]` entries recording which unit pairs
+    may currently attempt a non-combat *Skill Check* (see SkillCheckAbility
+    in app/engine/abilities.py) against each other.
+
+    Mirrors `game.talk_options` (see AddTalk/RemoveTalk above), but
+    game_state.py is owned by another workstream for this change, so rather
+    than add a new `GameState` attribute, the registry lives in
+    `game.game_vars['_skill_check_options']`. `game_vars` is a
+    PrimitiveCounter that already accepts (and round-trips through
+    save/pickle/load and the turnwheel, for free) lists of primitives, so no
+    new persistence plumbing is required.
+
+    Mutating the returned list does NOT persist the change -- callers must
+    reassign it back to `game.game_vars['_skill_check_options']`
+    (PrimitiveCounter validates on `__setitem__`), which AddSkillCheck and
+    RemoveSkillCheck do below.
+    """
+    return list(game.game_vars.get('_skill_check_options', []))
+
+
+def find_skill_check(unit1_nid, unit2_nid):
+    """Returns the DC (difficulty class) registered for a skill check where
+    `unit1_nid` is the initiator and `unit2_nid` is the target, or None if no
+    such skill check is currently registered.
+    """
+    for entry in get_skill_check_options():
+        if entry[0] == unit1_nid and entry[1] == unit2_nid:
+            return entry[2]
+    return None
+
+
+class AddSkillCheck(Action):
+    """Registers `unit1_nid` as able to attempt a non-combat *Skill Check*
+    against `unit2_nid` in the current chapter, with the given DC (difficulty
+    class). See `get_skill_check_options` above for where this is stored.
+    """
+    def __init__(self, unit1_nid, unit2_nid, dc=12):
+        self.unit1 = unit1_nid
+        self.unit2 = unit2_nid
+        self.dc = int(dc)
+
+    def do(self):
+        options = get_skill_check_options()
+        if not any(entry[0] == self.unit1 and entry[1] == self.unit2 for entry in options):
+            options.append([self.unit1, self.unit2, self.dc])
+            game.game_vars['_skill_check_options'] = options
+
+    def reverse(self):
+        options = get_skill_check_options()
+        entry = [self.unit1, self.unit2, self.dc]
+        if entry in options:
+            options.remove(entry)
+            game.game_vars['_skill_check_options'] = options
+
+
+class RemoveSkillCheck(Action):
+    """Removes the ability for `unit1_nid` to attempt a *Skill Check* against
+    `unit2_nid`. Symmetric with AddSkillCheck; turnwheel-reversible.
+    """
+    def __init__(self, unit1_nid, unit2_nid):
+        self.unit1 = unit1_nid
+        self.unit2 = unit2_nid
+        self.removed_entry = None
+
+    def do(self):
+        self.removed_entry = None
+        options = get_skill_check_options()
+        for entry in options:
+            if entry[0] == self.unit1 and entry[1] == self.unit2:
+                self.removed_entry = entry
+                break
+        if self.removed_entry is not None:
+            options.remove(self.removed_entry)
+            game.game_vars['_skill_check_options'] = options
+
+    def reverse(self):
+        if self.removed_entry is not None:
+            options = get_skill_check_options()
+            options.append(self.removed_entry)
+            game.game_vars['_skill_check_options'] = options
+
+
 class AddLore(Action):
     def __init__(self, lore_nid):
         self.lore_nid = lore_nid

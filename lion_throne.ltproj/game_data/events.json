@@ -177,9 +177,61 @@
             "speak;Iska;Scouts on the ridge. Not soldiers. Cinder Wardens again.",
             "remove_portrait;Iska",
             "remove_portrait;Rowan",
-            "transition;Open"
+            "transition;Open",
+            "add_portrait;Rowan;Left",
+            "speak;Rowan;There's a warmth on that ridge wind that isn't the desert's. Push on, or make camp and wait for first light?",
+            "choice;S2Gambit;What do we do?;Push Through,Make Camp",
+            "remove_portrait;Rowan"
         ],
         "nid": "S2 Intro"
+    },
+    {
+        "name": "TurnReinforce",
+        "trigger": "turn_change",
+        "level_nid": "S2",
+        "condition": "game.turncount >= 4",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "add_portrait;Rowan;Left",
+            "speak;Rowan;They've circled too long. Time's up.",
+            "remove_portrait;Rowan",
+            "add_group;S2Monsters"
+        ],
+        "nid": "S2 TurnReinforce"
+    },
+    {
+        "name": "AmbushOnAttack",
+        "trigger": "combat_start",
+        "level_nid": "S2",
+        "condition": "unit1.team == 'player' and unit2 and unit2.team == 'other'",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "add_portrait;Rowan;Left",
+            "speak;Rowan;That wasn't a soldier. What did we just wake up?",
+            "remove_portrait;Rowan",
+            "add_group;S2Monsters"
+        ],
+        "nid": "S2 AmbushOnAttack"
+    },
+    {
+        "name": "WrongChoiceAmbush",
+        "trigger": "turn_change",
+        "level_nid": "S2",
+        "condition": "game.game_vars.get('S2Gambit') == 'Push Through'",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "add_portrait;Rowan;Left",
+            "speak;Rowan;We should have waited. Now something's found us.",
+            "remove_portrait;Rowan",
+            "add_group;S2Monsters"
+        ],
+        "nid": "S2 WrongChoiceAmbush"
     },
     {
         "name": "Reenter",
@@ -521,6 +573,25 @@
             "win_game"
         ],
         "nid": "SHUB Depart"
+    },
+    {
+        "name": "MonsterApproach",
+        "trigger": "roaming_interrupt",
+        "level_nid": "SHUB",
+        "condition": "region.nid == 'MonsterApproach'",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "add_portrait;Rowan;Left",
+            "speak;Rowan;Something's moving in the dark past the fence line.",
+            "choice;MonsterChoice;Engage the creature?;Fight,Retreat",
+            "remove_portrait;Rowan",
+            "if;game.game_vars.get('MonsterChoice') == 'Fight'",
+            "change_roaming;False",
+            "end"
+        ],
+        "nid": "SHUB MonsterApproach"
     },
     {
         "name": "LoseGame",

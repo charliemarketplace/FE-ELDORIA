@@ -248,6 +248,22 @@ class OnTalk(EventTrigger):
     position: Tuple[int, int] #: the position of unit1 (is None if triggered during free roam)
 
 @dataclass(init=True)
+class OnSkillCheck(EventTrigger):
+    """
+    This trigger fires when a unit attempts a non-combat *Skill Check* (e.g.
+    persuasion, intimidation) against another unit. The check is resolved on
+    a d20 via `query_engine.roll_d20` before this trigger fires, so `result`
+    already contains the outcome -- branch on `result['success']` (vs a DC)
+    or `result['band']` (`'crit_fail'`/`'fail'`/`'success'`/`'crit_success'`)
+    to route the story.
+    """
+    nid: ClassVar[NID] = 'on_skill_check'
+    unit1: UnitObject #: the unit who initiated the skill check.
+    unit2: UnitObject #: the unit who is the target of the skill check.
+    position: Tuple[int, int] #: the position of unit1 (is None if triggered outside the map).
+    result: Dict[str, Any] #: the dict returned by `roll_d20`: {'natural', 'total', 'success', 'band'}.
+
+@dataclass(init=True)
 class OnSupport(EventTrigger):
     """
     This trigger fires when two units "Support" to one another.
