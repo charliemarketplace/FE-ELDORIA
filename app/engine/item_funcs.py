@@ -148,7 +148,13 @@ def buy_price(unit: UnitObject, item: ItemObject) -> int:
     """
     value = item_system.buy_price(unit, item)
     if value:
-        value *= skill_system.modify_buy_price(unit, item)
+        # `unit` can legitimately be None -- game_menus/menu_options.py resolves
+        # the owner with game.get_unit(item.owner_nid), which returns None for a
+        # shop template item whose owner is not a registered unit. sell_price
+        # below already guards this; buy_price did not, and would raise
+        # AttributeError inside modify_buy_price iterating unit.skills.
+        if unit:
+            value *= skill_system.modify_buy_price(unit, item)
     else:
         return 0
     return int(value)

@@ -169,8 +169,12 @@ for nid in companions:
 #    per-unit wizard appended to CAPITAL Intro's own _source, see below)
 # ---------------------------------------------------------------------------
 print('\n--- [3] Class change 2 companions via action.ClassChange (real Action change_class uses) ---')
-assert 'change_class;Kael;Fighter,Mercenary,Archer,Mage,Cleric' in intro_script
-assert 'change_class;Elara;Fighter,Mercenary,Archer,Mage,Cleric' in intro_script
+# CAPITAL Intro assigns classes through a for-loop over the four companions
+# rather than one hardcoded change_class line each. Assert the loop and the
+# templated command, not per-unit literals -- the previous per-unit assertions
+# rotted silently when the event was refactored, because this test is not in CI.
+assert "for;OutfitTarget;['Kael', 'Elara', 'Ren', 'Briar']" in intro_script
+assert 'change_class;{OutfitTarget};Fighter,Mercenary,Archer,Mage,Cleric' in intro_script
 
 class_targets = {'Kael': 'Fighter', 'Elara': 'Mage'}
 classed_before = {}
@@ -209,14 +213,16 @@ for nid, target_klass in class_targets.items():
 #    now part of the same automatic per-unit wizard as class assignment.
 # ---------------------------------------------------------------------------
 print('\n--- [4] Grant a feat skill via action.AddSkill (real Action give_skill uses) ---')
-# The exact feat skill nid list, read verbatim out of the FeatPick_Kael choice line.
-feat_line = next(l for l in intro_event._source if l.startswith('choice;FeatPick_Kael;'))
+# The exact feat skill nid list, read verbatim out of the FeatPick choice line.
+# Like the class-assignment lines in section 3, this was refactored from one
+# choice per companion (FeatPick_Kael, ...) into a single templated choice
+# inside the for;OutfitTarget loop. Assert the templated form.
+feat_line = next(l for l in intro_event._source if l.startswith('choice;FeatPick;'))
 feat_nids = [tok.split('|')[0] for tok in feat_line.split(';')[3].split(',')]
 check('4. feat nids parsed from CAPITAL Intro', len(feat_nids) == 5 and all(n in DB.skills for n in feat_nids),
       'parsed feat nids = %s' % feat_nids)
-for nid in companions:
-    assert 'give_skill;%s;{v:FeatPick_%s};persistent' % (nid, nid) in intro_script, \
-        'expected the {v:...} syntax fix for %s, not the old broken {game.game_vars[...]} form' % nid
+assert 'give_skill;{OutfitTarget};{v:FeatPick};persistent' in intro_script, \
+    'expected the templated {v:FeatPick} give_skill line inside the for;OutfitTarget loop'
 
 feat_unit_nid = 'Kael'
 feat_skill_nid = feat_nids[0]  # 'fMaximum HP +5'
@@ -317,6 +323,14 @@ action.do(action.GiveItem(buyer, new_item))
 gold_after_shop = game.get_party().money
 inv_after_shop = [i.nid for i in buyer.items]
 
+# Absolute price check. The delta assertion below is tautological on its own --
+# `price` is both the debit and the expected delta, so it passes under ANY
+# global price multiplier. Anchor it to the value authored in items.json so an
+# economy regression (e.g. a shop-wide discount landing unintentionally) is
+# actually detectable here.
+check('5. Vulnerary buy price matches its authored value',
+      price == 300,
+      'buy_price(Kael, Vulnerary) = %d (expected 300, per items.json "value" component)' % price)
 check('5. gold decreased by exactly item value',
       gold_after_shop == gold_before_shop - price,
       'price=%d, gold before=%d, after=%d, delta=%d' % (price, gold_before_shop, gold_after_shop, gold_after_shop - gold_before_shop))
@@ -337,8 +351,18 @@ print('\n--- [6] CAPITAL Depart tail + real chapter transition into S1 ---')
 depart_event = next(e for e in DB.events if e.nid == 'CAPITAL Depart')
 depart_script = '\n'.join(depart_event._source)
 assert 'game_var;safe_zone;0' in depart_script
-assert 'set_next_chapter;S1' in depart_script
 assert 'win_game' in depart_script
+# NOTE: CAPITAL Depart does NOT call set_next_chapter. Progression out of
+# CAPITAL runs through the overworld (levels.json CAPITAL has
+# go_to_overworld: True), so Depart just clears safe_zone and wins the map.
+# No event anywhere in events.json uses set_next_chapter/_goto_level today --
+# verified by grep. The _goto_level exercise below is therefore an *engine
+# capability* check (the mechanism EventState.level_end() honours when a
+# level chains directly to another without the overworld), not a replay of
+# what CAPITAL Depart actually does. Keeping it because the dungeon
+# floor-to-floor work will depend on exactly this path.
+assert 'set_next_chapter' not in depart_script, \
+    'CAPITAL Depart now chains directly -- update this section to match'
 
 # game_var;safe_zone;0 -> action.SetGameVar (same Action as event_functions.game_var)
 action.do(action.SetGameVar('safe_zone', 0))
