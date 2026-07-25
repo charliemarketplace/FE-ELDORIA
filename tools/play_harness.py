@@ -393,6 +393,47 @@ def _find_adjacent_free_tile(pos):
     return None
 
 
+def _counterattack_could_kill(attacker, weapon, defender):
+    """True if `defender` countering `attacker`'s strike (at the adjacent
+    range this module always teleports attackers to before striking) could
+    reduce a FULLY HEALED `attacker` to 0 HP or below.
+
+    Uses the exact same forecast primitives the real pre-combat UI preview
+    (app/engine/ui_view.py) and the AI's own attack scoring
+    (app/engine/ai_controller.py) call to answer "can this defender counter,
+    and for how much" -- combat_calcs.can_counterattack + compute_damage with
+    mode='defense' -- rather than re-deriving might/defense by hand. Takes
+    the worse of a normal hit and a critical hit, but ONLY treats a crit as
+    possible when combat_calcs.compute_crit(...) actually returns a
+    percentage rather than None -- compute_damage(..., crit=True) applies
+    the crit multiplier/addition unconditionally regardless of whether the
+    weapon has a Crit component at all, so calling it without this guard
+    flags every non-critable weapon (e.g. S1 Draven's plain Iron Lance) as
+    lethal on a hit that, in real combat, can never actually land as a crit
+    -- and also accounts for the defender doubling the attacker on the
+    counter (compute_attack_phases), since a single win_current_level_by_
+    combat combat instance can still lose a healed-to-full attacker within
+    that one exchange -- the existing heal-before-each-attacker's-own-strike
+    only ever prevented an EARLIER round's chip damage from compounding into
+    a later, otherwise-survivable hit; it does nothing against a single
+    exchange that is lethal by itself.
+    """
+    from app.engine import combat_calcs
+
+    def_weapon = defender.get_weapon()
+    if not combat_calcs.can_counterattack(attacker, weapon, defender, def_weapon):
+        return False
+    normal = combat_calcs.compute_damage(defender, attacker, def_weapon, weapon, 'defense', (0, 0)) or 0
+    worst = normal
+    crit_chance = combat_calcs.compute_crit(defender, attacker, def_weapon, weapon, 'defense', (0, 0))
+    if crit_chance:
+        crit = combat_calcs.compute_damage(defender, attacker, def_weapon, weapon, 'defense', (0, 0), crit=True) or 0
+        worst = max(worst, crit)
+    phases = combat_calcs.compute_attack_phases(defender, attacker, def_weapon, weapon, 'defense', (0, 0))
+    worst_case = worst * max(phases, 1)
+    return worst_case >= attacker.get_max_hp()
+
+
 def win_current_level_by_combat(max_attacks=6000, max_stale_passes=200, max_frames_per_combat=1000):
     """Resolves the level's fight through the real combat pipeline
     (interaction.start_combat(..., skip=True), which is app/engine/combat's
@@ -415,6 +456,16 @@ def win_current_level_by_combat(max_attacks=6000, max_stale_passes=200, max_fram
     with matching DEF nets 0-1 damage; a Fighter's Iron Axe against the same
     target might not), so always leading with the same attacker can stall
     forever on a matchup the rest of the squad would have no trouble with.
+
+    Rowan is special: every level's loss condition is his death (an
+    `unit_death` event with unit.nid == 'Rowan', see events.json), so he's
+    tried LAST against every target -- a fallback attacker, not the default
+    one -- and _counterattack_could_kill guards every attacker (not just
+    him) so a healed-to-full unit is never thrown at a matchup whose counter
+    could kill it outright in one exchange. This still lets Rowan fight (and
+    finish off) anything the rest of the squad genuinely cannot damage --
+    the guard only ever skips a specific (attacker, target) pairing for this
+    attempt, never the attacker or the target outright.
     """
     from app.engine.game_state import game
     from app.engine import action
@@ -426,6 +477,10 @@ def win_current_level_by_combat(max_attacks=6000, max_stale_passes=200, max_fram
         deployed = [u for u in game.get_units_in_party() if u.position and not u.dead and u.get_hp() > 0]
         if not deployed:
             raise RuntimeError("win_current_level_by_combat: no living deployed unit left to attack with")
+        # Rowan last: every other unit gets first crack at any target, so
+        # Rowan (whose death alone ends the level) only ever attacks when
+        # he's actually needed -- see _counterattack_could_kill above.
+        deployed.sort(key=lambda u: u.nid == 'Rowan')
 
         enemies_by_hp = sorted(game.get_enemy_units(), key=lambda u: u.get_hp())
         made_progress = False
@@ -441,10 +496,30 @@ def win_current_level_by_combat(max_attacks=6000, max_stale_passes=200, max_fram
                 weapon = attacker.get_weapon()
                 if weapon is None:
                     continue
+                if _counterattack_could_kill(attacker, weapon, enemy):
+                    # This specific pairing is unsafe -- not the attacker or
+                    # the target overall. Move on to the next attacker this
+                    # pass; this attacker may still be safe against a
+                    # different target, and a different attacker may be
+                    # exactly who this target needed.
+                    continue
                 action.do(action.SetHP(attacker, attacker.get_max_hp()))
                 adj = _find_adjacent_free_tile(enemy.position)
                 if adj is None:
                     continue
+                # Remember where this attacker came from so it can be sent
+                # back there once this strike resolves (below) -- otherwise
+                # every attacker that ever fought this enemy stays parked on
+                # one of its (at most 4) orthogonal tiles forever, and a
+                # tough enemy that outlives everyone's first attack attempt
+                # eventually has every adjacent tile permanently occupied by
+                # its own attackers, making _find_adjacent_free_tile return
+                # None for everyone from then on -- a real deadlock this
+                # loop can't tell apart from a genuinely un-damageable
+                # matchup (both look like max_stale_passes consecutive
+                # no-progress passes), even though every attacker's forecast
+                # damage/hit here is perfectly healthy.
+                origin = attacker.position
                 action.do(action.Teleport(attacker, adj))
                 interaction.start_combat(attacker, enemy.position, weapon, skip=True)
                 # Combat doesn't finish settling the instant interaction.
@@ -466,6 +541,14 @@ def win_current_level_by_combat(max_attacks=6000, max_stale_passes=200, max_fram
                     # cleared the level. Nothing left for this helper to do;
                     # the caller drives the save/overworld transition.
                     return
+
+                # Free up the tile this attacker just occupied (see the
+                # `origin` comment above) -- but only if it's still alive
+                # and its old tile is actually empty (nothing else was
+                # teleported there in the interim; only one unit ever moves
+                # per attempt in this loop, so it always is).
+                if not attacker.dead and origin and not game.board.get_unit(origin):
+                    action.do(action.Teleport(attacker, origin))
 
                 if enemy not in game.get_enemy_units():
                     made_progress = True
