@@ -14,6 +14,7 @@ from app.data.resources.sounds import SFXPrefab, SongPrefab
 from app.engine import (action, background, banner, base_surf, dialog, engine,
                         icons, image_mods, item_funcs, item_system,
                         save, skill_system, unit_funcs)
+from app.engine.generic_unit import create_generic_unit
 from app.engine.game_board import FogOfWarType
 from app.engine.achievements import ACHIEVEMENTS
 from app.engine.animations import MapAnimation
@@ -854,13 +855,12 @@ def make_generic(self: Event, nid, klass, level: int, team, ai=None, faction=Non
     if klass not in DB.classes:
         self.logger.error("make_generic: Class %s doesn't exist in database " % klass)
         return
-    if not ai:
-        ai = 'None'
-    if not faction:
-        faction = DB.factions[0].nid
-    starting_items = item_list or []
-    level_unit_prefab = GenericUnit(unit_nid, animation_variant, level, klass, faction, starting_items, [], team, ai)
-    new_unit = UnitObject.from_prefab(level_unit_prefab, self.game.current_mode)
+
+    # Construction itself lives in app.engine.generic_unit.create_generic_unit
+    # so it's reachable outside an Event instance (see enemy_pool.py).
+    new_unit = create_generic_unit(
+        unit_nid, klass, level, team, ai=ai, faction=faction, variant=animation_variant,
+        starting_items=item_list, current_mode=self.game.current_mode)
     new_unit.party = self.game.current_party
     #self.game.full_register(new_unit)
     action.do(action.RegisterUnit(new_unit))

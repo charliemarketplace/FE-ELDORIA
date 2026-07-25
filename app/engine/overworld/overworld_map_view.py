@@ -19,10 +19,10 @@ class OverworldMapView():
                 return
             node.sprite.update()
             if node.prefab.pos:
-                if OverworldNodeProperty.IS_NEXT_LEVEL in self.overworld.node_props(node.nid):
-                    surf = node.sprite.draw(surf, cull_rect, True)
-                else:
-                    surf = node.sprite.draw(surf, cull_rect)
+                has_flag = OverworldNodeProperty.IS_NEXT_LEVEL in self.overworld.node_props(node.nid)
+                requirement_met = self.overworld.node_requirement_met(node)
+                required_level = node.prefab.req_unit_level if node.prefab.req_unit_count > 0 else None
+                surf = node.sprite.draw(surf, cull_rect, has_flag, requirement_met, required_level)
 
     def draw_roads(self, surf, full_size, cull_rect):
         for road in self.overworld.revealed_roads:

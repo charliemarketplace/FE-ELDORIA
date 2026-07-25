@@ -617,6 +617,48 @@
                 ],
                 "starting_traveler": null,
                 "generic": true
+            },
+            {
+                "nid": "S2Monster1",
+                "variant": null,
+                "level": 5,
+                "klass": "Ghoul",
+                "faction": "Monster",
+                "starting_items": [
+                    [
+                        "Iron Axe",
+                        false
+                    ]
+                ],
+                "starting_skills": [],
+                "team": "enemy",
+                "ai": "Attack",
+                "roam_ai": null,
+                "ai_group": "",
+                "starting_position": null,
+                "starting_traveler": null,
+                "generic": true
+            },
+            {
+                "nid": "S2Monster2",
+                "variant": null,
+                "level": 5,
+                "klass": "Hellhound",
+                "faction": "Monster",
+                "starting_items": [
+                    [
+                        "Iron Sword",
+                        false
+                    ]
+                ],
+                "starting_skills": [],
+                "team": "enemy",
+                "ai": "Attack",
+                "roam_ai": null,
+                "ai_group": "",
+                "starting_position": null,
+                "starting_traveler": null,
+                "generic": true
             }
         ],
         "regions": [
@@ -689,7 +731,25 @@
                 "interrupt_move": false
             }
         ],
-        "unit_groups": [],
+        "unit_groups": [
+            {
+                "nid": "S2Monsters",
+                "units": [
+                    "S2Monster1",
+                    "S2Monster2"
+                ],
+                "positions": {
+                    "S2Monster1": [
+                        14,
+                        13
+                    ],
+                    "S2Monster2": [
+                        14,
+                        14
+                    ]
+                }
+            }
+        ],
         "ai_groups": []
     },
     {
@@ -713,8 +773,8 @@
             "win": "Rowan departs by,the south road",
             "loss": "Rowan dies"
         },
-        "roam": false,
-        "roam_unit": null,
+        "roam": true,
+        "roam_unit": "Rowan",
         "go_to_overworld": true,
         "should_record": true,
         "tags": [],
@@ -839,6 +899,30 @@
                 "starting_position": null,
                 "starting_traveler": null,
                 "generic": true
+            },
+            {
+                "nid": "SHUBMonster",
+                "variant": null,
+                "level": 5,
+                "klass": "Wraith",
+                "faction": "Monster",
+                "starting_items": [
+                    [
+                        "Fire",
+                        false
+                    ]
+                ],
+                "starting_skills": [],
+                "team": "enemy",
+                "ai": "Guard",
+                "roam_ai": "MonsterRoamAI",
+                "ai_group": "",
+                "starting_position": [
+                    3,
+                    7
+                ],
+                "starting_traveler": null,
+                "generic": true
             }
         ],
         "regions": [
@@ -926,6 +1010,23 @@
                 "time_left": null,
                 "only_once": false,
                 "interrupt_move": false
+            },
+            {
+                "nid": "MonsterApproach",
+                "region_type": "event",
+                "position": [
+                    2,
+                    6
+                ],
+                "size": [
+                    3,
+                    1
+                ],
+                "sub_nid": "MonsterApproach",
+                "condition": "unit.team == 'player'",
+                "time_left": null,
+                "only_once": false,
+                "interrupt_move": true
             }
         ],
         "unit_groups": [],

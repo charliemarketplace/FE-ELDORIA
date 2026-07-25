@@ -66,7 +66,11 @@ class EventState(State):
         current_level_index = DB.levels.index(game.level.nid)
         should_go_to_overworld = DB.levels.get(game.level.nid).go_to_overworld and DB.constants.value('overworld') and game.game_vars.get('_goto_level') is None
         game.memory['_skip_save'] = game.level_vars.get('_skip_save', False)
-        game.clean_up()
+        # A dungeon floor (or any level) can opt in to carrying unit HP/guard/mana
+        # across the transition into the next level, instead of the default
+        # full-heal-on-transition, via LevelPrefab.preserve_state_on_transition.
+        preserve_hp = DB.levels.get(game.level.nid).preserve_state_on_transition
+        game.clean_up(preserve_hp=preserve_hp)
         if current_level_index < len(DB.levels) - 1 or game.game_vars.get('_goto_level') is not None:
             game.game_vars['_should_go_to_overworld'] = should_go_to_overworld
             if should_go_to_overworld:

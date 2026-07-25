@@ -1,6 +1,8 @@
 from __future__ import annotations
 from app.data.database.units import UnitPrefab
 
+import pygame
+
 from typing import TYPE_CHECKING
 
 from app.data.database.klass import Klass
@@ -13,7 +15,7 @@ if TYPE_CHECKING:
     from app.engine.engine import Surface
     from app.engine.objects.overworld import OverworldEntityObject, RoadObject
 
-from typing import Tuple
+from typing import Optional, Tuple
 
 from app.constants import TILEHEIGHT, TILEWIDTH
 from app.data.database.database import DB
@@ -21,6 +23,7 @@ from app.data.database.overworld_node import OverworldNodePrefab
 from app.engine.overworld.overworld_road_sprite_wrapper import OverworldRoadSpriteWrapper
 from app.engine import engine, image_mods, skill_system
 from app.engine.animations import MapAnimation
+from app.engine.fonts import FONT
 from app.engine.sound import get_sound_thread
 from app.data.resources.map_icons import MapIcon
 from app.data.resources.resources import RESOURCES
@@ -86,7 +89,8 @@ class OverworldNodeSprite():
                                                 self.offset),
                                (cull_rect[0], cull_rect[1]))
 
-    def draw(self, surf: Surface, cull_rect: Tuple[int, int, int, int], has_flag=False):
+    def draw(self, surf: Surface, cull_rect: Tuple[int, int, int, int], has_flag=False,
+             requirement_met=True, required_level: Optional[int] = None):
         image = self.create_image()
         flag = engine.copy_surface(self.flag_sprite.sprite)
         topleft = self.get_topleft(cull_rect)
@@ -105,7 +109,27 @@ class OverworldNodeSprite():
         surf.blit(image, topleft)
         if has_flag:
             surf.blit(flag, (topleft[0] + 6, topleft[1] - flag.get_height() + 2))
+        if not requirement_met and required_level is not None:
+            self.draw_requirement_warning(surf, topleft, image, required_level)
         return surf
+
+    def draw_requirement_warning(self, surf: Surface, topleft: Point, image: Surface, required_level: int):
+        """Draws a small warning triangle (built from pygame.draw primitives --
+        no dedicated art asset exists for this) plus the required level number
+        in red, overlaid on the node's icon, to show the node is not currently
+        enterable.
+        """
+        tri_width, tri_height = 9, 8
+        tri_left = topleft[0] + image.get_width() - tri_width - 1
+        tri_top = topleft[1] - 1
+        points = [
+            (tri_left + tri_width // 2, tri_top),
+            (tri_left, tri_top + tri_height),
+            (tri_left + tri_width, tri_top + tri_height),
+        ]
+        pygame.draw.polygon(surf, (255, 200, 0), points)
+        pygame.draw.polygon(surf, (0, 0, 0), points, 1)
+        FONT['small-red'].blit(str(required_level), surf, (topleft[0], topleft[1] - 4))
 
 class OverworldRoadSprite():
     """Contains logic for drawing roads between nodes.

@@ -347,7 +347,49 @@ class GameState():
 
         self.roam_info = RoamInfo(level_prefab.roam, level_prefab.roam_unit)
 
+        # Must run after current_party is assigned above (party-average
+        # effective level needs the live roster) and before level_setup(),
+        # which is what actually registers/places units -- a unit appended
+        # to self._current_level.units after level_setup() has already run
+        # would never arrive on the map.
+        self._generate_enemy_squad(level_prefab)
+
         self.level_setup()
+
+    def _generate_enemy_squad(self, level_prefab):
+        """Fills any "procedural" marked enemy slots
+        (app.data.database.level_units.GenericUnit.procedural) in
+        level_prefab.units with a squad sampled from
+        lion_throne.ltproj/game_data/enemy_pools.json, scaled to the live
+        party's average effective level (app.engine.power_band). No-op if
+        the level declares no procedural slots -- every level shipping
+        today falls into this case.
+
+        `LevelObject.from_prefab` (already run by the time this is called)
+        turns every level-prefab unit, procedural placeholders included,
+        into a stub UnitObject already sitting in self._current_level.units.
+        Replacing that stub (rather than just RegisterUnit-ing the real
+        one) is what makes level_setup() pick it up -- it iterates
+        self._current_level.units to register and self.arrive() units, not
+        the unit registry.
+        """
+        slots = [u for u in level_prefab.units if getattr(u, 'procedural', False)]
+        if not slots:
+            return
+
+        from app.engine import enemy_pool
+        bands = enemy_pool.load_pools()
+        # get_all_units_in_party (not get_units_in_party) deliberately --
+        # the latter indexes self.parties[party], which isn't populated
+        # until level_setup()'s _build_party() call further down, so it
+        # would KeyError on a brand-new party's very first level.
+        party = [u for u in self.get_all_units_in_party(self.current_party) if not u.dead]
+        avg = enemy_pool.party_average_effective_level(party)
+        band = enemy_pool.pick_band(avg, bands)
+        generated = enemy_pool.instantiate_squad(slots, band, self)
+        for unit in generated:
+            unit.party = self.current_party
+            self._current_level.units.append(unit, overwrite=True)
 
     def _seed_deploy_vars_from_prefab(self, level_prefab):
         """

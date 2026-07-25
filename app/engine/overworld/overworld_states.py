@@ -120,6 +120,13 @@ class OverworldFreeState(MapState):
                     game.state.change('overworld_party_option_menu')
                     return
                 else:   # we selected a node without a party
+                    if not game.overworld_controller.node_requirement_met(selected_node):
+                        # unmet unit-count/level requirement -- refuse the launch.
+                        # The node stays visible and cursor-reachable: we don't
+                        # hide it, deselect it, or change state, we just decline
+                        # to act on this SELECT.
+                        get_sound_thread().play_sfx('Error')
+                        return
                     party_node = game.overworld_controller.selected_party_node()
                     is_next_level = selected_node.prefab.level == game.overworld_controller.next_level
                     # a node whose level has already been cleared is always launchable, so the
@@ -136,6 +143,10 @@ class OverworldFreeState(MapState):
                                 game.state.change('overworld_next_level')
                             elif is_reentry:
                                 game.game_vars['_reentry_target_nid'] = selected_node.prefab.level
+                                # revisiting an already-cleared level rolls (once,
+                                # cached) whether this visit is Safe or Unsafe --
+                                # see OverworldManager.get_node_safety
+                                game.overworld_controller.get_node_safety(selected_node.prefab.level)
                                 game.state.change('overworld_next_level')
                             else:
                                 game.game_vars['_target_node_nid'] = selected_node.nid

@@ -44,3 +44,21 @@ jobs:
 
       - name: Merchant entity, Donate XP, and prep-market feat pricing
         run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_merchant.py
+
+      - name: Enemy template pool and squad generation
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_enemy_pool.py
+
+      - name: Conditional enemy spawns
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_conditional_spawn.py
+
+      - name: Free roam and monster engagement
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_roam.py
+
+      - name: Non-combat skill checks
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_skill_check.py
+
+      - name: Dungeon floor state preservation
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_dungeon_floor.py
+
+      - name: Overworld level gating and Safe/Unsafe revisits
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_overworld_gating.py

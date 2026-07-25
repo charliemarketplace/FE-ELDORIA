@@ -21,6 +21,7 @@ from __future__ import annotations
 from typing import List, Optional, Tuple
 
 from app.data.database.database import DB
+from app.engine import power_band
 
 
 def _median(values: List[int]) -> float:
@@ -34,9 +35,10 @@ def _median(values: List[int]) -> float:
 
 def _effective_level_and_tier(level_unit) -> Optional[Tuple[int, int]]:
     """(effective_level, tier) for a level-prefab unit entry, or None if
-    it can't be determined. Effective level is level + 10 for tier-2
-    (promoted) classes, else just level -- this keeps promoted units
-    from skewing the power-band median down relative to their threat."""
+    it can't be determined. Effective level accounts for tier-2 (promoted)
+    classes being worth more than their raw level suggests -- see
+    app.engine.power_band.effective_level, the single shared rule used here
+    and by the enemy-pool generator."""
     if level_unit.generic:
         level = level_unit.level
         klass_nid = level_unit.klass
@@ -52,7 +54,7 @@ def _effective_level_and_tier(level_unit) -> Optional[Tuple[int, int]]:
         return None
     klass = DB.classes.get(klass_nid)
     tier = klass.tier if klass else 1
-    effective = level + 10 if tier == 2 else level
+    effective = power_band.effective_level(level, klass_nid)
     return effective, tier
 
 

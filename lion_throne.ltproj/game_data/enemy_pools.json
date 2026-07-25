@@ -1,0 +1,66 @@
+[
+    {
+        "nid": "green_recruits",
+        "min_avg_level": 1,
+        "max_avg_level": 4,
+        "templates": [
+            {"klass": "Soldier", "level_range": [1, 4], "faction": "Soldier", "ai": "Guard", "weight": 3, "starting_items": ["Iron Lance"]},
+            {"klass": "Archer", "level_range": [1, 4], "faction": "Soldier", "ai": "Defend", "weight": 2, "starting_items": ["Willow Bow"]},
+            {"klass": "Thief", "level_range": [1, 4], "faction": "Cutthroat", "ai": "Thief", "weight": 1, "starting_items": ["Iron Sword"]},
+            {"klass": "Mercenary", "level_range": [1, 4], "faction": "Bandit", "ai": "Attack", "weight": 2, "starting_items": ["Iron Sword"]}
+        ]
+    },
+    {
+        "nid": "hardened_soldiers",
+        "min_avg_level": 5,
+        "max_avg_level": 8,
+        "templates": [
+            {"klass": "Soldier", "level_range": [4, 8], "faction": "Soldier", "ai": "Defend", "weight": 3, "starting_items": ["Steel Lance"]},
+            {"klass": "Skirmisher", "level_range": [4, 8], "faction": "Soldier", "ai": "Attack", "weight": 2, "starting_items": ["Iron Lance"]},
+            {"klass": "Fighter", "level_range": [4, 8], "faction": "Bandit", "ai": "Berserk", "weight": 2, "starting_items": ["Iron Axe"]},
+            {"klass": "Mage", "level_range": [4, 8], "faction": "Templar", "ai": "Attack", "weight": 2, "starting_items": ["Fire"]},
+            {"klass": "Ghoul", "level_range": [4, 8], "faction": "Monster", "ai": "Berserk", "weight": 1, "starting_items": ["Iron Axe"]}
+        ]
+    },
+    {
+        "nid": "veteran_warband",
+        "min_avg_level": 9,
+        "max_avg_level": 12,
+        "templates": [
+            {"klass": "Knight", "level_range": [7, 10], "faction": "Soldier", "ai": "Defend", "weight": 2, "starting_items": ["Iron Lance"]},
+            {"klass": "Cavalier", "level_range": [7, 10], "faction": "Soldier", "ai": "Attack", "weight": 2, "starting_items": ["Iron Sword"]},
+            {"klass": "Wraith", "level_range": [7, 10], "faction": "Monster", "ai": "Attack", "weight": 2, "starting_items": ["Fire"]},
+            {"klass": "Hellhound", "level_range": [7, 10], "faction": "Monster", "ai": "Berserk", "weight": 1, "starting_items": ["Iron Sword"]},
+            {"klass": "Halberdier", "level_range": [1, 2], "faction": "Soldier", "ai": "Pursue", "weight": 2, "starting_items": ["Steel Lance"]},
+            {"klass": "Assassin", "level_range": [1, 2], "faction": "Cutthroat", "ai": "Attack", "weight": 1, "starting_items": ["Iron Sword"]},
+            {"klass": "Sage", "level_range": [1, 2], "faction": "Templar", "ai": "Attack", "weight": 1, "starting_items": ["Fire"]}
+        ]
+    },
+    {
+        "nid": "elite_vanguard",
+        "min_avg_level": 13,
+        "max_avg_level": 16,
+        "templates": [
+            {"klass": "Paladin", "level_range": [3, 6], "faction": "Soldier", "ai": "Attack", "weight": 3, "starting_items": ["Steel Lance"]},
+            {"klass": "General", "level_range": [3, 6], "faction": "Soldier", "ai": "Guard", "weight": 2, "starting_items": ["Steel Axe"]},
+            {"klass": "Sniper", "level_range": [3, 6], "faction": "Soldier", "ai": "Attack", "weight": 2, "starting_items": ["Willow Bow"]},
+            {"klass": "Sage", "level_range": [3, 6], "faction": "Templar", "ai": "Attack", "weight": 2, "starting_items": ["Fire"]},
+            {"klass": "Warrior", "level_range": [3, 6], "faction": "Bandit", "ai": "Berserk", "weight": 2, "starting_items": ["Steel Axe"]},
+            {"klass": "Oracle", "level_range": [3, 6], "faction": "Templar", "ai": "Heal", "weight": 1, "starting_items": ["Blind"]},
+            {"klass": "Hellhound", "level_range": [9, 10], "faction": "Monster", "ai": "Berserk", "weight": 1, "starting_items": ["Iron Sword"]}
+        ]
+    },
+    {
+        "nid": "legion_of_ash",
+        "min_avg_level": 17,
+        "max_avg_level": 9999,
+        "templates": [
+            {"klass": "General", "level_range": [7, 10], "faction": "Elite", "ai": "Guard", "weight": 3, "starting_items": ["Steel Axe"]},
+            {"klass": "Paladin", "level_range": [7, 10], "faction": "Elite", "ai": "Attack", "weight": 3, "starting_items": ["Steel Lance"]},
+            {"klass": "Sage", "level_range": [7, 10], "faction": "Templar", "ai": "Attack", "weight": 2, "starting_items": ["Fire"]},
+            {"klass": "Sniper", "level_range": [7, 10], "faction": "Soldier", "ai": "Attack", "weight": 2, "starting_items": ["Willow Bow"]},
+            {"klass": "Assassin", "level_range": [7, 10], "faction": "Cutthroat", "ai": "Attack", "weight": 1, "starting_items": ["Iron Sword"]},
+            {"klass": "Hellhound", "level_range": [9, 10], "faction": "Monster", "ai": "Berserk", "weight": 1, "starting_items": ["Iron Sword"]}
+        ]
+    }
+]

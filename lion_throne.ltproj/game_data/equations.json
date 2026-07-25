@@ -98,5 +98,9 @@
     {
         "nid": "MANA",
         "expression": "0"
+    },
+    {
+        "nid": "PERSUASION",
+        "expression": "SKL + LCK"
     }
 ]

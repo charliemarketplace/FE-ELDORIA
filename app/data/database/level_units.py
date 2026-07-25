@@ -27,6 +27,17 @@ class GenericUnit(Prefab):
 
     generic: bool = True
 
+    # Marks this slot as a target for the enemy-pool generator
+    # (app/engine/enemy_pool.py): its klass/level/faction/ai/starting_items
+    # are overwritten at level start with a squad member sampled from
+    # enemy_pools.json and scaled to the live party's average effective
+    # level; position/team/ai_group stay exactly as authored here. Appended
+    # LAST and defaulted False -- GenericUnit is constructed with 9
+    # positional args at two call sites in app/events/event_functions.py, so
+    # inserting a field anywhere but the end would silently shift
+    # starting_items/team/ai with no TypeError.
+    procedural: bool = False
+
     @property
     def name(self):
         from app.data.database.database import DB
