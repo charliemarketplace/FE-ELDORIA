@@ -13,6 +13,18 @@ if TYPE_CHECKING:
 from app.data.database.database import DB
 from app.utilities import utils
 
+# Maps the public axis name used by `check_alignment` to the underlying
+# game_var it is stored under. Must stay module-scope: GameQueryEngine.__init__
+# builds its func_dict by scanning `dir(self)` for public attributes, so a
+# class-level constant here would get swept up and exposed as a (non-callable)
+# entry in every condition-eval scope.
+_ALIGNMENT_AXES = {
+    'lawful_chaotic': 'alignment_lawful_chaotic',
+    'good_evil': 'alignment_good_evil',
+}
+_ALIGNMENT_MIN = -10
+_ALIGNMENT_MAX = 10
+
 class GameQueryEngine():
     def __init__(self, logger: logging.Logger, game: GameState) -> None:
         self.logger = logger
@@ -386,3 +398,72 @@ class GameQueryEngine():
         """
         from app.engine.achievements import ACHIEVEMENTS
         return ACHIEVEMENTS.check_achievement(nid)
+
+    def check_alignment(self, axis: str) -> int:
+        """Returns the party's current standing on an alignment axis.
+        Alignment is stored as a plain game_var (so it survives save/load and
+        the turnwheel like any other game_var) and is always reported clamped
+        to the range [-10, 10], regardless of what raw value may have been
+        written to the underlying var.
+        Example usage:
+        * `check_alignment('good_evil') >= 3` in a condition string to gate a
+          "good"-aligned event branch
+        Args:
+            axis: one of 'lawful_chaotic' or 'good_evil'
+        Raises:
+            ValueError: if axis is not a recognized alignment axis
+        Returns:
+            int: the current value of that axis, clamped to [-10, 10]
+        """
+        if axis not in _ALIGNMENT_AXES:
+            raise ValueError(
+                "Unknown alignment axis %r; expected one of %s" %
+                (axis, sorted(_ALIGNMENT_AXES.keys())))
+        varname = _ALIGNMENT_AXES[axis]
+        raw = self.game.game_vars.get(varname, 0)
+        return utils.clamp(raw, _ALIGNMENT_MIN, _ALIGNMENT_MAX)
+
+    def roll_d20(self, unit=None, modifier: int = 0, dc: int = None) -> dict:
+        """Rolls a d20, tabletop-style, and reports the result against an
+        optional difficulty class (DC).
+        Uses `game.get_random`, which draws from the turnwheel-safe
+        `other_random` stream (NOT the `combat_random` stream that combat rolls
+        use) so calling this never perturbs combat replay/turnwheel state.
+        Example usage:
+        * `roll_d20(unit, modifier=2, dc=15)['success']` in a condition string
+          to gate a skill-check event branch
+        Args:
+            unit (optional): unit the roll is being made for. Currently
+                unused by the roll itself (no unit stat bonuses are applied),
+                but accepted so event scripts can pass it through for
+                flavor/logging without needing a separate signature.
+            modifier (int, optional): flat modifier added to the natural roll
+                to produce the total. Defaults to 0.
+            dc (int, optional): difficulty class to beat. If None, no
+                pass/fail judgement is made against a DC. Defaults to None.
+        Returns:
+            dict: {
+                'natural': the raw 1-20 die result,
+                'total': natural + modifier,
+                'success': total >= dc if dc was given, else None,
+                'band': 'crit_fail' on a natural 1, 'crit_success' on a
+                    natural 20, else 'success'/'fail' vs dc, or 'normal' if
+                    dc is None,
+            }
+        """
+        natural = self.game.get_random(1, 20)
+        total = natural + modifier
+        success = None if dc is None else (total >= dc)
+
+        if natural == 1:
+            band = 'crit_fail'
+        elif natural == 20:
+            band = 'crit_success'
+        elif dc is None:
+            band = 'normal'
+        elif success:
+            band = 'success'
+        else:
+            band = 'fail'
+
+        return {'natural': natural, 'total': total, 'success': success, 'band': band}

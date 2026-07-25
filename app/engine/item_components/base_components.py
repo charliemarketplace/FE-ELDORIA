@@ -138,6 +138,14 @@ class Value(ItemComponent):
             return self.value * frac * DB.constants.value('sell_modifier')
         return self.value * DB.constants.value('sell_modifier')
 
+class Tier(ItemComponent):
+    nid = 'tier'
+    desc = "Item has a numeric power tier, purely for shop/progression gating and UI grouping (e.g. sorting or filtering items into 'Tier 1', 'Tier 2', ...). This is INDEPENDENT of weapon_rank: weapon_rank is a wexp-based usability gate (can this unit even wield an E/D/C/... rank weapon), whereas tier carries no wexp/usability semantics on its own and does not affect whether a unit can equip or use the item. Read it from event/query code (e.g. to lock a shop's offerings behind a story-progression threshold) rather than relying on it for combat legality checks."
+    tag = ItemTags.BASE
+
+    expose = ComponentType.Int
+    value = 1
+
 class Accessory(ItemComponent):
     nid = 'accessory'
     desc = "The item is considered an accessory and takes up an accessory slot in a unit's inventory. Make sure to increase the number of accessory slots to more than zero and have a total number of inventory + accessory slots less than six."
