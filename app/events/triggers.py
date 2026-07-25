@@ -57,6 +57,16 @@ class LevelStart(EventTrigger):
     nid: ClassVar[NID] = 'level_start'
 
 @dataclass(init=True)
+class LevelReenter(EventTrigger):
+    """
+    Occurs at the very beginning of a level, in place of LevelStart, when the
+    player is re-entering a level they have already cleared (from the
+    overworld). Use this to reach the prep screen (Manage/Formation/Save)
+    without replaying the level's intro cinematics.
+    """
+    nid: ClassVar[NID] = 'level_reenter'
+
+@dataclass(init=True)
 class LevelEnd(EventTrigger):
     """
     This occurs once `win_game` is set in another event. This is called at the

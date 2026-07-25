@@ -38,3 +38,6 @@ jobs:
 
       - name: Declarative deploy cap and clean_up HP preservation
         run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_deploy_cap.py
+
+      - name: Level re-entry from the overworld
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_level_reentry.py
