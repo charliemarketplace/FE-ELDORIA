@@ -18,23 +18,15 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-sys.frozen = True
-os.environ['SDL_VIDEODRIVER'] = 'dummy'
-os.environ['SDL_AUDIODRIVER'] = 'dummy'
-os.makedirs('saves', exist_ok=True)
+from tools import play_harness as harness
+harness.boot()
 
 from app.data.resources.resources import RESOURCES
 from app.data.database.database import DB
-from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
-
-import pygame
-pygame.init()
-pygame.display.set_mode((240, 160))
 
 from app.engine import action
 from app.engine import game_state
 from app.engine.game_state import GameState
-import app.engine.sprites as engine_sprites
 
 
 FAILURES = []
@@ -56,13 +48,8 @@ print('=' * 78)
 # 0. Boot DB/RESOURCES (identical to tools/test_capital_completion.py)
 # ---------------------------------------------------------------------------
 print('\n--- [0] Boot DB/RESOURCES ---')
-RESOURCES.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
-DB.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
-# Harness quirk (not a gameplay bug) -- see tools/test_capital_completion.py for
-# the full explanation: RESOURCES.load() resets app.sprites.SPRITES without
-# re-running app.engine.sprites.load_images(), so engine-chrome sprites' .image
-# stays None until this is re-run.
-engine_sprites.load_images()
+# RESOURCES/DB already loaded and engine-chrome sprites/fonts already
+# initialized by harness.boot() above.
 
 
 def fresh_start_level(level_nid, preset_level_vars=None):

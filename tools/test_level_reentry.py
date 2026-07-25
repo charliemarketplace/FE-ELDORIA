@@ -18,22 +18,14 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-sys.frozen = True
-os.environ['SDL_VIDEODRIVER'] = 'dummy'
-os.environ['SDL_AUDIODRIVER'] = 'dummy'
-os.makedirs('saves', exist_ok=True)
+from tools import play_harness as harness
+harness.boot()
 
 from app.data.resources.resources import RESOURCES
 from app.data.database.database import DB
-from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
-
-import pygame
-pygame.init()
-pygame.display.set_mode((240, 160))
 
 from app.engine import game_state
 from app.engine.game_state import GameState
-import app.engine.sprites as engine_sprites
 
 
 FAILURES = []
@@ -55,13 +47,8 @@ print('=' * 78)
 # 1. Boot DB/RESOURCES, start S1 for real
 # ---------------------------------------------------------------------------
 print('\n--- [1] Boot DB/RESOURCES, game_state.start_level(\'S1\') ---')
-RESOURCES.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
-DB.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
-# Harness quirk (not a gameplay bug), same as tools/test_capital_completion.py:
-# RESOURCES.load() resets app.sprites.SPRITES without re-running
-# app.engine.sprites.load_images(), so engine-chrome sprites (e.g.
-# level_cursor.py, chapter_title.py) crash on import unless this is re-run.
-engine_sprites.load_images()
+# RESOURCES/DB already loaded and engine-chrome sprites/fonts already
+# initialized by harness.boot() above.
 game = game_state.start_level('S1')
 check('1. start_level(S1)', game.level is not None and game.level.nid == 'S1',
       'game.level.nid = %r (expected S1)' % (game.level.nid if game.level else None))
@@ -129,21 +116,38 @@ check('4. DB.events.get(level_reenter, S1) returns exactly the new prep event',
       'reenter_events = %s' % [e.nid for e in reenter_events])
 
 reenter_script = '\n'.join(reenter_events[0]._source) if reenter_events else ''
-check('4. S1 Reenter event source is exactly prep;0 (Manage/Formation/Save entry point)',
-      reenter_events and reenter_events[0]._source == ['prep;0'],
+# S1 Reenter's _source still ends in prep;0 (the Manage/Formation/Save entry
+# point) but -- as of the bug-1 fix -- now leads with the same conditional
+# add_unit re-placement blocks S1 Intro uses. Before the fix this was bare
+# ['prep;0']: a companion recruited earlier never got re-placed on a
+# revisited level, so their position stayed None forever after the first
+# clean_up(full=True) -- present in game.get_units_in_party() but invisible
+# and undeployable. tools/test_playthrough.py proves the effect at runtime
+# (a real re-entry with a real party); this proves the fix is actually
+# present in the authored content, not just coincidentally working.
+check('4. S1 Reenter event source still ends in prep;0 (Manage/Formation/Save entry point)',
+      reenter_events and reenter_events[0]._source[-1] == 'prep;0',
+      'S1 Reenter _source = %r' % (reenter_events[0]._source if reenter_events else None,))
+check('4. S1 Reenter now re-places every recruitable companion, mirroring S1 Intro',
+      reenter_events and all('add_unit;%s;' % nid in reenter_script for nid in ('Kael', 'Elara', 'Ren', 'Briar')),
       'S1 Reenter _source = %r' % (reenter_events[0]._source if reenter_events else None,))
 
 check('4. DB.events.get(level_start, S1) still returns S1 Intro, unaffected',
       len(start_events) == 1 and start_events[0].nid == 'S1 Intro',
       'start_events = %s' % [e.nid for e in start_events])
 
-# Also assert the analogous events exist for S2-S5, and that hub levels
-# (CAPITAL, SHUB) were deliberately NOT given a level_reenter event.
+# Also assert the analogous events exist for S2-S5, that they still end in
+# prep;0, and that hub levels (CAPITAL, SHUB) were deliberately NOT given a
+# level_reenter event.
 for lvl in ('S2', 'S3', 'S4', 'S5'):
     lvl_reenter = DB.events.get('level_reenter', lvl)
-    check('4. %s has a level_reenter prep event' % lvl,
-          len(lvl_reenter) == 1 and lvl_reenter[0]._source == ['prep;0'],
+    check('4. %s has a level_reenter prep event ending in prep;0' % lvl,
+          len(lvl_reenter) == 1 and lvl_reenter[0]._source[-1] == 'prep;0',
           '%s level_reenter events = %s' % (lvl, [(e.nid, e._source) for e in lvl_reenter]))
+    lvl_reenter_script = '\n'.join(lvl_reenter[0]._source) if lvl_reenter else ''
+    check('4. %s level_reenter re-places its Intro\'s companions too' % lvl,
+          lvl_reenter and 'add_unit;Kael;' in lvl_reenter_script,
+          '%s level_reenter _source = %r' % (lvl, lvl_reenter[0]._source if lvl_reenter else None))
 
 for hub in ('CAPITAL', 'SHUB'):
     hub_reenter = DB.events.get('level_reenter', hub)
