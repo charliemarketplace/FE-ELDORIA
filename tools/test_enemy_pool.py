@@ -21,18 +21,11 @@ import types
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-sys.frozen = True
-os.environ['SDL_VIDEODRIVER'] = 'dummy'
-os.environ['SDL_AUDIODRIVER'] = 'dummy'
-os.makedirs('saves', exist_ok=True)
+from tools import play_harness as harness
+harness.boot()
 
 from app.data.resources.resources import RESOURCES
 from app.data.database.database import DB
-from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
-
-import pygame
-pygame.init()
-pygame.display.set_mode((240, 160))
 
 from app.data.database.level_units import GenericUnit
 from app.engine import action
@@ -41,7 +34,6 @@ from app.engine import enemy_pool
 from app.engine import game_state
 from app.engine import power_band
 from app.utilities import static_random
-import app.engine.sprites as engine_sprites
 
 
 FAILURES = []
@@ -63,14 +55,8 @@ print('=' * 78)
 # 1. Boot DB/RESOURCES, load the pool, start a real level
 # ---------------------------------------------------------------------------
 print('\n--- [1] Boot DB/RESOURCES, load enemy_pools.json, start_level(S1) ---')
-RESOURCES.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
-DB.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
-
-# Same harness quirk as test_capital_completion.py: RESOURCES.load() clears
-# app/sprites.py's SPRITES dict without re-running app.engine.sprites'
-# load_images(), which modules imported by game_state.start_level() read at
-# class-definition time.
-engine_sprites.load_images()
+# RESOURCES/DB already loaded and engine-chrome sprites/fonts already
+# initialized by harness.boot() above.
 
 bands = enemy_pool.load_pools()
 check('1. enemy_pools.json loads', isinstance(bands, list) and len(bands) > 0,

@@ -17,24 +17,16 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-sys.frozen = True
-os.environ['SDL_VIDEODRIVER'] = 'dummy'
-os.environ['SDL_AUDIODRIVER'] = 'dummy'
-os.makedirs('saves', exist_ok=True)
+from tools import play_harness as harness
+harness.boot()
 
 from app.data.resources.resources import RESOURCES
 from app.data.database.database import DB
-from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
-
-import pygame
-pygame.init()
-pygame.display.set_mode((240, 160))
 
 from app.engine import game_state
 from app.engine.game_state import GameState
 from app.engine.generic_unit import create_generic_unit
 from app.utilities import static_random
-import app.engine.sprites as engine_sprites
 
 
 FAILURES = []
@@ -57,13 +49,8 @@ print('=' * 78)
 #    real "0" overworld out of overworlds.json.
 # ---------------------------------------------------------------------------
 print('\n--- [1] Boot DB/RESOURCES, game_state.start_level(\'S1\'), build OverworldManager ---')
-RESOURCES.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
-DB.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
-# Harness quirk (not a gameplay bug), same as tools/test_capital_completion.py:
-# RESOURCES.load() resets app.sprites.SPRITES without re-running
-# app.engine.sprites.load_images(), so engine-chrome sprites crash on import
-# unless this is re-run first.
-engine_sprites.load_images()
+# RESOURCES/DB already loaded and engine-chrome sprites/fonts already
+# initialized by harness.boot() above.
 game = game_state.start_level('S1')
 check('1. start_level(S1)', game.level is not None and game.level.nid == 'S1',
       'game.level.nid = %r (expected S1)' % (game.level.nid if game.level else None))
@@ -80,12 +67,30 @@ check('1. OverworldManager built with real nodes', 'S3' in manager.nodes and 'S1
 
 
 def clear_party():
-    """Removes any units this test added to the player party, leaving the
-    party's real (level-authored) units alone."""
-    for nid in list(game.unit_registry.keys()):
-        unit = game.unit_registry[nid]
-        if getattr(unit, '_test_added', False):
-            del game.unit_registry[nid]
+    """Empties the party as far as get_units_in_party()/node_requirement_met()
+    (both party == current_party filtered, per app/engine/game_state.py and
+    app/engine/overworld/overworld_manager.py) are concerned, so each
+    req_unit_count/req_unit_level probe below starts from a precisely
+    controlled, empty party.
+
+    Reassigns `.party` rather than deleting from game.unit_registry: S1's
+    own level-authored units (Rowan/Iska) are never referenced by nid
+    anywhere in this file -- they're incidental to loading a real level to
+    get a real OverworldManager, not part of what's under test -- but they
+    DO count towards get_units_in_party() like any other player unit, so
+    leaving them at the real current_party would silently satisfy a low
+    req_unit_level (e.g. the bug-3 fix's req_unit_level: 2 -- both start at
+    internal level 2) without this test ever adding a single unit itself.
+    Deleting them outright instead would crash the save/pickle/load round
+    trip in section 8 below (LevelObject.restore() resolves game._current_level
+    .units back through game.get_unit(), which needs them to still exist).
+    """
+    for unit in list(game.unit_registry.values()):
+        if unit.team == 'player' and getattr(unit, '_test_added', False):
+            del game.unit_registry[unit.nid]
+    for unit in game.unit_registry.values():
+        if unit.team == 'player':
+            unit.party = '_test_bench'
 
 
 def add_party_unit(nid, klass, level, internal_level_note=''):
@@ -129,16 +134,25 @@ for other_nid in ('CAPITAL', 'S2', 'SHUB', 'S4', 'S5'):
 
 # ---------------------------------------------------------------------------
 # 3. S3 node (authored in overworlds.json with req_unit_count: 2,
-#    req_unit_level: 5) is refused with one qualifying unit and permitted
+#    req_unit_level: 2) is refused with one qualifying unit and permitted
 #    with two -- proves the field round-trips out of real project JSON.
+#
+#    req_unit_level was originally shipped as 5, which tools/test_playthrough.py
+#    (a real state-machine playthrough) proved unreachable through normal
+#    CAPITAL -> S1 -> S2 progression: only the protagonist reliably reaches
+#    internal level 5 that early, so the only way to pass this gate was
+#    grinding the first fight repeatedly. Lowered to 2 -- comfortably cleared
+#    by at least two party members after a normal, non-grinding clear of the
+#    first two chapters, per tools/test_playthrough.py's recorded levels --
+#    while still requiring the party to have actually fought.
 # ---------------------------------------------------------------------------
-print('\n--- [3] S3 node requires 2 units at internal level >= 5 ---')
+print('\n--- [3] S3 node requires 2 units at internal level >= 2 ---')
 s3_node = manager.nodes['S3']
 check('3. S3 node req_unit_count == 2 (round-tripped from overworlds.json)',
       s3_node.prefab.req_unit_count == 2,
       'S3 node.prefab.req_unit_count = %r' % (s3_node.prefab.req_unit_count,))
-check('3. S3 node req_unit_level == 5 (round-tripped from overworlds.json)',
-      s3_node.prefab.req_unit_level == 5,
+check('3. S3 node req_unit_level == 2 (round-tripped from overworlds.json, reachable through normal play)',
+      s3_node.prefab.req_unit_level == 2,
       'S3 node.prefab.req_unit_level = %r' % (s3_node.prefab.req_unit_level,))
 
 clear_party()
@@ -173,13 +187,14 @@ promoted_unit = add_party_unit('TestPromoted', 'Vanguard', 1)
 check('4. promoted unit raw level is 1 (post-promotion reset)',
       promoted_unit.level == 1,
       'promoted_unit.level = %r' % (promoted_unit.level,))
-check('4. promoted unit raw level alone would FAIL the req_unit_level=5 check',
-      promoted_unit.level < 5,
-      'promoted_unit.level = %r (< 5, so a naive unit.level check would wrongly exclude it)' %
-      (promoted_unit.level,))
-check('4. promoted unit get_internal_level() is >= 5 (1 + Mercenary max_level 10 = 11)',
-      promoted_unit.get_internal_level() >= 5,
-      'promoted_unit.get_internal_level() = %r (expected >= 5)' % (promoted_unit.get_internal_level(),))
+check('4. promoted unit raw level alone would FAIL the req_unit_level=%d check' % s3_node.prefab.req_unit_level,
+      promoted_unit.level < s3_node.prefab.req_unit_level,
+      'promoted_unit.level = %r (< %r, so a naive unit.level check would wrongly exclude it)' %
+      (promoted_unit.level, s3_node.prefab.req_unit_level))
+check('4. promoted unit get_internal_level() is >= %d (1 + Mercenary max_level 10 = 11)' % s3_node.prefab.req_unit_level,
+      promoted_unit.get_internal_level() >= s3_node.prefab.req_unit_level,
+      'promoted_unit.get_internal_level() = %r (expected >= %r)' %
+      (promoted_unit.get_internal_level(), s3_node.prefab.req_unit_level))
 
 # Alone, one promoted unit still isn't enough for S3's req_unit_count of 2.
 check('4. S3 still refused with only the ONE promoted unit (need 2)',

@@ -2,11 +2,11 @@
 
 ## Shipped
 
-All on `main`. Twelve behaviour suites plus `smoke_test.py` run in `.github/workflows/behaviour-tests.yml`.
+All on `main`. Thirteen behaviour suites plus `smoke_test.py` run in `.github/workflows/behaviour-tests.yml`.
 
 | # | Feature | Where to see it |
 |---|---|---|
-| 2 | Overworld level gating | S3 requires 2 units at internal level 5 |
+| 2 | Overworld level gating | S3 requires 2 units at internal level 2 (reachable through normal CAPITAL->S1->S2 play; verified by `tools/test_playthrough.py`) |
 | 3 | Level re-entry | Cleared nodes selectable on the overworld |
 | 4, 5 | Enemy pool + party-scaled generator | `enemy_pools.json`, `app/engine/enemy_pool.py` |
 | 6 | Safe/Unsafe revisits | Rolls once per node, cached |
@@ -22,10 +22,9 @@ All on `main`. Twelve behaviour suites plus `smoke_test.py` run in `.github/work
 | 20 | Dungeon floor state preservation | `preserve_state_on_transition` |
 | 20a | `clean_up(preserve_hp=…)` | HP/guard/mana survive a floor change |
 | 21 | Monster classes | Ghoul, Wraith, Hellhound |
+| 15 | Reusable state-machine test harness | `tools/play_harness.py` (boot, frame-pump, prep/manage/combat/overworld drivers); `tools/test_playthrough.py` drives a full CAPITAL->S1->S2 run through it |
 
 ## Open
-
-**#15 — reusable test harness.** The CI gate is done; the fixture is not. Every test file still hand-rolls the same ~40-line SDL/DB bootstrap. Extract `tools/harness.py` when the duplication starts costing something.
 
 **#22 — Gemini art pipeline.** Blocked: no API key in the remote environment. Add one via environment config (not a repo `.env` — the pygbag bundle ships wholesale to the browser). `tools/make_monster_sprites.py` already covers palette variants without it.
 

@@ -20,18 +20,11 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-sys.frozen = True
-os.environ['SDL_VIDEODRIVER'] = 'dummy'
-os.environ['SDL_AUDIODRIVER'] = 'dummy'
-os.makedirs('saves', exist_ok=True)
+from tools import play_harness as harness
+harness.boot()
 
 from app.data.resources.resources import RESOURCES
 from app.data.database.database import DB
-from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
-
-import pygame
-pygame.init()
-pygame.display.set_mode((240, 160))
 
 from app.engine import action
 from app.engine import item_funcs
@@ -41,7 +34,6 @@ from app.engine.game_state import GameState
 from app.engine.source_type import SourceType
 from app.engine.objects.unit import UnitObject
 from app.data.database.level_units import UniqueUnit
-import app.engine.sprites as engine_sprites
 
 
 FAILURES = []
@@ -71,9 +63,8 @@ print('=' * 78)
 #    but doesn't re-run app.engine.sprites.load_images()).
 # ---------------------------------------------------------------------------
 print('\n--- [1] Boot DB/RESOURCES, game_state.start_level(\'CAPITAL\') ---')
-RESOURCES.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
-DB.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
-engine_sprites.load_images()
+# RESOURCES/DB already loaded and engine-chrome sprites/fonts already
+# initialized by harness.boot() above.
 game = game_state.start_level('CAPITAL')
 check('1. start_level(CAPITAL)', game.level is not None and game.level.nid == 'CAPITAL',
       'game.level.nid = %r (expected CAPITAL)' % (game.level.nid if game.level else None))

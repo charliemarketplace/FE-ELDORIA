@@ -2,9 +2,17 @@ name: Behaviour tests
 
 # Execution-based regression gate. Unlike smoke-test.yml -- which only checks
 # that data loads, engine modules import, and content references resolve --
-# these boot a real GameState headlessly (dummy SDL video/audio drivers),
-# drive real action.do(action.Foo(...)) state mutations, and assert real
-# before/after engine state, including save/pickle/load round trips.
+# these boot a real GameState headlessly (dummy SDL video/audio drivers) and
+# assert real before/after engine state, including save/pickle/load round
+# trips. Most of these drive real action.do(action.Foo(...)) state mutations
+# directly; tools/test_playthrough.py (built on tools/play_harness.py) instead
+# drives the actual state machine -- game.state.update() -- through prep
+# menus, dialogue/choice screens, real combat, and overworld transitions,
+# exactly the layer action.do()-only tests never touch. Three real
+# player-reported bugs (companions vanishing on level re-entry, the prep
+# Market never being reachable, an overworld gate unreachable through normal
+# play) lived entirely in that layer and were invisible to every other test
+# here.
 #
 # Why this workflow exists: tools/test_capital_completion.py sat red on main
 # for some time because nothing ran it. CAPITAL Intro was refactored into a
@@ -62,3 +70,6 @@ jobs:
 
       - name: Overworld level gating and Safe/Unsafe revisits
         run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_overworld_gating.py
+
+      - name: Full playthrough (drives the real state machine -- prep menus, dialogue/choice screens, real combat, overworld transitions)
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_playthrough.py

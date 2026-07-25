@@ -30,21 +30,13 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-sys.frozen = True
-os.environ['SDL_VIDEODRIVER'] = 'dummy'
-os.environ['SDL_AUDIODRIVER'] = 'dummy'
-os.makedirs('saves', exist_ok=True)
+from tools import play_harness as harness
+harness.boot()
 
 from app.data.resources.resources import RESOURCES
 from app.data.database.database import DB
-from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
-
-import pygame
-pygame.init()
-pygame.display.set_mode((240, 160))
 
 from app.engine import game_state
-import app.engine.sprites as engine_sprites
 
 FAILURES = []
 
@@ -65,10 +57,8 @@ print('=' * 78)
 # 1. Boot DB/RESOURCES, start SHUB for real
 # ---------------------------------------------------------------------------
 print("\n--- [1] Boot DB/RESOURCES, game_state.start_level('SHUB') ---")
-RESOURCES.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
-DB.load('lion_throne.ltproj', CURRENT_SERIALIZATION_VERSION)
-# See tools/test_capital_completion.py for why this re-run is required.
-engine_sprites.load_images()
+# RESOURCES/DB already loaded and engine-chrome sprites/fonts already
+# initialized by harness.boot() above.
 
 level_prefab = DB.levels.get('SHUB')
 check('1. SHUB levels.json authored with roam=True',
