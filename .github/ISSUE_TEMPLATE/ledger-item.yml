@@ -16,6 +16,7 @@ body:
       options:
         - content (level/unit/item/skill authoring)
         - engine (Python, app/)
+        - content + engine (authoring change that needs new engine support)
         - bug-watch (recurring or latent bug class)
         - testing (smoke test / CI / verification)
         - infra (deploy, CI, Cloudflare, wrangler)
