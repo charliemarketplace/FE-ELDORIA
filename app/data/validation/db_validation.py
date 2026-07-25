@@ -106,6 +106,11 @@ class DBChecker():
             if level.roam:
                 res.errors += self._val_or_err(level.roam_unit, DType.UNITS, l_err.field("roam_unit"), False)
 
+            # deploy cap/floor
+            if level.min_deploy is not None and level.max_deploy is not None and level.min_deploy > level.max_deploy:
+                res.errors.append(l_err.field("min_deploy").msg(
+                    "min_deploy (%d) is greater than max_deploy (%d)" % (level.min_deploy, level.max_deploy)))
+
             all_level_units = set(level.units.keys())
             travelers: Dict[NID, NID] = {unit.nid: unit.starting_traveler for unit in level.units}
             for unit in level.units:

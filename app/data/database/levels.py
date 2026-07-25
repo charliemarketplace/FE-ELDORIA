@@ -27,6 +27,17 @@ class LevelPrefab(Prefab):
         self.should_record: bool = True
         self.tags: list = []
 
+        # Deployment cap/floor for this level. None means "not set" -- Prefab.restore()
+        # (app/utilities/data.py) only assigns attrs whose DEFAULT value is not None,
+        # so these two Optional[int] fields are backward compatible with existing
+        # levels.json entries with zero migration.
+        self.max_deploy: Optional[int] = None
+        self.min_deploy: Optional[int] = None
+        # Opt-in flag for a future level (e.g. a dungeon floor) to request that
+        # GameState.clean_up() preserve unit HP/state across the transition into
+        # this level, instead of the default full-heal-on-transition behavior.
+        self.preserve_state_on_transition: bool = False
+
         self.units = Data[Union[UniqueUnit, GenericUnit]]()
         self.regions = Data[Region]()
         self.unit_groups = Data[UnitGroup]()
