@@ -1722,5 +1722,53 @@
                 15
             ]
         ]
+    },
+    {
+        "nid": "fMerchant's Reach",
+        "name": "Merchant's Reach",
+        "desc": "The Merchant's prep-market stocks tier 2 goods (Steel-rank and equivalent).",
+        "icon_nid": "Skills",
+        "icon_index": [
+            1,
+            3
+        ],
+        "components": [
+            [
+                "feat",
+                null
+            ],
+            [
+                "market_tier_unlock",
+                2
+            ],
+            [
+                "class_skill",
+                null
+            ]
+        ]
+    },
+    {
+        "nid": "fMerchant's Renown",
+        "name": "Merchant's Renown",
+        "desc": "The Merchant's prep-market stocks tier 3 goods (Brave/Silver-rank and legendary gear).",
+        "icon_nid": "Skills",
+        "icon_index": [
+            1,
+            4
+        ],
+        "components": [
+            [
+                "feat",
+                null
+            ],
+            [
+                "market_tier_unlock",
+                3
+            ],
+            [
+                "class_skill",
+                null
+            ]
+        ]
     }
 ]

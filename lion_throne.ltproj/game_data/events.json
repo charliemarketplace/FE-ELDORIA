@@ -25,6 +25,9 @@
         "only_once": false,
         "priority": 20,
         "_source": [
+            "add_group;S1_MainSquad",
+            "add_skill_check;Rowan;S1Soldier3;1",
+            "add_skill_check;Iska;S1Soldier4;100",
             "if;game.game_vars.get('kael_joined') and game.get_unit('Kael') and game.get_unit('Kael').team == 'player'",
             "add_unit;Kael;2,8;immediate",
             "end",
@@ -79,7 +82,16 @@
             "if;game.game_vars.get('briar_joined') and game.get_unit('Briar') and game.get_unit('Briar').team == 'player'",
             "add_unit;Briar;4,8;immediate",
             "end",
-            "prep;0"
+            "if;game.game_vars.get('_pending_unsafe_encounter') == 'S1'",
+            "game_var;_pending_unsafe_encounter;None",
+            "add_group;S1_MainSquad",
+            "add_group;S1_UnsafeSquad",
+            "prep;0",
+            "else",
+            "game_var;_pending_unsafe_encounter;None",
+            "speak;Rowan;The road back to Emberhollow is quiet. Nothing stirs.",
+            "win_game",
+            "end"
         ],
         "nid": "S1 Reenter"
     },
@@ -1241,6 +1253,7 @@
             "game_var;safe_zone;1",
             "give_money;3000",
             "game_var;_prep_market;1",
+            "game_var;_prep_donate;1",
             "add_market_item;Vulnerary",
             "add_market_item;Iron Sword",
             "add_market_item;Iron Lance",
@@ -1248,6 +1261,8 @@
             "add_market_item;Willow Bow",
             "add_market_item;Fire",
             "add_market_item;Heal",
+            "add_market_item;Steel Sword",
+            "add_market_item;Brave Lance",
             "add_talk;Rowan;Halvard",
             "add_talk;Rowan;Maren",
             "level_var;capital_pool;['Kael', 'Elara', 'Ren', 'Briar']",
@@ -1257,6 +1272,22 @@
             "add_portrait;Rowan;Right",
             "speak;Rowan;This is it, then. The muster's called every volunteer the capital could spare. Time to see who answered.",
             "remove_portrait;Rowan",
+            "choice;AlignmentTone;How do you address the volunteers?;Reassure|Reassure them gently.,Command|Give them clear orders, no exceptions.",
+            "if;game.game_vars['AlignmentTone'] == 'Reassure'",
+            "inc_game_var;alignment_good_evil;3",
+            "speak;Rowan;Whatever happens out there, we look out for each other first.",
+            "elif;game.game_vars['AlignmentTone'] == 'Command'",
+            "inc_game_var;alignment_lawful_chaotic;3",
+            "speak;Rowan;Fall in. We move as one line, no exceptions.",
+            "end",
+            "choice;SupplyChoice;The quartermaster asks how to divide the extra rations.;Share|Share the surplus with the volunteers.,Keep|Bank the surplus for the campaign.",
+            "if;game.game_vars['SupplyChoice'] == 'Share'",
+            "inc_game_var;alignment_good_evil;3",
+            "speak;Rowan;Nobody marches hungry. Not on my watch.",
+            "elif;game.game_vars['SupplyChoice'] == 'Keep'",
+            "inc_game_var;alignment_lawful_chaotic;3",
+            "speak;Rowan;We hold it in reserve. Discipline before comfort.",
+            "end",
             "choice;GreetPick;Who will you greet first?;game.level_vars['capital_pool'];expression",
             "level_var;capital_pool;[n for n in game.level_vars['capital_pool'] if n != game.game_vars['GreetPick']]",
             "if;game.game_vars['GreetPick'] == 'Kael'",
@@ -1683,5 +1714,39 @@
             "speak;Rowan;Two switches for this. Whoever hid it wanted it kept."
         ],
         "nid": "S3 ChestCenter"
+    },
+    {
+        "name": "AlignmentBlessing",
+        "trigger": "level_start",
+        "level_nid": "S1",
+        "condition": "game.query_engine.check_alignment('good_evil') >= 5",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "speak;Rowan;Halvard always said kindness finds its way back to you.",
+            "give_item;Rowan;Vulnerary",
+            "game_var;_alignment_blessing_given;1"
+        ],
+        "nid": "S1 AlignmentBlessing"
+    },
+    {
+        "name": "SkillCheckResolve",
+        "trigger": "on_skill_check",
+        "level_nid": "S1",
+        "condition": "unit2.nid in ('S1Soldier3', 'S1Soldier4')",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "if;result['success']",
+            "speak;{unit2};Enough. I didn't sign up to burn with this town.",
+            "change_team;{unit2};player",
+            "else",
+            "speak;{unit2};Nice try. Back in line before I forget we're not enemies yet.",
+            "end",
+            "remove_skill_check;{unit1};{unit2}"
+        ],
+        "nid": "S1 SkillCheckResolve"
     }
 ]

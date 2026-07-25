@@ -236,6 +236,44 @@ def goto_prep_main(max_frames=20000, choose=None):
     run_until(lambda g: top_name() == 'prep_main', max_frames=max_frames, choose=choose)
 
 
+def resolve_feat_choice_for(feat_nid, max_frames=2000):
+    """Selects `feat_nid` in a real, live 'feat_choice' screen (FeatChoiceState)
+    that is about to appear -- e.g. right after selecting 'Donate XP' in
+    prep_main, which queues one feat_choice push per Merchant level gained.
+
+    Deliberately does NOT use run_until's generic AUTO_SELECT_STATES
+    auto-pilot for this: that pilot calls `choose(state)` and immediately
+    sends SELECT on every frame whose top state is named 'feat_choice',
+    including the very first frame after the state was merely PUSHED (via
+    a queued state.change()) but before StateMachine.update() has actually
+    run its start() -- FeatChoiceState.unit/.menu are still the class-level
+    defaults (None) at that point (set for real only inside start()), so a
+    choose() callback trying to branch on `state.unit` would see None and
+    silently fall through to "confirm whatever's under the cursor" before
+    ever getting a chance to steer the pick. Pumping plain (event=None)
+    frames here until the state has genuinely started avoids that race,
+    then selects for real and confirms with one explicit SELECT.
+    """
+    from app.engine.game_state import game
+    from app.data.database.database import DB
+
+    for _ in range(max_frames):
+        cur = game.state.current_state()
+        if cur is not None and cur.name == 'feat_choice' and cur.started:
+            break
+        frame(None)
+    else:
+        raise TimeoutError(
+            "resolve_feat_choice_for: 'feat_choice' never started within %d frames" % max_frames)
+
+    state = game.state.current_state()
+    feats = DB.skills.get_feats()
+    target = next((f for f in feats if f.nid == feat_nid), None)
+    assert target is not None, "feat %r not found in DB.skills.get_feats()" % feat_nid
+    state.menu.set_selection(target)
+    frame('SELECT')
+
+
 def get_prep_main_options():
     """The real PrepMainState.populate_options() output: (options, ignore,
     events), read off the live state instance (must be top of stack)."""
@@ -277,6 +315,35 @@ def back_out_of_prep_manage_select(max_frames=20000, choose=None):
     run_until(lambda g: top_name() == 'prep_manage', max_frames=max_frames, choose=choose)
     frame('BACK')
     run_until(lambda g: top_name() == 'prep_main', max_frames=max_frames, choose=choose)
+
+
+def back_out_of_prep_market(max_frames=20000, choose=None):
+    """BACK from prep_market's top Buy/Sell menu (PrepMarketState's initial
+    self.state == 'free') back to prep_manage_select."""
+    frame('BACK')
+    run_until(lambda g: top_name() == 'prep_manage_select', max_frames=max_frames, choose=choose)
+
+
+def enter_prep_market(manage_select_state, max_frames=20000, choose=None):
+    """From a live prep_manage_select state (as returned by
+    enter_manage_and_select_unit): selects 'Market' in the real select_menu
+    and drives forward into the real 'prep_market' state (PrepMarketState),
+    returning that live instance so its buy_menu/sell_menu can be
+    inspected."""
+    from app.engine.game_state import game
+    manage_select_state.select_menu.set_selection('Market')
+    frame('SELECT')
+    run_until(lambda g: top_name() == 'prep_market', max_frames=max_frames, choose=choose)
+    return game.state.current_state()
+
+
+def buy_menu_item_nids(prep_market_state):
+    """The nids actually offered by the real, live PrepMarketState.buy_menu
+    -- built in PrepMarketState.start() from game.market_items filtered by
+    item.Tier vs skill_system.unlocked_market_tier(merchant) (see
+    app/engine/prep.py), so this reflects what tier-gating actually leaves
+    choosable, not the raw (unfiltered) game.market_items dict."""
+    return [item.nid for item in prep_market_state.buy_menu.options]
 
 
 def leave_prep_by_fighting(max_frames=20000, choose=None):
@@ -512,3 +579,114 @@ def is_reentry_available(level_nid):
     return is_level_launchable(
         level_nid, game.overworld_controller.next_level,
         game.game_vars.get('_cleared_levels', set()))
+
+
+def force_node_safety(level_nid, desired, max_attempts=200):
+    """Pins the Safe/Unsafe outcome a revisit of `level_nid` will see, by
+    repeatedly invoking the REAL production coin-flip -- OverworldManager.
+    get_node_safety (see overworld/overworld_manager.py), the exact call
+    OverworldFreeState.take_input makes the moment a re-entry is selected --
+    after clearing any cached roll, until it lands on `desired` ('Safe' or
+    'Unsafe'). This is the same brute-force-until-it-lands technique
+    tools/test_alignment_d20_tier.py already uses for roll_d20 bands
+    (`next(r for r in (...) if r['natural'] == 1)`): it drives the actual
+    production RNG (game.get_random_weighted_choice, the turnwheel-safe
+    other_random stream) over and over rather than writing the cached
+    result by hand. get_node_safety's whole point is "never re-roll once
+    cached" (app/engine/overworld/overworld_manager.py), so once this
+    lands on `desired`, travel_to_level_node()'s subsequent real node-select
+    -> get_node_safety() call for the same node reads back the exact same
+    cached outcome, unchanged.
+    """
+    from app.engine.game_state import game
+    for _ in range(max_attempts):
+        game.game_vars.get('_node_safety', {}).pop(level_nid, None)
+        # get_node_safety only ever SETS '_pending_unsafe_encounter' (on an
+        # Unsafe outcome); it never clears it, because in real play a node
+        # is only ever rolled once before the level consumes the flag. A
+        # discarded retry that happened to land Unsafe would otherwise leak
+        # a stale pending flag past a later retry that lands the desired
+        # Safe outcome -- clear it before every real re-roll so the flag
+        # only ever reflects the LAST (kept) roll, exactly as if that had
+        # been the only roll made.
+        if game.game_vars.get('_pending_unsafe_encounter') == level_nid:
+            del game.game_vars['_pending_unsafe_encounter']
+        outcome = game.overworld_controller.get_node_safety(level_nid)
+        if outcome == desired:
+            return
+    raise RuntimeError(
+        "force_node_safety: %r never landed on %r after %d real rolls" %
+        (level_nid, desired, max_attempts))
+
+
+# ---------------------------------------------------------------------------
+# Skill check -- drives the REAL on-map ability menu (general_states.py's
+# 'free' -> 'move' -> 'menu' -> 'targeting' state chain), not a direct call
+# into abilities.SkillCheckAbility.
+# ---------------------------------------------------------------------------
+
+def attempt_skill_check(initiator_nid, target_nid, max_frames=2000):
+    """From 'free': teleports `initiator_nid` adjacent to `target_nid` (real
+    action.Teleport -- the same technique win_current_level_by_combat uses
+    to position attackers; grid pathing is orthogonal to the bug under
+    test), then drives the exact state chain a player clicking that unit
+    and choosing "Skill Check" produces:
+
+    - 'free' -> SELECT with the cursor already on the unit -> 'move'
+      (FreeState.take_input's real unit-selection branch).
+    - 'move' -> SELECT with the cursor still on the unit's own tile ->
+      'menu' (MoveState.take_input's "confirm, don't move" branch), whose
+      option list is the REAL live one MenuState.begin() builds from
+      Ability.targets() (app/engine/abilities.py) -- asserted present here,
+      not assumed.
+    - 'menu' -> selecting "Skill Check" -> 'targeting' (MenuState.take_input's
+      generic-ability branch).
+    - 'targeting' -> SELECT invokes SkillCheckAbility.do() for real (the
+      d20 roll via query_engine.roll_d20 plus the on_skill_check trigger
+      dispatch) -- TargetingState.start() already parked the cursor on the
+      only registered target for this initiator.
+
+    SkillCheckAbility.do() pops 'targeting' back to 'menu' *before* firing
+    the on_skill_check event (the identical shape TalkAbility.do() uses) --
+    MenuState only special-cases clearing self.menu for the 'Talk'/'Support'
+    selections, not 'Skill Check', so the same live menu is still there once
+    the event (run on top of it as an ordinary 'event' state, auto-skipped
+    like any other) resolves. A Skill Check, like a Talk, does not end the
+    unit's turn by itself -- this drives the real 'Wait' option in that same
+    menu afterward to return to 'free', exactly like a player would.
+    """
+    from app.engine.game_state import game
+    from app.engine import action
+
+    initiator = game.get_unit(initiator_nid)
+    target = game.get_unit(target_nid)
+    assert initiator and initiator.position, "%s not on the map" % initiator_nid
+    assert target and target.position, "%s not on the map" % target_nid
+    assert top_name() == 'free', "attempt_skill_check must start from 'free' (top=%r)" % top_name()
+
+    adj = _find_adjacent_free_tile(target.position)
+    assert adj is not None, "no free tile adjacent to %s" % target_nid
+    action.do(action.Teleport(initiator, adj))
+
+    game.cursor.set_pos(initiator.position)
+    frame('SELECT')
+    run_until(lambda g: top_name() == 'move', max_frames=max_frames)
+
+    frame('SELECT')
+    run_until(lambda g: top_name() == 'menu', max_frames=max_frames)
+
+    menu_state = game.state.current_state()
+    options = [opt.get() for opt in menu_state.menu.options]
+    assert 'Skill Check' in options, (
+        "'Skill Check' not in the real on-map ability menu: %r" % options)
+    menu_state.menu.set_selection('Skill Check')
+    frame('SELECT')
+    run_until(lambda g: top_name() == 'targeting', max_frames=max_frames)
+
+    frame('SELECT')  # invokes SkillCheckAbility.do() for real
+    run_until(lambda g: top_name() == 'menu', max_frames=max_frames)
+
+    menu_state = game.state.current_state()
+    menu_state.menu.set_selection('Wait')
+    frame('SELECT')
+    run_until(lambda g: top_name() == 'free', max_frames=max_frames)

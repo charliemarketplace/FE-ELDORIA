@@ -231,7 +231,18 @@ tier_attach_ok = False
 tier_error = None
 target_item = None
 try:
-    target_item = DB.items.values()[0]
+    # Pick an item that doesn't already carry a tier component -- content now
+    # authors `tier` on many items (item tiers, see CONTENT_GUIDE.md), so
+    # DB.items.values()[0] is no longer guaranteed tier-less the way it was
+    # when this test was written. Data.append() (app/utilities/data.py)
+    # warns-and-skips on a duplicate nid rather than overwriting, so
+    # add_component-ing a second 'tier' onto an item that already has one
+    # would leave target_item.tier pointing at an object never actually
+    # inserted into target_item.components -- a real, pre-existing sharp
+    # edge in ItemPrefab.add_component, not something to work around by
+    # weakening this assertion.
+    target_item = next((it for it in DB.items.values() if not getattr(it, 'tier', None)), None)
+    assert target_item is not None, 'every item already carries a tier component'
     tier_component = ICA.get_component('tier')
     assert tier_component is not None, 'ICA.get_component(\'tier\') returned None -- Tier not registered'
     tier_component.value = 3

@@ -116,24 +116,34 @@ check('4. DB.events.get(level_reenter, S1) returns exactly the new prep event',
       'reenter_events = %s' % [e.nid for e in reenter_events])
 
 reenter_script = '\n'.join(reenter_events[0]._source) if reenter_events else ''
-# S1 Reenter's _source still ends in prep;0 (the Manage/Formation/Save entry
-# point) but -- as of the bug-1 fix -- now leads with the same conditional
-# add_unit re-placement blocks S1 Intro uses. Before the fix this was bare
-# ['prep;0']: a companion recruited earlier never got re-placed on a
+# S1 Reenter's _source still contains prep;0 (the Manage/Formation/Save entry
+# point), reached on an Unsafe revisit -- and leads with the same conditional
+# add_unit re-placement blocks S1 Intro uses. Before the bug-1 fix this was
+# bare ['prep;0']: a companion recruited earlier never got re-placed on a
 # revisited level, so their position stayed None forever after the first
 # clean_up(full=True) -- present in game.get_units_in_party() but invisible
 # and undeployable. tools/test_playthrough.py proves the effect at runtime
 # (a real re-entry with a real party); this proves the fix is actually
 # present in the authored content, not just coincidentally working.
-check('4. S1 Reenter event source still ends in prep;0 (Manage/Formation/Save entry point)',
-      reenter_events and reenter_events[0]._source[-1] == 'prep;0',
+#
+# As of the Safe/Unsafe fix (BACKLOG_AUDIT.md item 6), prep;0 is no longer
+# unconditionally the last line: an Unsafe roll (game_vars['_pending_
+# unsafe_encounter'] == 'S1') places the main squad + a generated squad and
+# proceeds to prep;0 for a real fight; a Safe roll skips straight to
+# win_game with no fight. Check both halves are actually present, rather
+# than pinning the old unconditional shape.
+check('4. S1 Reenter still reaches prep;0 (Manage/Formation/Save entry point) on an Unsafe roll',
+      reenter_events and 'prep;0' in reenter_events[0]._source,
+      'S1 Reenter _source = %r' % (reenter_events[0]._source if reenter_events else None,))
+check('4. S1 Reenter branches on the Safe/Unsafe pending-encounter flag',
+      reenter_events and "_pending_unsafe_encounter" in reenter_script and 'win_game' in reenter_events[0]._source,
       'S1 Reenter _source = %r' % (reenter_events[0]._source if reenter_events else None,))
 check('4. S1 Reenter now re-places every recruitable companion, mirroring S1 Intro',
       reenter_events and all('add_unit;%s;' % nid in reenter_script for nid in ('Kael', 'Elara', 'Ren', 'Briar')),
       'S1 Reenter _source = %r' % (reenter_events[0]._source if reenter_events else None,))
 
-check('4. DB.events.get(level_start, S1) still returns S1 Intro, unaffected',
-      len(start_events) == 1 and start_events[0].nid == 'S1 Intro',
+check('4. DB.events.get(level_start, S1) still includes S1 Intro, unaffected',
+      any(e.nid == 'S1 Intro' for e in start_events),
       'start_events = %s' % [e.nid for e in start_events])
 
 # Also assert the analogous events exist for S2-S5, that they still end in
