@@ -59,6 +59,19 @@
         "nid": "S1 Intro"
     },
     {
+        "name": "Reenter",
+        "trigger": "level_reenter",
+        "level_nid": "S1",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "prep;0"
+        ],
+        "nid": "S1 Reenter"
+    },
+    {
         "name": "SickHouse",
         "trigger": "Visit",
         "level_nid": "S1",
@@ -167,6 +180,19 @@
             "transition;Open"
         ],
         "nid": "S2 Intro"
+    },
+    {
+        "name": "Reenter",
+        "trigger": "level_reenter",
+        "level_nid": "S2",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "prep;0"
+        ],
+        "nid": "S2 Reenter"
     },
     {
         "name": "ShrineRuin",
@@ -566,6 +592,19 @@
         "nid": "S3 Intro"
     },
     {
+        "name": "Reenter",
+        "trigger": "level_reenter",
+        "level_nid": "S3",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "prep;0"
+        ],
+        "nid": "S3 Reenter"
+    },
+    {
         "name": "Turn3",
         "trigger": "turn_change",
         "level_nid": "S3",
@@ -683,6 +722,19 @@
             "transition;Open"
         ],
         "nid": "S4 Intro"
+    },
+    {
+        "name": "Reenter",
+        "trigger": "level_reenter",
+        "level_nid": "S4",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "prep;0"
+        ],
+        "nid": "S4 Reenter"
     },
     {
         "name": "Turn4Wave",
@@ -873,6 +925,19 @@
             "transition;Open"
         ],
         "nid": "S5 Intro"
+    },
+    {
+        "name": "Reenter",
+        "trigger": "level_reenter",
+        "level_nid": "S5",
+        "condition": "True",
+        "commands": [],
+        "only_once": false,
+        "priority": 20,
+        "_source": [
+            "prep;0"
+        ],
+        "nid": "S5 Reenter"
     },
     {
         "name": "Valve1",

@@ -121,7 +121,10 @@ class TurnChangeState(MapState):
                     for unit in game.get_all_units_in_party():
                         # Give out fatigue statuses if necessary at the beginning of the level
                         action.do(action.ChangeFatigue(unit, 0))
-                    game.events.trigger(triggers.LevelStart())
+                    if game.level.nid in game.game_vars.get('_cleared_levels', set()):
+                        game.events.trigger(triggers.LevelReenter())
+                    else:
+                        game.events.trigger(triggers.LevelStart())
 
         else:
             game.phase.next()  # Go to next phase
@@ -147,7 +150,10 @@ class TurnChangeState(MapState):
                     for unit in game.get_all_units_in_party():
                         # Give out fatigue statuses if necessary at the beginning of the level
                         action.do(action.ChangeFatigue(unit, 0))
-                    game.events.trigger(triggers.LevelStart())
+                    if game.level.nid in game.game_vars.get('_cleared_levels', set()):
+                        game.events.trigger(triggers.LevelReenter())
+                    else:
+                        game.events.trigger(triggers.LevelStart())
                 if DB.constants.value('pairup'):
                     self.handle_paired()
             else:

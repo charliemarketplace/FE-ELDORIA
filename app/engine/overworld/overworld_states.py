@@ -20,6 +20,16 @@ from app.events import triggers
 from app.utilities.typing import NID
 
 
+def is_level_launchable(node_level_nid: NID, next_level_nid: NID, cleared_levels) -> bool:
+    """Whether an overworld node whose prefab.level is `node_level_nid` can be
+    launched into directly: either it's the story's next level, or the player
+    has already cleared it and is free to re-enter it at any time.
+    """
+    if node_level_nid == next_level_nid:
+        return True
+    return bool(node_level_nid) and node_level_nid in cleared_levels
+
+
 class OverworldFreeState(MapState):
     """The main overworld state - sprite is on the map and you can navigate around.
     """
@@ -111,12 +121,21 @@ class OverworldFreeState(MapState):
                     return
                 else:   # we selected a node without a party
                     party_node = game.overworld_controller.selected_party_node()
+                    is_next_level = selected_node.prefab.level == game.overworld_controller.next_level
+                    # a node whose level has already been cleared is always launchable, so the
+                    # player can freely re-enter any level they've beaten from the overworld
+                    is_reentry = not is_next_level and is_level_launchable(
+                        selected_node.prefab.level, game.overworld_controller.next_level,
+                        game.game_vars.get('_cleared_levels', set()))
                     if game.overworld_controller.any_path(party_node, selected_node):  # if there is a path from our party to this node
                         # if there is an event that will take place upon reaching this node, or this is the next level, stop short and trigger event start
                         if game.events.should_trigger(triggers.OnOverworldNodeSelect(game.overworld_controller.selected_entity, selected_node.nid),
-                                                      level_nid=game.overworld_controller.next_level) or selected_node.prefab.level == game.overworld_controller.next_level:
+                                                      level_nid=game.overworld_controller.next_level) or is_next_level or is_reentry:
                             movement = OverworldMove(game.overworld_controller.selected_entity, selected_node, game.overworld_controller, event=True, remove_last=True)
-                            if selected_node.prefab.level == game.overworld_controller.next_level:
+                            if is_next_level:
+                                game.state.change('overworld_next_level')
+                            elif is_reentry:
+                                game.game_vars['_reentry_target_nid'] = selected_node.prefab.level
                                 game.state.change('overworld_next_level')
                             else:
                                 game.game_vars['_target_node_nid'] = selected_node.nid
@@ -232,7 +251,11 @@ class OverworldLevelTransition(State):
         return 'repeat'
 
     def update(self):
-        self.go_to_next_level(game.overworld_controller.next_level)
+        # a stashed reentry target (set in OverworldFreeState.take_input when the player
+        # selects an already-cleared node) takes priority; `next_level` (story progress)
+        # is never reassigned, so it survives a revisit untouched
+        reentry_target = game.game_vars.pop('_reentry_target_nid', None)
+        self.go_to_next_level(reentry_target or game.overworld_controller.next_level)
         return 'repeat'
 
     def go_to_next_level(self, nid=None):

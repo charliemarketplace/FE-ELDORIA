@@ -62,6 +62,7 @@ class EventState(State):
     def level_end(self):
         current_level_nid = game.level.nid
         game.memory['_prev_level_nid'] = current_level_nid
+        game.game_vars['_cleared_levels'] = game.game_vars.get('_cleared_levels', set()) | {current_level_nid}
         current_level_index = DB.levels.index(game.level.nid)
         should_go_to_overworld = DB.levels.get(game.level.nid).go_to_overworld and DB.constants.value('overworld') and game.game_vars.get('_goto_level') is None
         game.memory['_skip_save'] = game.level_vars.get('_skip_save', False)
