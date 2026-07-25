@@ -221,10 +221,7 @@
                 "ai": "Guard",
                 "roam_ai": null,
                 "ai_group": null,
-                "starting_position": [
-                    17,
-                    1
-                ],
+                "starting_position": null,
                 "starting_traveler": null,
                 "generic": false
             },
@@ -245,10 +242,7 @@
                 "ai": "Guard",
                 "roam_ai": null,
                 "ai_group": "",
-                "starting_position": [
-                    6,
-                    1
-                ],
+                "starting_position": null,
                 "starting_traveler": null,
                 "generic": true
             },
@@ -269,10 +263,7 @@
                 "ai": "Guard",
                 "roam_ai": null,
                 "ai_group": "",
-                "starting_position": [
-                    5,
-                    2
-                ],
+                "starting_position": null,
                 "starting_traveler": null,
                 "generic": true
             },
@@ -293,10 +284,7 @@
                 "ai": "Guard",
                 "roam_ai": null,
                 "ai_group": "",
-                "starting_position": [
-                    13,
-                    6
-                ],
+                "starting_position": null,
                 "starting_traveler": null,
                 "generic": true
             },
@@ -317,10 +305,7 @@
                 "ai": "Guard",
                 "roam_ai": null,
                 "ai_group": "",
-                "starting_position": [
-                    15,
-                    7
-                ],
+                "starting_position": null,
                 "starting_traveler": null,
                 "generic": true
             },
@@ -341,12 +326,43 @@
                 "ai": "Defend",
                 "roam_ai": null,
                 "ai_group": "",
-                "starting_position": [
-                    6,
-                    0
-                ],
+                "starting_position": null,
                 "starting_traveler": null,
                 "generic": true
+            },
+            {
+                "nid": "S1_Unsafe1",
+                "variant": null,
+                "level": 2,
+                "klass": "Soldier",
+                "faction": "Soldier",
+                "starting_items": [],
+                "starting_skills": [],
+                "team": "enemy",
+                "ai": "Attack",
+                "roam_ai": null,
+                "ai_group": "S1UnsafeSquad",
+                "starting_position": null,
+                "starting_traveler": null,
+                "generic": true,
+                "procedural": true
+            },
+            {
+                "nid": "S1_Unsafe2",
+                "variant": null,
+                "level": 2,
+                "klass": "Soldier",
+                "faction": "Soldier",
+                "starting_items": [],
+                "starting_skills": [],
+                "team": "enemy",
+                "ai": "Attack",
+                "roam_ai": null,
+                "ai_group": "S1UnsafeSquad",
+                "starting_position": null,
+                "starting_traveler": null,
+                "generic": true,
+                "procedural": true
             }
         ],
         "regions": [
@@ -368,7 +384,62 @@
                 "interrupt_move": false
             }
         ],
-        "unit_groups": [],
+        "unit_groups": [
+            {
+                "nid": "S1_MainSquad",
+                "units": [
+                    "Draven",
+                    "S1Soldier1",
+                    "S1Soldier2",
+                    "S1Soldier3",
+                    "S1Soldier4",
+                    "S1Archer"
+                ],
+                "positions": {
+                    "Draven": [
+                        17,
+                        1
+                    ],
+                    "S1Soldier1": [
+                        6,
+                        1
+                    ],
+                    "S1Soldier2": [
+                        5,
+                        2
+                    ],
+                    "S1Soldier3": [
+                        13,
+                        6
+                    ],
+                    "S1Soldier4": [
+                        15,
+                        7
+                    ],
+                    "S1Archer": [
+                        6,
+                        0
+                    ]
+                }
+            },
+            {
+                "nid": "S1_UnsafeSquad",
+                "units": [
+                    "S1_Unsafe1",
+                    "S1_Unsafe2"
+                ],
+                "positions": {
+                    "S1_Unsafe1": [
+                        10,
+                        3
+                    ],
+                    "S1_Unsafe2": [
+                        12,
+                        3
+                    ]
+                }
+            }
+        ],
         "ai_groups": []
     },
     {

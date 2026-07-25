@@ -20,6 +20,16 @@ from app.engine.state import MapState, State
 from app.events import triggers
 
 
+def _item_tier(item_nid) -> int:
+    """The item's Tier component value (app.engine.item_components.
+    base_components.Tier), or 1 if the item carries no tier component --
+    every item authored before this feature, and every non-weapon/staff
+    utility item, defaults to always-available tier 1."""
+    prefab = DB.items.get(item_nid)
+    tier_component = getattr(prefab, 'tier', None) if prefab else None
+    return tier_component.value if tier_component else 1
+
+
 class PrepMainState(MapState):
     name = 'prep_main'
     bg = None
@@ -194,12 +204,27 @@ class PrepDonateXPState(State):
     queue a `feat_choice` screen each (handled by `donate_xp` itself), so
     those become the new top of the state stack before control returns to
     `prep_main`.
+
+    Pop BEFORE calling donate_xp(), not after. StateMachine.temp_state
+    (app/engine/state_machine.py) is a flat list of pending ops applied in
+    order by process_temp_state() at the end of THIS SAME update() call --
+    'pop' always removes whatever is on top *at the moment it is
+    processed*, not "the state that queued it". Popping after donate_xp()
+    has already queued N 'feat_choice' pushes means the pop is processed
+    *after* those pushes and removes the last-pushed feat_choice screen
+    instead of this state -- silently eating the final feat pick and
+    leaving 'prep_donate_xp' stuck on the stack forever (nothing else ever
+    pops it, since it has no take_input/update of its own). Queuing the
+    pop first means it is processed before any feat_choice push exists,
+    correctly removing this state and leaving every feat_choice screen
+    donate_xp() queued stacked on top of prep_main, back to back, exactly
+    as documented above.
     """
     name = 'prep_donate_xp'
 
     def start(self):
-        merchant_engine.donate_xp()
         game.state.back()
+        merchant_engine.donate_xp()
 
 
 class PrepPickUnitsState(State):
@@ -1416,8 +1441,18 @@ class PrepMarketState(State):
         self.unit = game.memory['current_unit']
 
         self.sell_menu = menus.Market(self.unit, None, (WINWIDTH - 164, 40), disp_value='sell')
-        market_items = game.market_items.keys()
-        market_items = item_funcs.create_items(self.unit, market_items)
+        # Tier-gated stock (see item_components.base_components.Tier and
+        # skill_components.base_components.MarketTierUnlock): a market slot
+        # whose item carries a Tier above whatever the Merchant currently
+        # unlocks is left in game.market_items (so it's ready to sell the
+        # instant a matching feat is granted -- no re-authoring the shop)
+        # but is filtered out of the buy list until then. No Merchant yet
+        # (never donated/never created) means tier 1 only, same as every
+        # save from before this feature existed.
+        merchant_for_stock = game.get_unit(merchant_engine.MERCHANT_NID)
+        unlocked_tier = skill_system.unlocked_market_tier(merchant_for_stock) if merchant_for_stock else 1
+        market_item_nids = [nid for nid in game.market_items.keys() if _item_tier(nid) <= unlocked_tier]
+        market_items = item_funcs.create_items(self.unit, market_item_nids)
         show_stock = any(stock >= 0 for stock in game.market_items.values())
         self.buy_menu = menus.Market(self.unit, market_items, (WINWIDTH - 164, 40), disp_value='buy', show_stock=show_stock)
         self.display_menu = self.buy_menu

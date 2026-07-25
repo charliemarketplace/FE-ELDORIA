@@ -247,13 +247,16 @@ if generated is not None:
     check('9. ai_group kept as authored', generated.ai_group == 'ProcTestGroup',
           'generated.ai_group = %r (expected ProcTestGroup)' % (generated.ai_group,))
 
-# A level with no procedural slots is a no-op (every level shipping today).
-real_level_prefab = DB.levels.get('S1')
+# A level with no procedural slots is a no-op. S1 itself now authors two
+# (the Safe/Unsafe "Unsafe squad", see BACKLOG_AUDIT.md item 2/6 and
+# lion_throne.ltproj/game_data/levels.json unit_group "S1_UnsafeSquad") --
+# use S2, which still has none, to keep testing the genuine no-op path.
+real_level_prefab = DB.levels.get('S2')
 units_before_noop = len(game._current_level.units)
 game._generate_enemy_squad(real_level_prefab)
 units_after_noop = len(game._current_level.units)
 check('9. no-op when the level has no procedural slots', units_after_noop == units_before_noop,
-      'units before=%d after=%d (S1 has 0 procedural slots)' % (units_before_noop, units_after_noop))
+      'units before=%d after=%d (S2 has 0 procedural slots)' % (units_before_noop, units_after_noop))
 
 # ---------------------------------------------------------------------------
 print('\n' + '=' * 78)

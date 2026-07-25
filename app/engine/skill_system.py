@@ -123,6 +123,10 @@ class Defaults():
         return 1.0
 
     @staticmethod
+    def unlocked_market_tier(unit) -> int:
+        return 1
+
+    @staticmethod
     def damage_formula(unit) -> str:
         return 'DAMAGE'
 
@@ -1106,6 +1110,24 @@ def modify_sell_price(unit: UnitObject, item: ItemObject):
 
     result = utils.unique(values)
     return result if values else Defaults.modify_sell_price(unit, item)
+
+def unlocked_market_tier(unit: UnitObject) -> int:
+    """Highest item.Tier the unit's feats currently unlock for purchase
+    (see MarketTierUnlock, app/engine/skill_components/base_components.py).
+    Unlike modify_buy_price/modify_sell_price (which use utils.unique() --
+    "last value wins" -- since only one discount curve should apply), a unit
+    that happens to hold two DIFFERENT tier-unlock feats (e.g. picked one at
+    Merchant level 3, another at level 6) should unlock the higher of the
+    two, not whichever was granted last -- so this takes max(), not unique().
+    """
+    values = []
+    for skill in unit.skills[:]:
+        for component in skill.components:
+            if component.defines('unlocked_market_tier'):
+                if component.ignore_conditional or condition(skill, unit):
+                    values.append(component.unlocked_market_tier(unit))
+
+    return max(values) if values else Defaults.unlocked_market_tier(unit)
 
 def limit_maximum_range(unit: UnitObject, item: ItemObject):
     values = []

@@ -82,6 +82,24 @@ class ChangeBuyPrice(SkillComponent):
     def modify_buy_price(self, unit, item):
         return self.value
 
+class MarketTierUnlock(SkillComponent):
+    nid = 'market_tier_unlock'
+    desc = ("Unit unlocks purchase of item.Tier-gated stock up to and including "
+             "the given tier (e.g. value 2 unlocks tiers 1 and 2). Read by "
+             "PrepMarketState (app/engine/prep.py) via "
+             "skill_system.unlocked_market_tier(merchant) to decide which of "
+             "game.market_items are actually offered for sale -- a slot in "
+             "game.market_items whose item.Tier exceeds every currently held "
+             "unlock stays in the data (so it's ready the moment a matching "
+             "feat is granted) but is filtered out of the buy menu until then.")
+    tag = SkillTags.BASE
+
+    expose = ComponentType.Int
+    value = 1
+
+    def unlocked_market_tier(self, unit):
+        return self.value
+
 class ExpMultiplier(SkillComponent):
     nid = 'exp_multiplier'
     desc = "Unit receives a multiplier on exp gained"
