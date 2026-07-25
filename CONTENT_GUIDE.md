@@ -14,7 +14,7 @@ re-verify anything.
 > Lion-Throne-specific facts and numbers (13 levels, 243 events, the demo
 > chapters `DEBUG`/`TRIAL`/`TOWN`/`RIVER`, `title`/`game_nid`) describe the
 > *other* project's content, not Eldoria's. Eldoria has 7 levels (`CAPITAL`,
-> `S1`, `S2`, `SHUB`, `S3`, `S4`, `S5`) and 54 events — re-verify any number
+> `S1`, `S2`, `SHUB`, `S3`, `S4`, `S5`) and 60 events — re-verify any number
 > against the live files in `lion_throne.ltproj/game_data/` rather than
 > trusting this doc.
 
@@ -306,7 +306,7 @@ while inside), `formation` (prep-screen deployment slots), `time` (expires).
 
 ### 5.3 Events — the actual game logic
 
-`game_data/events.json` — 243 entries in `lt_web`/Lion Throne, 54 in Eldoria
+`game_data/events.json` — 243 entries in `lt_web`/Lion Throne, 60 in Eldoria
 (re-count via `len(json.load(open(...)))` rather than trusting either number).
 Fields:
 
@@ -358,6 +358,78 @@ camera, unit spawning/moving (works with level `unit_groups`), map layer
 changes, shops, `give_item`/`give_skill`/`give_exp`, variables
 (`game_var`/`level_var`), flow control (`if`/`elif`/`else`/`end`), chapter
 flow (`win_game`, `lose_game`, `set_next_chapter`, `activate_turnwheel`).
+
+### 5.4 Compound win conditions (1-of-N / N-of-M)
+
+`win_game` (`app/events/event_functions.py:658-659`) is one line:
+
+```python
+def win_game(self: Event, flags=None):
+    self.game.level_vars['_win_game'] = True
+```
+
+It doesn't care what trigger or condition led to it — any event, on any
+trigger, can call it. "Compound" win conditions aren't a feature, they're
+just an event whose `condition` (or in-script `if`) does more than check one
+thing before reaching `win_game`.
+
+**N-of-N (all required) already ships**: `S5 QuenchWin`
+(`lion_throne.ltproj/game_data/events.json`, trigger `Quench`, level `S5`):
+
+```
+"condition": "game.game_vars.get('valve1') and game.game_vars.get('valve2') and game.game_vars.get('valve3')"
+```
+
+Three independent regions/events each do `game_var;valveN;1` (see §10.1
+flavor B); the win-checking event only fires `win_game` once all three are
+truthy. Its sibling `S5 QuenchFail` uses the negated condition to give a
+"not yet" line instead.
+
+| shape | mechanism | condition shape |
+|---|---|---|
+| N-of-N (all) | one `game_var` per requirement, `and` them | `game.game_vars.get('a') and game.game_vars.get('b') and ...` — real: `S5 QuenchWin` |
+| 1-of-N (any) | `check_dead`/`unit.nid` OR-chain, no new vars needed | `game.check_dead('X') or game.check_dead('Y') or ...` |
+| K-of-N (at least K) | counter var bumped by `inc_game_var` (nickname `ginc`), threshold check | `game.game_vars.get('counter', 0) >= K` |
+
+`inc_game_var` (`app/events/event_commands.py:828-839`, nickname `ginc`)
+takes `Nid` and an optional `Expression` (defaults to +1) — that's the K-of-N
+counter primitive.
+
+1-of-N needs no new content in this project: `S4` already places three
+nidded generic units (`S4Warrior1`/`S4Warrior2`/`S4Warrior3`, `"generic":
+true`, team `enemy`) alongside the unique boss `Garrow`
+(`lion_throne.ltproj/game_data/levels.json`) — "defeat any 1 of 3
+commanders" is purely a condition string over nids that already exist, no
+new units/portraits/art. `unit_death`'s trigger exposes the dying unit as
+both `unit1` and `unit` in the eval context (`app/engine/evaluate.py:52-53`,
+`temp_globals.update({'unit1': unit1, 'unit': unit1, ...})`), which is why
+`unit.nid == '...'` works in a `unit_death` condition (see `S4 LoseGame`:
+`"trigger": "unit_death", "condition": "unit.nid == 'Rowan'"`).
+
+Copy-pasteable worked example — "win once any one of the three S4 warriors
+falls" (1-of-N, zero new units), as a `combat_end` check instead of
+per-unit `unit_death` so it also catches deaths from status effects, not
+just combat:
+
+```
+# events.json, new entry, level_nid "S4", trigger "combat_end"
+if;game.check_dead('S4Warrior1') or game.check_dead('S4Warrior2') or game.check_dead('S4Warrior3')
+win_game
+end
+```
+
+K-of-N variant of the same roster ("win once 2 of the 3 have fallen") —
+one `unit_death` event, condition narrows to the three nids, script does the
+counting:
+
+```
+# events.json, new entry, level_nid "S4", trigger "unit_death",
+# condition: unit.nid in ('S4Warrior1', 'S4Warrior2', 'S4Warrior3')
+inc_game_var;commanders_down
+if;game.game_vars.get('commanders_down', 0) >= 2
+win_game
+end
+```
 
 ## 6. Discovering valid values (do this instead of guessing)
 
@@ -635,3 +707,139 @@ reachability/inventory afterward. This is slower than the static BFS check
 in §10.2 (needs a real engine boot) — use the BFS check to get placement
 right the first time, and a runtime script to confirm the wiring (region
 sub_nid ↔ event trigger ↔ layer/item nid) actually fires end-to-end.
+
+## 11. Branching dialogue: Choice and Unchoice
+
+`Choice` (`app/events/event_commands.py:2756-2820`, keywords `Nid`/`Title`/
+`Choices`, optional `RowWidth`/`Orientation`/`Alignment`/`BG`/`EventNid`/
+`EntryType`/`Dimensions`/`TextAlign`, flags including `persist`/
+`expression`/`backable`) pops a menu and writes the pick to two `game_vars`:
+the choice's own `nid` and `_last_choice` (`app/engine/player_choice.py:104-106`,
+`PlayerChoice.choose()`):
+
+```python
+def choose(self, selection):
+    action.do(action.SetGameVar(self.nid, selection))
+    action.do(action.SetGameVar('_last_choice', selection))
+```
+
+While the menu is up, the *currently hovered* (not yet chosen) option is
+written every input tick to `game_vars[nid + '_choice_hover']`
+(`player_choice.py:173`) — useful for a live preview panel, but don't
+mistake it for the final answer.
+
+**`Choices` is either a literal comma-separated list or a Python
+expression — and you must say which with the `expression` flag.** Without
+it, the string is naively `.split(',')` (`app/events/event.py:769-784`,
+`_get_rows_of_table`); it is never eval'd, so `game.level_vars['pool']` as a
+bare string would show up as a single literal option reading exactly that.
+With the flag, `_get_rows_of_table` routes through
+`_eval_str_func_factory` (`event.py:751`), which returns a closure —
+`PlayerChoiceState.update()` (`player_choice.py:175-182`) re-invokes it every
+frame (`if self.is_callable: data = self.data()`), so the option list is
+genuinely live: it can grow or shrink while the menu is open, in response to
+whatever the expression reads.
+
+`nid|display text` splits stored value from shown label — the stored
+`game_vars[nid]` value is always the nid half, e.g.
+`ArmorKnight_Sun|Solar Knight` stores `ArmorKnight_Sun` regardless of what
+the player sees.
+
+⚠️ **There is no "fire a different sub-event per option" feature.** The
+optional `Event`/`EventNid` keyword fires exactly one event, unconditionally,
+regardless of which option was picked — it's a single hook fired on any
+selection, not a dispatch table. The idiom used throughout this project is
+inline `if`/`elif`/`end` on `game_vars[<choice_nid>]` in the *same* event,
+immediately after the `choice` line. `Unchoice` (`event_commands.py:2822-2829`)
+is engine-supported (prevents a non-`persist` choice from auto-closing) but
+is used **nowhere** in this project's content — zero hits for `unchoice` in
+`events.json`.
+
+Real production example — `CAPITAL Intro`
+(`lion_throne.ltproj/game_data/events.json`, `nid: "CAPITAL Intro"`, roughly
+lines 1019-1242) is the only place `choice` is used in this game (21 calls,
+all in this one event) and demonstrates every piece above at once:
+
+```
+"level_var;capital_pool;['Kael', 'Elara', 'Ren', 'Briar']",
+...
+"choice;GreetPick;Who will you greet first?;game.level_vars['capital_pool'];expression",
+"level_var;capital_pool;[n for n in game.level_vars['capital_pool'] if n != game.game_vars['GreetPick']]",
+"if;game.game_vars['GreetPick'] == 'Kael'",
+"add_portrait;Kael;Left",
+"speak;Kael;I've walked farther than I can count. One more road won't hurt.",
+"choice;RecruitKael;Bring Kael along?;Yes|Welcome aboard.,Wait|One more question first.",
+"if;game.game_vars['RecruitKael'] == 'Wait'",
+"speak;Kael;Where I go isn't as important as making myself useful. Point me at the road.",
+"end",
+"speak;Rowan;Glad to have you, Kael.",
+"remove_portrait;Kael",
+"add_unit;Kael;10,9;immediate",
+"game_var;kael_joined;1",
+"elif;game.game_vars['GreetPick'] == 'Elara'",
+...
+"end",
+```
+
+— an `expression`-driven `choice;GreetPick` over `game.level_vars['capital_pool']`
+whose pool shrinks by one name (`level_var;capital_pool;[n for n in ... if n
+!= game.game_vars['GreetPick']]`) after every pick, so asking "who's next?"
+four times in a row never re-offers someone already greeted; each branch
+nests a second, plain (non-expression) `choice;RecruitKael;...;Yes|...,Wait|...`
+to confirm the recruit. Later in the same event, a `for;OutfitTarget;
+['Kael', 'Elara', 'Ren', 'Briar']` loop contains
+`choice;FeatPick;Choose a feat for {OutfitTarget};...;EntryType=type_skill`,
+whose per-iteration answer is consumed immediately via
+`give_skill;{OutfitTarget};{v:FeatPick};persistent` — a `type_skill`
+`EntryType` choice feeding straight into a skill-granting command.
+
+## 12. Recruitment and switching sides
+
+This already works with **zero engine code** — it's an existing command/
+trigger chain, not a feature that needed building. The chain:
+`add_talk;A;B` → `TalkAbility` (`app/engine/abilities.py:50-68`) makes `A`
+show a "Talk" option when adjacent to `B` → selecting it fires
+`game.events.trigger(triggers.OnTalk(unit, u, unit.position))`, trigger nid
+`on_talk` → an `on_talk` event (condition `unit2.nid == '<target>'`) runs
+`change_team;<target>;player`.
+
+`ChangeTeam` (`app/engine/action.py:2726-2771`) is a full `do`/`reverse`
+action pair (turnwheel-safe): `do()` pulls the unit off the map, flips
+`unit.team`, re-adds it, and updates fog-of-war for both the old and new
+team; `reverse()` undoes all of it symmetrically, so rewinding the
+turnwheel past a recruitment un-recruits cleanly.
+
+It ships three times already, all structurally identical —
+`lion_throne.ltproj/game_data/events.json` lines 208 (Tamsin), 429 (Corwin),
+597 (Ysolde). Canonical recipe, `S2 TalkTamsin` (trigger `on_talk`,
+condition `unit2.nid == 'Tamsin'`, `only_once: true`):
+
+```
+"add_portrait;Tamsin;Right",
+"add_portrait;Iska;Left",
+"speak;Iska;You've got that look. The one where the orders stopped making sense.",
+"speak;Tamsin;I was told to count the sick. Not to ask why there were so many.",
+"speak;Tamsin;I saw what's near that ruin. I'm done counting for them.",
+"change_team;Tamsin;player",
+"give_item;Tamsin;EMB_ScoutsBow",
+"game_var;tamsin_joined;1",
+"remove_talk;Iska;Tamsin",
+"remove_portrait;Tamsin",
+"remove_portrait;Iska"
+```
+
+Note the shape: `change_team` first, then a join reward (`give_item`), then
+a `<name>_joined` `game_var` flag (readable later by other events — e.g. the
+`S5 QuenchWin` example in §5.4 checks `ysolde_joined` to branch dialogue on
+whether that unit is in the party), then `remove_talk;Iska;Tamsin` so the
+option doesn't linger now that the recruit already happened.
+
+⚠️ **Gotcha: `ChangeTeam.do()` only clears AI when the destination team is
+`'player'`** (`action.py:2744-2746`, `if self.team == 'player': ... Make
+sure player unit's don't keep their AI`). There is no symmetric clear for
+the other direction. A player unit defecting to `'enemy'` keeps whatever AI
+it had — which for a player unit is normally `'None'` — and will sit inert
+on the enemy team, doing nothing on enemy phase. Content that flips a unit
+*out* of the player team must pair it with `change_ai;X;<AIName>`
+(a valid preset nid from `game_data/ai.json`, e.g. `change_team;X;enemy`
+then `change_ai;X;Defend`) or the "defector" will just stand there.

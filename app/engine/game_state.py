@@ -341,9 +341,50 @@ class GameState():
         else:
             self.current_party = self._current_level.party
 
+        # Must run after current_party is assigned above, since deployment
+        # cap/floor validation may eventually need party-scoped info.
+        self._seed_deploy_vars_from_prefab(level_prefab)
+
         self.roam_info = RoamInfo(level_prefab.roam, level_prefab.roam_unit)
 
         self.level_setup()
+
+    def _seed_deploy_vars_from_prefab(self, level_prefab):
+        """
+        Seeds level_vars deployment-cap keys from LevelPrefab.max_deploy/min_deploy
+        (app/data/database/levels.py) at level start.
+
+        Only seeds a key if it is not already present in level_vars, so any value
+        an event has already set (e.g. via action.SetLevelVar) wins over the prefab.
+
+        NOTE -- THE CAP IS OTHERWISE INERT: '_prep_slots' is only ever read inside
+        PrepPickUnitsState (app/engine/prep.py), which is only reachable from the
+        prep menu's 'Pick Units' entry, which PrepMainState.populate_options() only
+        adds `if game.level_vars.get('_prep_pick')`. Every existing prep event sets
+        '_prep_pick' to False via `prep;0`. So declaring max_deploy on a level with
+        no other change would do nothing -- the player could never reach the screen
+        that enforces it. To make the cap actually functional, seeding max_deploy
+        also seeds '_prep_pick' = True (unless an event already overrode it) so the
+        Pick Units screen becomes reachable.
+        """
+        max_deploy = level_prefab.max_deploy
+        min_deploy = level_prefab.min_deploy
+
+        if min_deploy is not None and max_deploy is not None and min_deploy > max_deploy:
+            logging.warning(
+                "Level %s: min_deploy (%d) > max_deploy (%d); clamping min_deploy down to max_deploy",
+                level_prefab.nid, min_deploy, max_deploy)
+            min_deploy = max_deploy
+
+        if max_deploy is not None:
+            if '_prep_slots' not in self.level_vars:
+                self.level_vars['_prep_slots'] = max_deploy
+            if '_prep_pick' not in self.level_vars:
+                self.level_vars['_prep_pick'] = True
+
+        if min_deploy is not None:
+            if '_minimum_deployment' not in self.level_vars:
+                self.level_vars['_minimum_deployment'] = min_deploy
 
     def build_level_from_scratch(self, level_nid, tilemap):
         """
@@ -547,7 +588,7 @@ class GameState():
 
         self.events = event_manager.EventManager.restore(s_dict.get('events'))
 
-    def clean_up(self, full: bool = True):
+    def clean_up(self, full: bool = True, preserve_hp: bool = False):
         '''
         A `full` cleanup does everything associated with cleaning up
         a chapter in preparation for the next.
@@ -559,6 +600,12 @@ class GameState():
             - Reset level vars
             - Reset talk options or base convos
             - Actually remove the level
+
+        `preserve_hp`, when True, skips the full-heal/guard-gauge-reset/mana-refill
+        that normally happens to every unit on every transition (independent of
+        `full`), so a future dungeon floor can carry damaged units across a
+        transition instead of resetting them to full HP. Defaults to False so
+        existing behavior is unchanged for every current caller.
         '''
 
         from app.engine import (action, item_funcs, item_system, skill_system,
@@ -584,10 +631,11 @@ class GameState():
                     pos = self.target_system.get_nearest_open_tile(droppee, unit.position)
                     action.Drop(unit, droppee, pos).execute()
                 skill_system.on_separate(droppee, unit)
-            unit.set_hp(1000)  # Set to full health
-            unit.set_guard_gauge(0) # Remove all guard gauge
-            if DB.constants.value('reset_mana'):
-                unit.set_mana(1000)  # Set to full mana
+            if not preserve_hp:
+                unit.set_hp(1000)  # Set to full health
+                unit.set_guard_gauge(0) # Remove all guard gauge
+                if DB.constants.value('reset_mana'):
+                    unit.set_mana(1000)  # Set to full mana
             if full:
                 unit.position = None
             unit.sprite.change_state('normal')

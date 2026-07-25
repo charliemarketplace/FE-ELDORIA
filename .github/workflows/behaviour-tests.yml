@@ -1,0 +1,40 @@
+name: Behaviour tests
+
+# Execution-based regression gate. Unlike smoke-test.yml -- which only checks
+# that data loads, engine modules import, and content references resolve --
+# these boot a real GameState headlessly (dummy SDL video/audio drivers),
+# drive real action.do(action.Foo(...)) state mutations, and assert real
+# before/after engine state, including save/pickle/load round trips.
+#
+# Why this workflow exists: tools/test_capital_completion.py sat red on main
+# for some time because nothing ran it. CAPITAL Intro was refactored into a
+# for;OutfitTarget loop and three separate assertion groups rotted against it,
+# silently. A behaviour test nobody runs is not a test.
+#
+# NOTE: this gates push and pull_request only. The production deploy path is
+# Cloudflare's native Git integration, which runs outside GitHub Actions and
+# does not consult these results. deploy.yml (workflow_dispatch, the fallback
+# path) does gate on smoke_test.py.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  behaviour-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: CAPITAL completion (chapter is playable, saveable, and chains to S1)
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_capital_completion.py
+
+      - name: Alignment axes, d20 rolls, and item tiers
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_alignment_d20_tier.py
+
+      - name: Declarative deploy cap and clean_up HP preservation
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_deploy_cap.py
