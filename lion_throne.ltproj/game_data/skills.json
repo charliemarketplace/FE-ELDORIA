@@ -492,6 +492,78 @@
         ]
     },
     {
+        "nid": "fMerchant's Eye",
+        "name": "Merchant's Eye",
+        "desc": "The Merchant's prep-market prices drop by 10%.",
+        "icon_nid": "Skills",
+        "icon_index": [
+            1,
+            0
+        ],
+        "components": [
+            [
+                "feat",
+                null
+            ],
+            [
+                "change_buy_price",
+                0.9
+            ],
+            [
+                "class_skill",
+                null
+            ]
+        ]
+    },
+    {
+        "nid": "fMerchant's Instinct",
+        "name": "Merchant's Instinct",
+        "desc": "The Merchant's prep-market prices drop by 20%.",
+        "icon_nid": "Skills",
+        "icon_index": [
+            1,
+            1
+        ],
+        "components": [
+            [
+                "feat",
+                null
+            ],
+            [
+                "change_buy_price",
+                0.8
+            ],
+            [
+                "class_skill",
+                null
+            ]
+        ]
+    },
+    {
+        "nid": "fMerchant's Fortune",
+        "name": "Merchant's Fortune",
+        "desc": "The Merchant's prep-market prices drop by 35%.",
+        "icon_nid": "Skills",
+        "icon_index": [
+            1,
+            2
+        ],
+        "components": [
+            [
+                "feat",
+                null
+            ],
+            [
+                "change_buy_price",
+                0.65
+            ],
+            [
+                "class_skill",
+                null
+            ]
+        ]
+    },
+    {
         "nid": "Resistance +2",
         "name": "Resistance +2",
         "desc": "Grants RES +2.",

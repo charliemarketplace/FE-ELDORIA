@@ -843,3 +843,256 @@ on the enemy team, doing nothing on enemy phase. Content that flips a unit
 *out* of the player team must pair it with `change_ai;X;<AIName>`
 (a valid preset nid from `game_data/ai.json`, e.g. `change_team;X;enemy`
 then `change_ai;X;Defend`) or the "defector" will just stand there.
+
+## 13. The Merchant
+
+The Merchant is a persistent, single, non-roster unit that banks donated
+party exp and levels up over the course of the campaign, granting feats
+that discount prices. **Current scope: the Merchant's feats affect the
+prep-menu market only** (`prep_market` state, reached from Manage → Market
+during deployment prep). They do **not** affect `item_funcs.buy_price`/
+`sell_price` globally, so the event-driven `shop` command (`ShopState`,
+e.g. `CAPITAL Vendor`) is untouched by design. See §13.5 for what an
+every-shop version would need.
+
+### 13.1 How the Merchant entity is created and persisted
+
+The Merchant is a normal unit prefab (`lion_throne.ltproj/game_data/units.json`,
+`nid: "Merchant"`, `klass: "Citizen"`, no `starting_items`, all-zero
+`growths`) with no special-cased engine support for its existence — it is
+built and kept alive by the exact same mechanisms every other non-roster
+ally uses.
+
+**Construction (`app/engine/merchant.py`, `get_merchant()`)**: the first
+time anything asks for the Merchant, `game.get_unit('Merchant')` returns
+`None` (old saves, or a fresh game that has never donated XP or opened a
+market). At that point `get_merchant()` builds it the same way
+`event_functions.load_unit` builds any non-level unit: the raw
+`UnitPrefab` from `DB.units.get('Merchant')` is **not** passed to
+`UnitObject.from_prefab` directly. Doing that would hit the
+`is_level_unit = not isinstance(prefab, UnitPrefab)` branch in
+`app/engine/objects/unit.py:143`, which is `False` for a raw prefab — that
+branch silently skips the entire items/skills block and force-sets
+`team='player'`. Instead the prefab is wrapped:
+`UniqueUnit('Merchant', 'other', 'None', None)`, then
+`UnitObject.from_prefab(unique_unit, game.current_mode)`. That makes
+`is_level_unit` `True`, so `team` actually comes from the `UniqueUnit`
+(`'other'`) and items/skills resolve for real instead of being skipped.
+The resulting `UnitObject` is registered via
+`action.do(action.RegisterUnit(merchant))` — a normal, reversible Action
+(turnwheel-safe), exactly like any other unit registration.
+
+**Why `team='other'` keeps it out of the roster**: `teams.json` marks
+`other` as allied to `player`, so the Merchant is friendly and reachable
+via `game.get_unit('Merchant')` anywhere in the engine, but
+`get_units_in_party`/`get_all_units_in_party` (`game_state.py`) only
+return units where `team == 'player'`. The Merchant is filtered out of
+both, so it never appears in Pick Units, Formation, Manage, or any
+roster-driven menu.
+
+**Why it persists with zero new save-format code**: `game.save()`
+serializes every unit in `unit_registry` unconditionally, and
+`game.clean_up(full=True)` (run at every chapter boundary) only strips
+units where `unit.persistent` is falsy. `UnitObject.from_prefab`'s
+`is_level_unit` branch sets `persistent = not prefab.generic`, and the
+Merchant's `UniqueUnit` has `generic=False` (the dataclass default), so
+`persistent` is `True`. That's sufficient — the Merchant rides along in
+every save and every `clean_up()` like any other persistent ally, with no
+migration and no new keys in the save dict.
+
+**Old saves**: a save from before the Merchant existed simply has no
+`'Merchant'` entry in its serialized `units` list. Loading it does not
+crash — `game.get_unit('Merchant')` just returns `None`, same as any
+unknown nid. The first subsequent call to `get_merchant()` (from Donate
+XP, or from a market screen that needs to check for one) creates and
+registers it then, exactly as on a brand-new save. There is deliberately
+no migration step.
+
+### 13.2 Donate XP
+
+`PrepMainState` (`app/engine/prep.py`) grows a "Donate XP" entry, inserted
+into its option list only when `game.game_vars.get('_prep_donate')` is
+truthy — content that wants this feature must set that game_var (e.g. via
+`game_var;_prep_donate;1` in an event). Selecting it pushes the
+`prep_donate_xp` state (`PrepDonateXPState`, registered in
+`app/engine/state_machine.py`), which is a single-frame, non-visual state:
+its `start()` calls `app.engine.merchant.donate_xp()` and immediately pops
+itself with `game.state.back()`.
+
+`donate_xp()` does the actual pooling:
+
+1. `total = merchant.exp + sum(unit.exp for unit in game.get_units_in_party())`.
+2. Every donor's exp is zeroed via `action.do(action.SetExp(donor, 0))` —
+   never `donor.exp = 0` directly, which would bypass the turnwheel and be
+   unrewindable.
+3. `levels_gained = min(total // 100, room)`, where `room` clamps the gain
+   to the Merchant's class `max_level` (`Citizen`, `max_level: 10`) so the
+   Merchant can never overshoot its class cap, matching the clamp pattern
+   in `app/engine/level_up.py:73`. The leftover, `total % 100`, is always
+   carried into the Merchant's exp bar via
+   `action.do(action.SetExp(merchant, remainder))`, even in the (rare)
+   case where the level gain itself was clamped.
+4. If `levels_gained > 0`, `action.do(action.SetLevel(merchant, merchant.level + levels_gained))`
+   runs once (not once per level), and `game.memory['current_unit']` is
+   set to the Merchant, then `game.state.change('feat_choice')` is called
+   once per level gained. This is the same mechanism
+   `level_up.py:_give_skills` and `event_functions.promote`/`change_class`
+   use for a class's `'Feat'` learned-skill entry — calling
+   `game.state.change('feat_choice')` more than once genuinely stacks
+   multiple independent `FeatChoiceState` instances on the state stack
+   (`state_machine.py:176, 210-228`), so the player sees one feat-choice
+   screen per level, back to back. `FeatChoiceState.start()` reads
+   `game.memory['current_unit']` and never clears it, so setting it once
+   before the loop is sufficient — every queued instance reads the same
+   value when it becomes top-of-stack.
+5. `donate_xp()` returns `(actions, levels_gained)`, where `actions` is
+   every `action.Action` it performed, in order. Reversing a donation
+   turnwheel-style is exactly `for act in reversed(actions): act.reverse()`
+   — see `tools/test_merchant.py` §5 for a worked example that reverses a
+   full donation and asserts every donor's exp comes back.
+
+`FeatChoiceState` itself is unfiltered: `DB.skills.get_feats()` returns
+every skill with a `feat` component, combat feats (`fStrength +2`, …) and
+Merchant-pricing feats (`fMerchant's Eye`, …) alike. The Merchant can be
+offered — and pick — an ordinary combat feat with no effect on its
+(non-existent) combat role. This is intentional; there is no feat
+filtering by unit and none is planned.
+
+### 13.3 Feats driving prep-market pricing
+
+Three feat skills exist for the Merchant in
+`lion_throne.ltproj/game_data/skills.json`, each shaped like any other
+feat (`["feat", null]` + a payload component + `["class_skill", null]` for
+first-page visibility in the info menu), using the pre-existing
+`ChangeBuyPrice` skill component (`app/engine/skill_components/base_components.py`,
+`nid: 'change_buy_price'`, `expose: Float`, defines
+`modify_buy_price(unit, item) -> self.value`):
+
+| nid | multiplier |
+|---|---|
+| `fMerchant's Eye` | 0.9 (10% off) |
+| `fMerchant's Instinct` | 0.8 (20% off) |
+| `fMerchant's Fortune` | 0.65 (35% off) |
+
+`ChangeBuyPrice` is exactly the precedent component this reuses — nothing
+Merchant-specific was added to the skill-component system. Note feats do
+**not** stack (`AddSkill.do()` dedupes via `add_skill(test=True)`), and if
+a unit somehow held two *different* `modify_buy_price`-granting skills,
+`skill_system.modify_buy_price` resolves multiple hook values via
+`utils.unique()`, which — despite the name — just returns the **last**
+value in iteration order, not a product of all of them. Feats don't
+multiply together; only one wins.
+
+**The prep-market wiring** lives entirely in `PrepMarketState.take_input`
+(`app/engine/prep.py`), at the two existing price computations, and
+nowhere else:
+
+```python
+# buy branch
+value = item_funcs.buy_price(self.unit, item)
+merchant = game.get_unit(merchant_engine.MERCHANT_NID)
+if merchant:
+    value = int(value * skill_system.modify_buy_price(merchant, item))
+
+# sell branch
+value = item_funcs.sell_price(self.unit, item)
+merchant = game.get_unit(merchant_engine.MERCHANT_NID)
+if merchant and value:
+    value = int(value * skill_system.modify_sell_price(merchant, item))
+```
+
+Both branches guard on `game.get_unit(MERCHANT_NID)` — **not**
+`get_merchant()`. This is deliberate: looking up the market price must
+never *create* a Merchant as a side effect. A save that has never
+donated XP or otherwise triggered `get_merchant()` sees baseline prices,
+unchanged, exactly like before this feature existed. Only Donate XP (or
+any other explicit `get_merchant()` call) brings the Merchant into
+existence. `self.unit` in `PrepMarketState` remains the browsing roster
+member (`game.memory['current_unit']`, set by `PrepManageSelectState`
+before entering the market) — the roster unit's own `buy_price`/
+`sell_price` (including *its own* skills, if any modify pricing) is
+computed first, then the Merchant's modifier is applied on top,
+multiplicatively.
+
+No sell-price feat currently exists (only `change_buy_price` feats were
+authored), but the sell-branch wiring calls
+`skill_system.modify_sell_price(merchant, item)` regardless — it simply
+resolves to the default `1.0` multiplier until a sell-price feat is
+authored, at which point it activates with no further code changes.
+
+### 13.4 Verifying a change
+
+`tools/test_merchant.py` is the headless proof for all of the above —
+same bootstrap and `check()`/`FAILURES`/`sys.exit(1)` harness as
+`tools/test_capital_completion.py`. It asserts, in order: the Merchant is
+created lazily and stays out of `get_units_in_party()`; the UniqueUnit-wrap
+mechanism actually resolves items/skills (proven both generically, using
+`Rowan`, and Merchant-specifically via `team` staying `'other'`); a save
+from before the Merchant existed loads without crashing and
+`get_merchant()` then creates one; the donate-math example from this doc
+(`90 + 40 + 75 + 0` exp pooled → `+2` levels, `5` exp carried, all donors
+zeroed); full turnwheel reversal of a donation; and that a discount feat
+changes the prep-market buy price by exactly its multiplier, restored to
+baseline the instant the feat is removed.
+
+### 13.5 Extending to every shop
+
+Today only the prep-menu market (`PrepMarketState`) checks for a
+Merchant. The event-driven `shop` command — `event_functions.shop` →
+`game.state.change('shop')` → `ShopState` (`app/engine/general_states.py`,
+e.g. `CAPITAL Vendor`'s `shop;Vulnerary,Potion,Fire,Heal`) — computes its
+own prices independently (`general_states.py` around the `take_input`
+`state == 'buy'`/`'sell'` branches) and does not look at the Merchant at
+all right now.
+
+**The central hook point, for both paths, is
+`item_funcs.buy_price`/`item_funcs.sell_price`** (`app/engine/item_funcs.py`).
+Every price display and every price actually charged funnels through
+those two functions or their direct callers:
+
+- `game_menus/menu_options.py` (`ItemOption`/shop-row rendering) calls
+  `item_funcs.buy_price(owner, item)` / `sell_price(owner, item)` to
+  decide what number is *displayed* next to an item.
+- `PrepMarketState` and `ShopState` both call the same two functions to
+  decide what is actually *charged* when a purchase or sale executes.
+
+Because both the displayed price and the charged price already share this
+one hook, making the Merchant's discount apply to every shop is a matter
+of *where* the Merchant's modifier gets folded in, not building a new
+price pipeline. Two options, in increasing order of reach:
+
+1. **Per-state, like the prep market today**: add the same
+   `merchant = game.get_unit(MERCHANT_NID); if merchant: value = int(value * skill_system.modify_buy_price(merchant, item))`
+   guard to `ShopState`'s own price computations and to
+   `game_menus/menu_options.py`'s display calls. This is the smallest
+   diff, but it means every future shop-shaped state has to remember to
+   add the same three lines — easy to miss, and it's what today's
+   prep-market-only scope deliberately avoids doing globally.
+2. **Inside `item_funcs.buy_price`/`sell_price` themselves**: fold the
+   Merchant lookup into the shared functions once, so every caller (prep
+   market, `ShopState`, menu display, and anything authored later) picks
+   it up automatically with no per-state code. This is what
+   `BACKLOG_AUDIT.md` calls making pricing "globally merchant-aware," and
+   it was explicitly deferred for this pass — `item_funcs.buy_price`/
+   `sell_price` currently only special-case the passed-in `unit` (the
+   shopper), not a second, always-relevant Merchant unit, and folding
+   that in cleanly (including the "don't create a Merchant just to price
+   an item" guard from §13.3) is real design surface, not a one-line
+   change.
+
+**The user's intended model for option 2**, to guide whoever picks this
+up: an event-driven shop should **inherit the same prep-market discount**
+(the Merchant's `modify_buy_price`/`modify_sell_price` roll) rather than
+having its own, separately-tuned discount curve — one Merchant, one
+pricing reputation, applied everywhere. On top of that shared discount,
+individual shops keep their own **special stock** (the item list passed
+to `shop;...`/`game.market_items`) — *what* is for sale stays
+per-shop-authored, but *how much cheaper* the Merchant makes it stays
+uniform. The two axes (special stock vs. discount depth) are meant to
+default to growing together as the Merchant levels — a higher-level
+Merchant with a deeper discount feat is also assumed to unlock pricier
+special stock — rather than being tuned as two independent authored
+knobs per shop. Concretely, that argues for option 2 over option 1: a
+single hook inside `item_funcs.buy_price`/`sell_price` keeps the discount
+half of that relationship automatically uniform across every shop,
+leaving only the stock lists as the per-shop authored piece.
