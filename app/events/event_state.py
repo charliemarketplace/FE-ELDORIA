@@ -62,6 +62,10 @@ class EventState(State):
     def level_end(self):
         current_level_nid = game.level.nid
         game.memory['_prev_level_nid'] = current_level_nid
+        # Captured BEFORE the cleared-set is updated below -- the set is what
+        # distinguishes a first clear from a revisit further down, and adding
+        # this level first would make every clear look like a revisit.
+        was_already_cleared = current_level_nid in game.game_vars.get('_cleared_levels', set())
         game.game_vars['_cleared_levels'] = game.game_vars.get('_cleared_levels', set()) | {current_level_nid}
         current_level_index = DB.levels.index(game.level.nid)
         should_go_to_overworld = DB.levels.get(game.level.nid).go_to_overworld and DB.constants.value('overworld') and game.game_vars.get('_goto_level') is None
@@ -95,6 +99,15 @@ class EventState(State):
                 else:
                     game.game_vars['_next_level_nid'] = game.game_vars['_goto_level']
                     game.game_vars['_goto_level'] = None
+            elif was_already_cleared and game.game_vars.get('_next_level_nid'):
+                # Re-clearing an already-cleared level must not rewind story
+                # progress. This assignment derives the next chapter from the
+                # level just finished, which is correct the first time through
+                # and destructive on a revisit: grinding S1 while S4 is pending
+                # would set _next_level_nid back to S2, and the overworld
+                # rebuilds next_level from it, making S4 unreachable until S2,
+                # SHUB and S3 were all re-cleared. Leave progress alone.
+                pass
             else:
                 next_level = DB.levels[current_level_index + 1]
                 if 'debug' in next_level.nid.lower():

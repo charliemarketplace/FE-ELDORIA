@@ -34,8 +34,10 @@ class LevelPrefab(Prefab):
         self.max_deploy: Optional[int] = None
         self.min_deploy: Optional[int] = None
         # Opt-in flag for a future level (e.g. a dungeon floor) to request that
-        # GameState.clean_up() preserve unit HP/state across the transition into
-        # this level, instead of the default full-heal-on-transition behavior.
+        # GameState.clean_up() preserve unit HP/guard/mana when LEAVING this
+        # level, instead of the default full-heal-on-transition behaviour.
+        # EventState.level_end() reads it off the level being exited, so set it
+        # on the floor you are walking OUT of, not the one you arrive in.
         self.preserve_state_on_transition: bool = False
 
         self.units = Data[Union[UniqueUnit, GenericUnit]]()

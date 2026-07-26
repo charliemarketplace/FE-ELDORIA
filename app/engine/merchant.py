@@ -74,18 +74,35 @@ def donate_xp() -> Tuple[List[action.Action], int]:
     merchant = get_merchant()
     donors = game.get_units_in_party()
 
-    total = merchant.exp + sum(unit.exp for unit in donors)
+    klass = DB.classes.get(merchant.klass)
+    room_to_grow = max(0, klass.max_level - merchant.level)
+    # The most the Merchant can actually hold: every remaining level, plus a
+    # full-but-not-levelling exp bar at the cap. Anything past this cannot be
+    # absorbed, so it must NOT be taken from the donors -- an earlier version
+    # zeroed every donor unconditionally while capping levels_gained, which
+    # meant that at max level "Donate XP" silently deleted the whole party's
+    # experience and gave nothing back.
+    capacity = room_to_grow * 100 + 99
+    available = merchant.exp + sum(unit.exp for unit in donors)
+    total = min(available, capacity)
 
     performed: List[action.Action] = []
+    # Draw from donors only up to what the Merchant can absorb, in roster
+    # order, leaving any surplus on the units that earned it.
+    to_draw = total - merchant.exp
     for donor in donors:
-        zero_act = action.SetExp(donor, 0)
+        if to_draw <= 0:
+            break
+        taken = min(donor.exp, to_draw)
+        if taken <= 0:
+            continue
+        zero_act = action.SetExp(donor, donor.exp - taken)
         action.do(zero_act)
         performed.append(zero_act)
+        to_draw -= taken
 
-    klass = DB.classes.get(merchant.klass)
     raw_levels = total // 100
     remainder = total % 100
-    room_to_grow = max(0, klass.max_level - merchant.level)
     levels_gained = min(raw_levels, room_to_grow)
 
     if levels_gained > 0:

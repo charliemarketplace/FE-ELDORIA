@@ -266,6 +266,16 @@ class OverworldLevelTransition(State):
         # selects an already-cleared node) takes priority; `next_level` (story progress)
         # is never reassigned, so it survives a revisit untouched
         reentry_target = game.game_vars.pop('_reentry_target_nid', None)
+        if reentry_target:
+            # The Safe/Unsafe roll made at selection has now been committed to a
+            # launch, so drop it: the cache exists only to keep the outcome
+            # stable between selecting the node and entering it. Leaving the
+            # entry in place would make the very first roll permanent, so a
+            # level that ever rolled Safe could never produce a generated
+            # encounter again and the grinding loop would seal itself shut.
+            safety = dict(game.game_vars.get('_node_safety', {}))
+            if safety.pop(reentry_target, None) is not None:
+                game.game_vars['_node_safety'] = safety
         self.go_to_next_level(reentry_target or game.overworld_controller.next_level)
         return 'repeat'
 

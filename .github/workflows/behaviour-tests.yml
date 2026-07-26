@@ -73,3 +73,6 @@ jobs:
 
       - name: Full playthrough (drives the real state machine -- prep menus, dialogue/choice screens, real combat, overworld transitions)
         run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_playthrough.py
+
+      - name: Event unit placements (terrain and collision)
+        run: uv run --no-project --python 3.12 --with pygame-ce --with typing-extensions python tools/test_event_placements.py
