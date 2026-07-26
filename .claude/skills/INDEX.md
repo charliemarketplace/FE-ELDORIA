@@ -37,6 +37,11 @@ with `name` and `description`, then these five sections:
 | `configure-ai-presets-and-groups` | Author `ai.json` behavior presets (targeting, view range, offense bias) and link units via `ai_group` so a squad reacts together |
 | `author-rescue-and-pairup` | Enable classic Rescue/Drop/Give/Take carrying, or switch to Fates-style Pair-Up (guard stance/gauge), via the shared `traveler` slot |
 | `configure-turnwheel-rewind-limits` | Cap Turnwheel rewinds per chapter, force a rewind after a scripted death, or permanently lock in history |
+| `configure-fatigue-system` | Turn on per-unit fatigue (deployment blocking or stat-penalty status skills) via `fatigue`/`reset_fatigue` constants and the `_fatigue` game_var |
+| `configure-bexp-economy` | Grant a party pooled Bonus Experience and let the player spend it in base to hand-pick level-ups (`bexp`/`rd_bexp_lvl` constants, `give_bexp`/`open_bexp_menu` commands) |
+| `configure-initiative-turn-order` | Replace team-phase turns with a per-unit initiative queue (`initiative` constant, `InitiativeTracker`, per-unit upkeep timing) |
+| `configure-fog-of-war` | Activate level-wide fog of war via event commands and layer `fog`/`vision` map regions on top for local overrides |
+| `author-persistent-records-and-achievements` | Author cross-save persistent records and player-facing achievements via event commands, distinct from the automatic Recordkeeper |
 
 ## Seed exclusion list — round 1 must NOT re-document these
 
@@ -79,3 +84,11 @@ They will be converted to skills separately; discovery rounds should look past t
 28. AI presets (`ai.json` behaviours, priority, offense_bias, view_range codes, roam_ai) and `ai_group` squad coordination (trigger_threshold, the `LevelPrefab.restore()` auto-heal)
 29. Rescue/Drop/Give/Take and Pair-Up (guard stance/gauge, the shared `traveler` slot, the `pair_up`/`separate` event commands and their rescue/drop nicknames)
 30. Turnwheel rewind limits (`_turnwheel` game_var gate, `_max_turnwheel_uses`/`_current_turnwheel_uses` budget, `activate_turnwheel` forced rewind, `LockTurnwheel`/`clear_turnwheel`/turnwheel-recording toggle)
+
+## Round 3 additions — also excluded from round 4 onward
+
+31. Fatigue system (`fatigue`/`reset_fatigue` DB constants, the `_fatigue` game_var's two modes, `ChangeFatigue`/`add_fatigue`, `ignore_fatigue`, the `Fatigue`/`FatigueOnHit` item components)
+32. BEXP economy (`bexp`/`rd_bexp_lvl` constants, `PartyObject.bexp`, `give_bexp`/`open_bexp_menu` event commands, the `BaseBEXPSelectState`/`BaseBEXPAllocateState` spend UI, the `BONUS_EXP` equation hook)
+33. Initiative / per-unit turn-order mode (`initiative` constant, `InitiativeTracker`, the `initiative` equation hook, `PhaseController`/`InitiativeUpkeep` rerouting, `DelayInitiativeOrder`)
+34. Fog of war plus the `fog`/`vision` region types (`enable_fog_of_war`/`set_fog_of_war` event commands, `fog_los`/`ai_fog_of_war` constants, `RegionType.FOG`/`VISION`, `game_board.in_vision`, `sight_range` skill components)
+35. Persistent records and achievements event layer (`create_record`/`update_record`/`replace_record`/`delete_record`/`unlock_difficulty`, `create_achievement`/`update_achievement`/`complete_achievement`/`clear_achievements`, the cross-save `AchievementManager`/`PersistentRecordManager` pickle stores, contrasted with the automatic save-bound Recordkeeper)
