@@ -12,5 +12,9 @@ node_modules/
 .dev.vars
 .dev.vars.*
 
-# Claude Code agent worktree scratch state
-.claude/
+# Claude Code agent worktree scratch state -- local settings and session
+# state stay untracked, but .claude/skills/ is a real deliverable (the
+# capability catalogue) and must be committed so it survives an ephemeral
+# container and loads automatically in future sessions on this repo.
+.claude/*
+!.claude/skills/
