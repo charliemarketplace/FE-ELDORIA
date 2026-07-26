@@ -89,20 +89,15 @@ def pick_band(avg: float, bands: List[dict]) -> dict:
 
 
 def _range_for_target(template: dict, target_level) -> tuple:
-    """Narrows a template's declared level_range so the rolled level actually
-    tracks the party.
-
-    Picking a band by party average is coarse: within a band the level was
-    previously rolled uniformly across the template's whole declared range,
-    so a small squad could easily average well outside LEVEL_TOLERANCE of the
-    party -- a party averaging 1.86 drawing a squad averaging 4.00, for
-    instance. The band decides WHICH enemies show up; the party average has
-    to decide how strong they are, or "scaled to the party" is not true.
+    """Narrows template['level_range'] to within LEVEL_TOLERANCE of
+    target_level (the party's average effective level), instead of rolling
+    uniformly across the template's whole declared range -- the band decides
+    WHICH enemies show up, target_level decides how strong they are.
 
     The comparison happens in EFFECTIVE level terms (power_band adds a flat
-    bonus for promoted classes), so a promoted template is offset back into
-    raw-level terms before clamping -- otherwise a tier-2 class would be
-    pushed to level 1 to hit a low-level party's effective average.
+    bonus for promoted classes), so a promoted template's range is offset
+    back into raw-level terms before clamping -- otherwise a tier-2 class
+    would be pushed to level 1 to hit a low-level party's effective average.
     """
     lo, hi = template['level_range']
     if target_level is None:

@@ -151,7 +151,11 @@ check('3. RemoveSkillCheck.reverse() restores the removed entry',
 #    exactly as the real 'targeting' state would leave them).
 # ---------------------------------------------------------------------------
 print('\n--- [4] Deterministic pass/fail via SkillCheckAbility.do(), on_skill_check fires ---')
-SEED = 918273
+# Picked so the natural this seed produces is neither 1 nor 20 -- roll_d20's
+# tabletop precedence (a natural 1 always fails, a natural 20 always
+# succeeds, overriding the DC) would otherwise override the pass/fail-by-DC
+# behavior this section is isolating.
+SEED = 1
 
 # Predict the natural this seed produces, via the exact same call shape
 # SkillCheckAbility.do() will make (unit=rowan, no dc yet) -- mirrors the
@@ -235,9 +239,9 @@ check('5. combat_random state UNCHANGED by 100 skill checks',
 #    parameters to typed values (event_commands.convert_parse), camel_to_snake
 #    the parameter keys (as Event.run_command does), and look up the
 #    implementation in app.events.function_catalog.get_catalog() -- proving
-#    the event_functions module-attachment wiring in event_commands.py
-#    (_wire_skill_check_dispatch) actually lands the two functions where
-#    function_catalog's inspect.getmembers scan will find them.
+#    add_skill_check/remove_skill_check (ordinary module-level functions in
+#    app/events/event_functions.py) actually land where function_catalog's
+#    inspect.getmembers scan will find them.
 # ---------------------------------------------------------------------------
 print('\n--- [6] add_skill_check / remove_skill_check event commands dispatch end to end ---')
 import logging as _logging

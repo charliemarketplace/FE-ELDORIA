@@ -149,7 +149,10 @@ targets = [
 for label, party in targets:
     avg = enemy_pool.party_average_effective_level(party)
     band = enemy_pool.pick_band(avg, bands)
-    squad = enemy_pool.sample_squad(band, 30, game)
+    # target_level=avg is the whole point of this section: without it,
+    # _range_for_target returns the band's full declared range and this
+    # check would pass identically even with the scaling code deleted.
+    squad = enemy_pool.sample_squad(band, 30, game, target_level=avg)
     squad_levels = [power_band.effective_level(s['level'], s['klass']) for s in squad]
     squad_mean = sum(squad_levels) / len(squad_levels)
     check('5. %s: party avg=%.2f -> band %r -> squad mean=%.2f within LEVEL_TOLERANCE=%d' % (
@@ -157,6 +160,35 @@ for label, party in targets:
           abs(squad_mean - avg) <= enemy_pool.LEVEL_TOLERANCE,
           'avg=%.2f squad_mean=%.2f diff=%.2f (tolerance=%d)' % (
               avg, squad_mean, abs(squad_mean - avg), enemy_pool.LEVEL_TOLERANCE))
+
+# ---------------------------------------------------------------------------
+# 5b. _range_for_target pins to the template's own edge instead of
+#     extrapolating when target_level sits entirely outside the template's
+#     declared level_range (band selection can leave a target this far off
+#     a template still present in the picked band).
+# ---------------------------------------------------------------------------
+print('\n--- [5b] _range_for_target pins to a band edge instead of extrapolating ---')
+edge_template = {'level_range': [1, 4], 'klass': 'Soldier'}
+lo_hi_above = enemy_pool._range_for_target(edge_template, 10)
+check('5b. target far above range pins to the template\'s own max (hi, hi)',
+      lo_hi_above == (4, 4), '_range_for_target(range=[1,4], target=10) = %r (expected (4, 4))' % (lo_hi_above,))
+lo_hi_below = enemy_pool._range_for_target(edge_template, -10)
+check('5b. target far below range pins to the template\'s own min (lo, lo)',
+      lo_hi_below == (1, 1), '_range_for_target(range=[1,4], target=-10) = %r (expected (1, 1))' % (lo_hi_below,))
+
+# ---------------------------------------------------------------------------
+# 5c. Regression: a party average that falls in the gap BETWEEN two bands'
+#     integer ranges (bands are authored as [1,4],[5,8],[9,12],[13,16],
+#     [17,9999] -- see enemy_pools.json) must pick the NEAREST band, not
+#     silently fall back to the highest one.
+# ---------------------------------------------------------------------------
+print('\n--- [5c] Regression: fractional avg in a band gap picks the nearest band ---')
+gap_avg = 4.33
+gap_band = enemy_pool.pick_band(gap_avg, bands)
+check('5c. avg 4.33 (gap between bands 1 and 2) picks the nearest band, not the highest',
+      gap_band['nid'] == 'green_recruits' and gap_band['nid'] != bands[-1]['nid'],
+      "pick_band(4.33, bands)['nid'] = %r (expected 'green_recruits', nearest below; must NOT be %r, the highest band)" %
+      (gap_band['nid'], bands[-1]['nid']))
 
 # ---------------------------------------------------------------------------
 # 6. Same seed -> same squad; combat_random state UNCHANGED by generation
@@ -247,16 +279,16 @@ if generated is not None:
     check('9. ai_group kept as authored', generated.ai_group == 'ProcTestGroup',
           'generated.ai_group = %r (expected ProcTestGroup)' % (generated.ai_group,))
 
-# A level with no procedural slots is a no-op. S1 itself now authors two
-# (the Safe/Unsafe "Unsafe squad", see BACKLOG_AUDIT.md item 2/6 and
-# lion_throne.ltproj/game_data/levels.json unit_group "S1_UnsafeSquad") --
-# use S2, which still has none, to keep testing the genuine no-op path.
-real_level_prefab = DB.levels.get('S2')
+# A level with no procedural slots is a no-op. S1-S4 each now author their
+# own Safe/Unsafe "Unsafe squad" pair (see BACKLOG_AUDIT.md item 2/6 and
+# lion_throne.ltproj/game_data/levels.json unit_groups "S{1..4}_UnsafeSquad")
+# -- use CAPITAL, which has none, to keep testing the genuine no-op path.
+real_level_prefab = DB.levels.get('CAPITAL')
 units_before_noop = len(game._current_level.units)
 game._generate_enemy_squad(real_level_prefab)
 units_after_noop = len(game._current_level.units)
 check('9. no-op when the level has no procedural slots', units_after_noop == units_before_noop,
-      'units before=%d after=%d (S2 has 0 procedural slots)' % (units_before_noop, units_after_noop))
+      'units before=%d after=%d (CAPITAL has 0 procedural slots)' % (units_before_noop, units_after_noop))
 
 # ---------------------------------------------------------------------------
 print('\n' + '=' * 78)

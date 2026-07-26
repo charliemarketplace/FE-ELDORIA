@@ -3640,8 +3640,6 @@ def parse_text_to_command(text: str, strict: bool = False) -> Tuple[EventCommand
         EventCommand: parsed command
         int: Index of the character the command failed to parse at (only if strict)
     """
-    _wire_skill_check_dispatch()
-
     def _parse_command(command: Type[EventCommand], arguments: List[str]) -> Tuple[Optional[EventCommand], Optional[int]]:
         # Start parsing
         keyword_argument_mode: bool = False
@@ -3816,68 +3814,3 @@ def parse_event_line(line: str) -> EventCommandTokens:
             ectoks._flag_idx = idx
             break
     return ectoks
-
-
-# ---------------------------------------------------------------------------
-# add_skill_check / remove_skill_check dispatch wiring
-#
-# app.events.event.Event._process_command looks up each command's
-# implementation via app.events.function_catalog.get_catalog(), which scans
-# app.events.event_functions (and overworld_event_functions) with
-# inspect.getmembers(module, inspect.isfunction), keeping only functions
-# whose __module__ literally equals 'app.events.event_functions'. That module
-# is owned by another workstream for this change, so instead of editing its
-# source, the two implementations below are attached onto the *module object*
-# here (with __module__ overridden to match what the catalog's filter
-# expects). This never edits event_functions.py on disk -- it only adds an
-# attribute to the already-imported module at runtime.
-#
-# This wiring CANNOT run at event_commands.py's own module scope: this file
-# is imported transitively from app.data.database.database (by way of
-# app.events.event_prefab), and event_functions.py itself does
-# `from app.data.database.database import DB` at its own module scope -- so
-# importing event_functions from here while database.py is still mid-import
-# raises "cannot import name 'DB' from partially initialized module". Instead
-# the wiring is deferred to first call of parse_text_to_command() below,
-# which is only ever invoked at real event-execution time (Event._queue_command,
-# app/events/event.py), long after every module above has finished importing,
-# and always before any command (including this one) is ever dispatched.
-_skill_check_wiring_done = False
-
-
-def _wire_skill_check_dispatch():
-    global _skill_check_wiring_done
-    if _skill_check_wiring_done:
-        return
-    _skill_check_wiring_done = True
-
-    from app.events import event_functions as _event_functions
-    from app.engine import action as _action
-
-    def _add_skill_check(self, unit1, unit2, dc=None, flags=None):
-        u1 = self._get_unit(unit1)
-        if not u1:
-            self.logger.error("add_skill_check: Couldn't find unit %s" % unit1)
-            return
-        u2 = self._get_unit(unit2)
-        if not u2:
-            self.logger.error("add_skill_check: Couldn't find unit %s" % unit2)
-            return
-        dc = int(dc) if dc is not None else 12
-        _action.do(_action.AddSkillCheck(u1.nid, u2.nid, dc))
-
-    def _remove_skill_check(self, unit1, unit2, flags=None):
-        u1 = self._get_unit(unit1)
-        if not u1:
-            self.logger.error("remove_skill_check: Couldn't find unit %s" % unit1)
-            return
-        u2 = self._get_unit(unit2)
-        if not u2:
-            self.logger.error("remove_skill_check: Couldn't find unit %s" % unit2)
-            return
-        _action.do(_action.RemoveSkillCheck(u1.nid, u2.nid))
-
-    _add_skill_check.__module__ = 'app.events.event_functions'
-    _remove_skill_check.__module__ = 'app.events.event_functions'
-    _event_functions.add_skill_check = _add_skill_check
-    _event_functions.remove_skill_check = _remove_skill_check

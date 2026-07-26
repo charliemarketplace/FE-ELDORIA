@@ -756,9 +756,13 @@ is used **nowhere** in this project's content — zero hits for `unchoice` in
 `events.json`.
 
 Real production example — `CAPITAL Intro`
-(`lion_throne.ltproj/game_data/events.json`, `nid: "CAPITAL Intro"`, roughly
-lines 1019-1242) is the only place `choice` is used in this game (21 calls,
-all in this one event) and demonstrates every piece above at once:
+(`lion_throne.ltproj/game_data/events.json`, `nid: "CAPITAL Intro"`) is by
+far the heaviest user of `choice` (23 calls in this one event alone) and
+demonstrates every piece above at once. `choice` ships in 3 events total —
+re-count via `sum(1 for e in json.load(open(...)) for l in e['_source'] if
+l.startswith('choice;'))` rather than trusting a fixed number here: the
+other two are `S2 Intro` (the `S2Gambit` Push-Through/Make-Camp choice) and
+`SHUB MonsterApproach`, one call each.
 
 ```
 "level_var;capital_pool;['Kael', 'Elara', 'Ren', 'Briar']",
@@ -809,10 +813,14 @@ action pair (turnwheel-safe): `do()` pulls the unit off the map, flips
 team; `reverse()` undoes all of it symmetrically, so rewinding the
 turnwheel past a recruitment un-recruits cleanly.
 
-It ships three times already, all structurally identical —
-`lion_throne.ltproj/game_data/events.json` lines 208 (Tamsin), 429 (Corwin),
-597 (Ysolde). Canonical recipe, `S2 TalkTamsin` (trigger `on_talk`,
-condition `unit2.nid == 'Tamsin'`, `only_once: true`):
+It ships four times — three `on_talk` recruitments, structurally identical
+(`S2 TalkTamsin`, `SHUB TalkCorwin`, `S3 TalkYsolde`), plus a fourth via the
+`on_skill_check` idiom in §14 (`S1 SkillCheckResolve`, `change_team;{unit2};
+player` on a successful check) — same primitive, different trigger. Re-count
+via `grep -c 'change_team;' lion_throne.ltproj/game_data/events.json` (counts
+lines, so also catches any future non-`on_talk` use) rather than trusting a
+fixed number here. Canonical `on_talk` recipe, `S2 TalkTamsin` (trigger
+`on_talk`, condition `unit2.nid == 'Tamsin'`, `only_once: true`):
 
 ```
 "add_portrait;Tamsin;Right",
@@ -916,8 +924,18 @@ truthy — content that wants this feature must set that game_var (e.g. via
 `game_var;_prep_donate;1` in an event). Selecting it pushes the
 `prep_donate_xp` state (`PrepDonateXPState`, registered in
 `app/engine/state_machine.py`), which is a single-frame, non-visual state:
-its `start()` calls `app.engine.merchant.donate_xp()` and immediately pops
-itself with `game.state.back()`.
+its `start()` pops itself with `game.state.back()` **first**, then calls
+`app.engine.merchant.donate_xp()`. This order is load-bearing, not
+cosmetic — it was originally donate-then-pop and that hung the prep menu:
+`StateMachine.temp_state` is a flat queue of pending ops applied in order at
+the end of the same `update()` call, so a pop queued *after* `donate_xp()`
+has already queued one `feat_choice` push per Merchant level gained is
+processed *after* those pushes and removes the last-pushed `feat_choice`
+screen instead of `prep_donate_xp` itself — silently eating the final feat
+pick and leaving `prep_donate_xp` stuck on the stack forever (it has no
+`take_input`/`update` of its own to recover). Popping first means every
+`feat_choice` push `donate_xp()` queues lands cleanly on top of `prep_main`,
+one screen per level gained, exactly as intended.
 
 `donate_xp()` does the actual pooling:
 

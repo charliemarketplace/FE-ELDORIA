@@ -445,6 +445,8 @@
     {
         "nid": "S2",
         "name": "Ashbriar Waste",
+        "max_deploy": 3,
+        "min_deploy": 1,
         "tilemap": "Chapter 5",
         "bg_tilemap": null,
         "party": "Emberwake",
@@ -730,6 +732,40 @@
                 "starting_position": null,
                 "starting_traveler": null,
                 "generic": true
+            },
+            {
+                "nid": "S2_Unsafe1",
+                "variant": null,
+                "level": 3,
+                "klass": "Soldier",
+                "faction": "Soldier",
+                "starting_items": [],
+                "starting_skills": [],
+                "team": "enemy",
+                "ai": "Attack",
+                "roam_ai": null,
+                "ai_group": "S2UnsafeSquad",
+                "starting_position": null,
+                "starting_traveler": null,
+                "generic": true,
+                "procedural": true
+            },
+            {
+                "nid": "S2_Unsafe2",
+                "variant": null,
+                "level": 3,
+                "klass": "Soldier",
+                "faction": "Soldier",
+                "starting_items": [],
+                "starting_skills": [],
+                "team": "enemy",
+                "ai": "Attack",
+                "roam_ai": null,
+                "ai_group": "S2UnsafeSquad",
+                "starting_position": null,
+                "starting_traveler": null,
+                "generic": true,
+                "procedural": true
             }
         ],
         "regions": [
@@ -800,6 +836,23 @@
                 "time_left": null,
                 "only_once": false,
                 "interrupt_move": false
+            },
+            {
+                "nid": "PickSlots",
+                "region_type": "formation",
+                "position": [
+                    7,
+                    15
+                ],
+                "size": [
+                    2,
+                    2
+                ],
+                "sub_nid": null,
+                "condition": "True",
+                "time_left": null,
+                "only_once": false,
+                "interrupt_move": false
             }
         ],
         "unit_groups": [
@@ -817,6 +870,23 @@
                     "S2Monster2": [
                         14,
                         14
+                    ]
+                }
+            },
+            {
+                "nid": "S2_UnsafeSquad",
+                "units": [
+                    "S2_Unsafe1",
+                    "S2_Unsafe2"
+                ],
+                "positions": {
+                    "S2_Unsafe1": [
+                        10,
+                        8
+                    ],
+                    "S2_Unsafe2": [
+                        11,
+                        8
                     ]
                 }
             }
@@ -1393,6 +1463,40 @@
                 ],
                 "starting_traveler": null,
                 "generic": true
+            },
+            {
+                "nid": "S3_Unsafe1",
+                "variant": null,
+                "level": 6,
+                "klass": "Soldier",
+                "faction": "Soldier",
+                "starting_items": [],
+                "starting_skills": [],
+                "team": "enemy",
+                "ai": "Attack",
+                "roam_ai": null,
+                "ai_group": "S3UnsafeSquad",
+                "starting_position": null,
+                "starting_traveler": null,
+                "generic": true,
+                "procedural": true
+            },
+            {
+                "nid": "S3_Unsafe2",
+                "variant": null,
+                "level": 6,
+                "klass": "Soldier",
+                "faction": "Soldier",
+                "starting_items": [],
+                "starting_skills": [],
+                "team": "enemy",
+                "ai": "Attack",
+                "roam_ai": null,
+                "ai_group": "S3UnsafeSquad",
+                "starting_position": null,
+                "starting_traveler": null,
+                "generic": true,
+                "procedural": true
             }
         ],
         "regions": [
@@ -1550,7 +1654,25 @@
                 "interrupt_move": false
             }
         ],
-        "unit_groups": [],
+        "unit_groups": [
+            {
+                "nid": "S3_UnsafeSquad",
+                "units": [
+                    "S3_Unsafe1",
+                    "S3_Unsafe2"
+                ],
+                "positions": {
+                    "S3_Unsafe1": [
+                        7,
+                        12
+                    ],
+                    "S3_Unsafe2": [
+                        8,
+                        12
+                    ]
+                }
+            }
+        ],
         "ai_groups": []
     },
     {
@@ -1934,6 +2056,40 @@
                 "starting_position": null,
                 "starting_traveler": null,
                 "generic": true
+            },
+            {
+                "nid": "S4_Unsafe1",
+                "variant": null,
+                "level": 8,
+                "klass": "Soldier",
+                "faction": "Soldier",
+                "starting_items": [],
+                "starting_skills": [],
+                "team": "enemy",
+                "ai": "Attack",
+                "roam_ai": null,
+                "ai_group": "S4UnsafeSquad",
+                "starting_position": null,
+                "starting_traveler": null,
+                "generic": true,
+                "procedural": true
+            },
+            {
+                "nid": "S4_Unsafe2",
+                "variant": null,
+                "level": 8,
+                "klass": "Soldier",
+                "faction": "Soldier",
+                "starting_items": [],
+                "starting_skills": [],
+                "team": "enemy",
+                "ai": "Attack",
+                "roam_ai": null,
+                "ai_group": "S4UnsafeSquad",
+                "starting_position": null,
+                "starting_traveler": null,
+                "generic": true,
+                "procedural": true
             }
         ],
         "regions": [
@@ -1955,7 +2111,25 @@
                 "interrupt_move": false
             }
         ],
-        "unit_groups": [],
+        "unit_groups": [
+            {
+                "nid": "S4_UnsafeSquad",
+                "units": [
+                    "S4_Unsafe1",
+                    "S4_Unsafe2"
+                ],
+                "positions": {
+                    "S4_Unsafe1": [
+                        10,
+                        8
+                    ],
+                    "S4_Unsafe2": [
+                        11,
+                        8
+                    ]
+                }
+            }
+        ],
         "ai_groups": []
     },
     {

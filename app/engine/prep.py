@@ -49,7 +49,7 @@ class PrepMainState(MapState):
         ignore = [False for option in options]
         # Don't manage units if there's nobody in the party!
         if not game.get_units_in_party():
-            ignore[0] = True
+            ignore[options.index('Manage')] = True
 
         # initialize custom options and events
         events = [None for option in options]
@@ -199,26 +199,16 @@ class PrepMainState(MapState):
 class PrepDonateXPState(State):
     """
     Instant, non-visual state: pools every roster unit's exp (plus the
-    Merchant's own banked exp) into the Merchant, per
-    `app.engine.merchant.donate_xp`, then pops itself. Any levels gained
-    queue a `feat_choice` screen each (handled by `donate_xp` itself), so
-    those become the new top of the state stack before control returns to
-    `prep_main`.
+    Merchant's banked exp) into the Merchant via merchant.donate_xp(), then
+    pops itself. Levels gained queue a `feat_choice` push each; donate_xp()
+    handles that.
 
-    Pop BEFORE calling donate_xp(), not after. StateMachine.temp_state
-    (app/engine/state_machine.py) is a flat list of pending ops applied in
-    order by process_temp_state() at the end of THIS SAME update() call --
-    'pop' always removes whatever is on top *at the moment it is
-    processed*, not "the state that queued it". Popping after donate_xp()
-    has already queued N 'feat_choice' pushes means the pop is processed
-    *after* those pushes and removes the last-pushed feat_choice screen
-    instead of this state -- silently eating the final feat pick and
-    leaving 'prep_donate_xp' stuck on the stack forever (nothing else ever
-    pops it, since it has no take_input/update of its own). Queuing the
-    pop first means it is processed before any feat_choice push exists,
-    correctly removing this state and leaving every feat_choice screen
-    donate_xp() queued stacked on top of prep_main, back to back, exactly
-    as documented above.
+    Pop BEFORE calling donate_xp(), not after: StateMachine.temp_state
+    processes queued ops in order at the end of THIS update(), and 'pop'
+    always removes whatever is on top when processed, not "the state that
+    queued it". Popping after donate_xp() has already queued N feat_choice
+    pushes would remove the last-pushed feat_choice instead of this state,
+    leaving 'prep_donate_xp' stuck on the stack forever.
     """
     name = 'prep_donate_xp'
 
