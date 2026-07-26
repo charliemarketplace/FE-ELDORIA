@@ -47,6 +47,11 @@ with `name` and `description`, then these five sections:
 | `author-combat-art-or-proc-skill` | Author a player-selectable Combat Art or an automatic proc skill (chance- or charge-gated), including the `build_charge`/`drain_charge`/mana resource layer |
 | `author-aura-skill` | Author a passive radius buff/debuff (`aura`/`aura_range`/`aura_target`) that auto-attaches a child skill to nearby units, with LOS gating and map highlighting |
 | `author-movement-granting-skill` | Author a move-again skill (Canto/Canter/CantoSharp), Pass-through, or a Witch Warp teleport, plus Galeforce's kill-to-move-again |
+| `author-shop-and-armoury` | Author a `shop` event: item list, `ShopFlavor` (vendor/armory/custom), `StockList` with cross-visit persistence via `ShopId` |
+| `configure-convoy-and-storage` | Turn on the party's shared convoy (`enable_convoy`/`_convoy`), route items into a specific party's convoy via `give_item;convoy`/`Party`, and the `long_range_storage`/`convoy_on_death` constants |
+| `author-camera-and-screen-transitions` | Direct cutscene camera/screen: `transition` fades, `change_background` panoramas, `move_cursor`/`center_cursor`/`flicker_cursor` pans, and `screen_shake` |
+| `author-overworld-nodes-roads-and-entities` | Progressively reveal overworld nodes/roads, toggle a node's custom menu options, and spawn/move standalone cinematic or reinforcement entities distinct from the automatic party entity |
+| `author-portrait-and-sprite-presentation` | Stage dialogue portraits beyond a bare add/remove: screen slots and auto-mirroring, slide vs. fade transitions, `move_portrait`/`bop_portrait`/`mirror_portrait`, and manual `expression` control |
 
 ## Seed exclusion list — round 1 must NOT re-document these
 
@@ -105,3 +110,11 @@ They will be converted to skills separately; discovery rounds should look past t
 38. Combat Arts and proc skills (`combat_art`/`automatic_combat_art`/`attack_proc`/`defense_proc`/`attack_pre_proc`/`defense_pre_proc`/`proc_rate`/`astra_proc`/`allowed_weapons`, the `build_charge`/`drain_charge`/`charges_per_turn`/`combat_charge_increase(_by_stat)`/mana-cost resource layer, `action.TriggerCharge`, and the unconditional `combat2` survival family (`miracle`/`true_miracle`/`ignore_damage`/`live_to_serve`/`lifetaker`/`lifelink`))
 39. Aura skills (`aura`/`aura_range`/`aura_target`/`show_aura`/`hide_aura`, `aura_funcs.py` propagation/pull/release, the `aura_los` DB constant, and the board/boundary/highlight rendering machinery)
 40. Movement-granting skills (`canto`/`canto_plus`/`canto_sharp`/`canter`, `pass`/`ignore_terrain`/`ignore_rescue_penalty`/`grounded`, `witch_warp`/`specific_witch_warp`/`witch_warp_expression`, and `galeforce`)
+
+## Round 5 additions — also excluded from round 6 onward
+
+41. Shops and armouries (`shop` event command's `ShopFlavor`/`StockList`/`ShopId`, the flavor-to-translation fallback in `ShopState`, and the `level_vars`-vs-`game_vars` stock-persistence mismatch)
+42. Convoy and storage (`enable_convoy`/`_convoy` game_var gate, `open_convoy`, `give_item;convoy;Item;Party` multi-party targeting, `PutItemInConvoy`/`TakeItemFromConvoy`/`TradeItemWithConvoy`, `long_range_storage`/`convoy_on_death` constants, `convoy_funcs.py` auto-equip heuristics)
+43. Camera and screen transition control (`transition`, `change_background`/`pause_background`, `move_cursor`/`center_cursor`/`flicker_cursor`, `screen_shake`/`screen_shake_end` and its five `ShakeType` offset patterns)
+44. Overworld nodes, roads, and entities (`reveal_overworld_node`/`reveal_overworld_road` ordering dependency, `set_overworld_menu_option_enabled`/`visible`, `create_overworld_entity`/`disable_overworld_entity`/`overworld_move_unit`/`set_overworld_position`, and the automatic `PARTY`-type entity seeded per `parties.json` entry)
+45. Portrait and sprite presentation (`add_portrait`/`remove_portrait`'s `Slide`/`ExpressionList`/`SpeedMult`/`mirror`/`low_priority`, screen-position auto-mirroring, `move_portrait`/`bop_portrait`/`mirror_portrait`, `multi_add_portrait`/`multi_remove_portrait`, `expression`, and the unit-level `change_portrait`)
