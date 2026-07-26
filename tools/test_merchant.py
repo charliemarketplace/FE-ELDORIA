@@ -27,8 +27,6 @@ from app.data.resources.resources import RESOURCES
 from app.data.database.database import DB
 
 from app.engine import action
-from app.engine import item_funcs
-from app.engine import skill_system
 from app.engine import game_state
 from app.engine.game_state import GameState
 from app.engine.source_type import SourceType
@@ -248,49 +246,57 @@ check('6. Merchant gained both feats', discount_feat_nid in skills_after and 'fL
       'skills before=%s, after=%s' % (skills_before, skills_after))
 
 # ---------------------------------------------------------------------------
-# 7. Prep-menu-market pricing: a discount feat changes the buy price, and
-#    removing it restores the baseline. This mirrors PrepMarketState's own
-#    buy-branch code exactly (app/engine/prep.py) -- read it back to prove
-#    the wiring is actually there, not just reimplemented here.
+# 7. Prep-menu-market pricing: drive the REAL PrepMarketState buy path (the
+#    actual take_input('SELECT') branch in app/engine/prep.py) with and
+#    without the discount feat, and assert the real gold delta -- not a
+#    hand-rolled reimplementation of the pricing arithmetic.
+#
+#    PrepMarketState/Manage/Market only exist inside a battle level's
+#    prep_main -- CAPITAL is a free-roam hub with no prep screen at all (see
+#    tools/test_playthrough.py section 4's note). Move the SAME `game`
+#    singleton into S1 via the real clean_up()+start_level() pair -- exactly
+#    what EventState.level_end() and the overworld's game.start_level() call
+#    do for a real level change -- so the Merchant, its feats, and the
+#    party's gold survive the transition.
 # ---------------------------------------------------------------------------
-print('\n--- [7] Prep-market pricing: Merchant feat discount applies, and its absence restores baseline ---')
-prep_source_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'app', 'engine', 'prep.py')
-with open(prep_source_path, 'r') as fp:
-    prep_source = fp.read()
-check('7. PrepMarketState buy path wires in the Merchant modifier',
-      'skill_system.modify_buy_price(merchant, item)' in prep_source,
-      'looked for "skill_system.modify_buy_price(merchant, item)" in app/engine/prep.py')
-check('7. PrepMarketState sell path wires in the Merchant modifier',
-      'skill_system.modify_sell_price(merchant, item)' in prep_source,
-      'looked for "skill_system.modify_sell_price(merchant, item)" in app/engine/prep.py')
+print('\n--- [7] Prep-market pricing: real buy path, with and without a discount feat ---')
+game.set_money(100000)
+game.clean_up()
+game.start_level('S1')
+check('7. Merchant survives the CAPITAL -> S1 level transition',
+      game.get_unit(merchant_engine.MERCHANT_NID) is merchant,
+      'game.get_unit(%r) = %r' % (merchant_engine.MERCHANT_NID, game.get_unit(merchant_engine.MERCHANT_NID)))
 
-buyer = kael
-template_items = item_funcs.create_items(buyer, ['Vulnerary'])
-vulnerary_template = template_items[0]
-baseline_price = item_funcs.buy_price(buyer, vulnerary_template)
+# Seed one infinite-stock Vulnerary the same way the real add_market_item
+# event function does (app/events/event_functions.py) -- game.market_items
+# is plain dict state that only a scripted `market` event populates; nothing
+# about clean_up()/start_level() fills it in on its own.
+game.market_items['Vulnerary'] = -1
 
-# Exact PrepMarketState buy-branch computation (app/engine/prep.py, state == 'buy'):
-#   value = item_funcs.buy_price(self.unit, item)
-#   merchant = game.get_unit(merchant_engine.MERCHANT_NID)
-#   if merchant: value = int(value * skill_system.modify_buy_price(merchant, item))
-def prep_market_buy_price(shopper, item):
-    value = item_funcs.buy_price(shopper, item)
-    m = game.get_unit(merchant_engine.MERCHANT_NID)
-    if m:
-        value = int(value * skill_system.modify_buy_price(m, item))
-    return value
+harness.goto_prep_main(max_frames=40000)
+manage_select = harness.enter_manage_and_select_unit('Rowan', max_frames=40000)
+market_state = harness.enter_prep_market(manage_select, max_frames=40000)
+check('7. Vulnerary reachable in the live buy_menu',
+      'Vulnerary' in harness.buy_menu_item_nids(market_state),
+      'buy_menu_item_nids = %s' % harness.buy_menu_item_nids(market_state))
 
-price_with_feat = prep_market_buy_price(buyer, vulnerary_template)
-check('7. discount feat lowers the prep-market buy price below baseline', price_with_feat < baseline_price,
-      'baseline_price=%d, price_with_feat=%d (fMerchant\'s Instinct = 0.8x)' % (baseline_price, price_with_feat))
-check('7. discounted price matches the feat\'s exact multiplier', price_with_feat == int(baseline_price * 0.8),
-      'price_with_feat=%d, expected int(%d * 0.8)=%d' % (price_with_feat, baseline_price, int(baseline_price * 0.8)))
+money_before_discounted = game.get_money()
+bought_discounted = harness.buy_item_in_prep_market(market_state, 'Vulnerary')
+discounted_delta = money_before_discounted - game.get_money()
+check('7. real buy path debits gold while the discount feat is active',
+      bought_discounted and discounted_delta > 0,
+      'bought=%r, delta=%d' % (bought_discounted, discounted_delta))
 
-remove_act = action.RemoveSkill(merchant, discount_feat_nid)
-action.do(remove_act)
-price_without_feat = prep_market_buy_price(buyer, vulnerary_template)
-check('7. removing the feat restores the baseline price', price_without_feat == baseline_price,
-      'price_without_feat=%d, baseline_price=%d' % (price_without_feat, baseline_price))
+action.do(action.RemoveSkill(merchant, discount_feat_nid))
+money_before_baseline = game.get_money()
+bought_baseline = harness.buy_item_in_prep_market(market_state, 'Vulnerary')
+baseline_delta = money_before_baseline - game.get_money()
+check('7. real buy path debits MORE gold once the discount feat is removed',
+      bought_baseline and baseline_delta > discounted_delta,
+      'baseline_delta=%d, discounted_delta=%d' % (baseline_delta, discounted_delta))
+check('7. discounted delta matches the feat\'s exact 0.8x multiplier',
+      discounted_delta == int(baseline_delta * 0.8),
+      'discounted_delta=%d, expected int(%d * 0.8)=%d' % (discounted_delta, baseline_delta, int(baseline_delta * 0.8)))
 
 # Put the feat back so the save round-trip below has something to prove
 # persisted correctly.

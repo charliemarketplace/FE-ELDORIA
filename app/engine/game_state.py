@@ -238,6 +238,12 @@ class GameState():
         self.turncount = 0
         self.talk_options = []
         self.base_convos = {}
+        # The skill-check registry (action.get_skill_check_options) lives in
+        # game_vars, not level_vars, so it isn't cleared by the
+        # self.level_vars reassignment above -- reset it explicitly here,
+        # alongside talk_options, or a stale S1 check silently re-arms when
+        # S1 is re-entered.
+        self.game_vars['_skill_check_options'] = []
         self.action_log = turnwheel.ActionLog()
         self.events = event_manager.EventManager()
         if not self.dialog_log:

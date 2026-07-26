@@ -129,11 +129,21 @@ reenter_script = '\n'.join(reenter_events[0]._source) if reenter_events else ''
 # As of the Safe/Unsafe fix (BACKLOG_AUDIT.md item 6), prep;0 is no longer
 # unconditionally the last line: an Unsafe roll (game_vars['_pending_
 # unsafe_encounter'] == 'S1') places the main squad + a generated squad and
-# proceeds to prep;0 for a real fight; a Safe roll skips straight to
+# proceeds to prep for a real fight; a Safe roll skips straight to
 # win_game with no fight. Check both halves are actually present, rather
 # than pinning the old unconditional shape.
-check('4. S1 Reenter still reaches prep;0 (Manage/Formation/Save entry point) on an Unsafe roll',
-      reenter_events and 'prep;0' in reenter_events[0]._source,
+#
+# S1 specifically also carries the deploy-cap fix (BACKLOG_AUDIT.md item 3 /
+# adversarial-review finding 1): its Intro and this Unsafe branch both call
+# `prep;1` (pick_units_enabled=True), not the bare `prep;0` every other
+# level's prep event still uses -- `_prep_pick` seeded by `max_deploy` on
+# S1's levels.json entry would otherwise be immediately stomped back to
+# False by an unconditional `prep;0`, exactly the "inert cap" bug
+# BACKLOG_AUDIT.md #3 describes. tools/test_playthrough.py drives the real
+# Pick Units screen and proves the cap actually refuses a unit; this only
+# proves the authored content actually asks for it.
+check('4. S1 Reenter reaches prep;1 (Pick Units enabled) on an Unsafe roll',
+      reenter_events and 'prep;1' in reenter_events[0]._source,
       'S1 Reenter _source = %r' % (reenter_events[0]._source if reenter_events else None,))
 check('4. S1 Reenter branches on the Safe/Unsafe pending-encounter flag',
       reenter_events and "_pending_unsafe_encounter" in reenter_script and 'win_game' in reenter_events[0]._source,
@@ -146,18 +156,64 @@ check('4. DB.events.get(level_start, S1) still includes S1 Intro, unaffected',
       any(e.nid == 'S1 Intro' for e in start_events),
       'start_events = %s' % [e.nid for e in start_events])
 
-# Also assert the analogous events exist for S2-S5, that they still end in
-# prep;0, and that hub levels (CAPITAL, SHUB) were deliberately NOT given a
-# level_reenter event.
-for lvl in ('S2', 'S3', 'S4', 'S5'):
+# Also assert the analogous events exist for S2-S5, and that hub levels
+# (CAPITAL, SHUB) were deliberately NOT given a level_reenter event.
+#
+# S2/S3/S4 now carry the same Safe/Unsafe branch as S1 (adversarial-review
+# finding 2: an Unsafe roll used to be a no-op past S1, and the pending flag
+# leaked into saves forever) -- each has its own `<lvl>_UnsafeSquad`
+# procedural unit_group (levels.json) added into the Unsafe half via
+# add_group, and both halves still end in 'end', not a bare trailing
+# 'prep;0'. S5 is a known exception: it is the campaign's last level
+# (go_to_overworld: false, last entry in levels.json), so a first clear
+# routes straight to 'title_start' and never revisits the overworld --
+# 'S5 Reenter' can therefore never actually fire in real play (confirmed by
+# tracing EventState.level_end()'s routing and is_level_launchable's
+# reentry gate), so it was deliberately left as the original unconditional
+# prep;0 rather than authoring dead content for it.
+branched_levels = {
+    'S2': 'S2_UnsafeSquad',
+    'S3': 'S3_UnsafeSquad',
+    'S4': 'S4_UnsafeSquad',
+}
+for lvl, unsafe_group in branched_levels.items():
     lvl_reenter = DB.events.get('level_reenter', lvl)
-    check('4. %s has a level_reenter prep event ending in prep;0' % lvl,
-          len(lvl_reenter) == 1 and lvl_reenter[0]._source[-1] == 'prep;0',
-          '%s level_reenter events = %s' % (lvl, [(e.nid, e._source) for e in lvl_reenter]))
     lvl_reenter_script = '\n'.join(lvl_reenter[0]._source) if lvl_reenter else ''
+    check('4. %s has exactly one level_reenter prep event' % lvl,
+          len(lvl_reenter) == 1,
+          '%s level_reenter events = %s' % (lvl, [(e.nid, e._source) for e in lvl_reenter]))
+    check('4. %s level_reenter branches on the Safe/Unsafe pending-encounter flag' % lvl,
+          lvl_reenter and "_pending_unsafe_encounter" in lvl_reenter_script and 'win_game' in lvl_reenter_script,
+          '%s level_reenter _source = %r' % (lvl, lvl_reenter[0]._source if lvl_reenter else None))
+    check('4. %s level_reenter places a generated Unsafe squad on the Unsafe branch, not a no-op' % lvl,
+          lvl_reenter and 'add_group;%s' % unsafe_group in lvl_reenter_script,
+          '%s level_reenter _source = %r' % (lvl, lvl_reenter[0]._source if lvl_reenter else None))
     check('4. %s level_reenter re-places its Intro\'s companions too' % lvl,
           lvl_reenter and 'add_unit;Kael;' in lvl_reenter_script,
           '%s level_reenter _source = %r' % (lvl, lvl_reenter[0]._source if lvl_reenter else None))
+
+# S3/S2 additionally re-place a mid-level recruit (Ysolde/Tamsin respectively)
+# who is NOT part of S1's four CAPITAL companions -- adversarial-review
+# finding 3: LevelObject.from_prefab re-places every registered unit at its
+# ORIGINAL level-prefab starting_position, so a recruited Tamsin/Ysolde
+# (originally placed on the enemy team at a specific tile) would otherwise
+# reappear at that old enemy-side tile, amid respawned enemies, on revisit.
+s2_reenter_script = '\n'.join(DB.events.get('level_reenter', 'S2')[0]._source)
+check('4. S2 level_reenter re-places recruited Tamsin too (not just the CAPITAL four)',
+      'add_unit;Tamsin;' in s2_reenter_script,
+      'S2 level_reenter _source = %r' % s2_reenter_script)
+s3_reenter_script = '\n'.join(DB.events.get('level_reenter', 'S3')[0]._source)
+check('4. S3 level_reenter re-places recruited Ysolde too (not just the CAPITAL four)',
+      'add_unit;Ysolde;' in s3_reenter_script,
+      'S3 level_reenter _source = %r' % s3_reenter_script)
+
+# S5 (unreachable in real play, see comment above) keeps its original,
+# unbranched shape -- pin that explicitly so a future edit that silently
+# changes it gets noticed.
+s5_reenter = DB.events.get('level_reenter', 'S5')
+check('4. S5 level_reenter (dead content -- never reachable) is unchanged: still ends in bare prep;0',
+      len(s5_reenter) == 1 and s5_reenter[0]._source[-1] == 'prep;0',
+      'S5 level_reenter events = %s' % [(e.nid, e._source) for e in s5_reenter])
 
 for hub in ('CAPITAL', 'SHUB'):
     hub_reenter = DB.events.get('level_reenter', hub)
@@ -186,36 +242,51 @@ check('5. uncleared, non-next-level S3 node is NOT launchable',
       "is_level_launchable('S3', 'S2', {'S1'}) = %r" % (is_level_launchable('S3', next_level, cleared),))
 
 # ---------------------------------------------------------------------------
-# 6. next_level is unchanged after a simulated re-entry -- story progress
-#    must survive a revisit. Mirrors OverworldLevelTransition.update(),
-#    which pops '_reentry_target_nid' and passes it to go_to_next_level(nid)
-#    WITHOUT ever reassigning game.overworld_controller.next_level.
+# 6. _next_level_nid survives a re-clear -- driven through the REAL
+#    EventState.level_end() (app/events/event_state.py), not a hand-copied
+#    simulation. level_end() takes no state from `self`, so it can be called
+#    directly on a bare EventState() the same way TurnChangeState's win-game
+#    path calls it for real.
+#
+#    Story progress must never rewind: a first clear of S1 must advance
+#    _next_level_nid to the next level in DB.levels order, and a LATER
+#    re-clear of S1 (story already past it, _next_level_nid pointing at
+#    S4) must leave _next_level_nid exactly where it was -- this is the
+#    campaign-progress regression BACKLOG_AUDIT.md records as just fixed
+#    (was_already_cleared computed before the cleared-set is updated).
 # ---------------------------------------------------------------------------
-print('\n--- [6] next_level survives a simulated re-entry ---')
+print('\n--- [6] _next_level_nid via the REAL EventState.level_end() ---')
+from app.events.event_state import EventState
 
+event_state = EventState()
 
-class FakeOverworldController:
-    def __init__(self, next_level):
-        self.next_level = next_level
+# Clean slate for this section, independent of section 3's save-round-trip
+# fixture above.
+game.game_vars['_cleared_levels'] = set()
+game.game_vars['_next_level_nid'] = None
+game.game_vars['_goto_level'] = None
 
+s1_index = DB.levels.index('S1')
+expected_first_clear_next = DB.levels[s1_index + 1].nid
 
-fake_controller = FakeOverworldController('S2')
-game.game_vars['_reentry_target_nid'] = 'S1'
+event_state.level_end()
+check('6. first clear of S1 marks it cleared',
+      'S1' in game.game_vars.get('_cleared_levels', set()),
+      "game_vars['_cleared_levels'] = %r" % (game.game_vars.get('_cleared_levels'),))
+check('6. first clear of S1 advances _next_level_nid to the next level in DB.levels order',
+      game.game_vars.get('_next_level_nid') == expected_first_clear_next,
+      "game_vars['_next_level_nid'] = %r (expected %r)" %
+      (game.game_vars.get('_next_level_nid'), expected_first_clear_next))
 
-# Exact logic of OverworldLevelTransition.update(): pop the stashed target,
-# fall back to next_level, and never write next_level itself.
-reentry_target = game.game_vars.pop('_reentry_target_nid', None)
-launch_nid = reentry_target or fake_controller.next_level
+# Re-enter S1 for real (the same call an Unsafe overworld revisit makes) and
+# simulate story progress having continued past it in the meantime.
+game.start_level('S1')
+game.game_vars['_next_level_nid'] = 'S4'
 
-check('6. simulated re-entry launches the reentry target, not next_level',
-      launch_nid == 'S1',
-      'launch_nid = %r (expected S1)' % (launch_nid,))
-check('6. next_level is unchanged after the simulated re-entry',
-      fake_controller.next_level == 'S2',
-      'fake_controller.next_level = %r (expected unchanged S2)' % (fake_controller.next_level,))
-check('6. _reentry_target_nid was consumed (popped), not left dangling',
-      game.game_vars.get('_reentry_target_nid') is None,
-      "game.game_vars.get('_reentry_target_nid') = %r" % (game.game_vars.get('_reentry_target_nid'),))
+event_state.level_end()
+check('6. re-clearing an already-cleared S1 does NOT rewind _next_level_nid',
+      game.game_vars.get('_next_level_nid') == 'S4',
+      "game_vars['_next_level_nid'] = %r (expected unchanged S4)" % (game.game_vars.get('_next_level_nid'),))
 
 # ---------------------------------------------------------------------------
 # Summary

@@ -2866,23 +2866,16 @@ class RemoveTalk(Action):
 
 
 def get_skill_check_options() -> list:
-    """Returns a snapshot (a fresh list copy) of the skill-check registry: a
+    """Returns a snapshot (fresh list copy) of the skill-check registry: a
     list of `[unit1_nid, unit2_nid, dc]` entries recording which unit pairs
     may currently attempt a non-combat *Skill Check* (see SkillCheckAbility
-    in app/engine/abilities.py) against each other.
-
-    Mirrors `game.talk_options` (see AddTalk/RemoveTalk above), but
-    game_state.py is owned by another workstream for this change, so rather
-    than add a new `GameState` attribute, the registry lives in
-    `game.game_vars['_skill_check_options']`. `game_vars` is a
-    PrimitiveCounter that already accepts (and round-trips through
-    save/pickle/load and the turnwheel, for free) lists of primitives, so no
-    new persistence plumbing is required.
+    in app/engine/abilities.py) against each other. Stored in
+    `game.game_vars['_skill_check_options']`, cleared each chapter alongside
+    `game.talk_options` (see GameState.sweep()).
 
     Mutating the returned list does NOT persist the change -- callers must
-    reassign it back to `game.game_vars['_skill_check_options']`
-    (PrimitiveCounter validates on `__setitem__`), which AddSkillCheck and
-    RemoveSkillCheck do below.
+    reassign it back to `game.game_vars['_skill_check_options']`, which
+    AddSkillCheck and RemoveSkillCheck do below.
     """
     return list(game.game_vars.get('_skill_check_options', []))
 
@@ -2902,19 +2895,29 @@ class AddSkillCheck(Action):
     """Registers `unit1_nid` as able to attempt a non-combat *Skill Check*
     against `unit2_nid` in the current chapter, with the given DC (difficulty
     class). See `get_skill_check_options` above for where this is stored.
+
+    do() is a no-op if the pair is already registered (unlike AddTalk, which
+    always appends); `did_add` records whether do() actually added the entry,
+    so reverse() only removes it when this action was the one that added it
+    -- the same pattern RemoveTalk uses for `did_remove`.
     """
     def __init__(self, unit1_nid, unit2_nid, dc=12):
         self.unit1 = unit1_nid
         self.unit2 = unit2_nid
         self.dc = int(dc)
+        self.did_add = False
 
     def do(self):
+        self.did_add = False
         options = get_skill_check_options()
         if not any(entry[0] == self.unit1 and entry[1] == self.unit2 for entry in options):
             options.append([self.unit1, self.unit2, self.dc])
             game.game_vars['_skill_check_options'] = options
+            self.did_add = True
 
     def reverse(self):
+        if not self.did_add:
+            return
         options = get_skill_check_options()
         entry = [self.unit1, self.unit2, self.dc]
         if entry in options:

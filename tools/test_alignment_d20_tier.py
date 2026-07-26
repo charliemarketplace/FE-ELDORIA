@@ -203,6 +203,20 @@ check('6. success is None when dc is None', no_dc_roll['success'] is None,
 check('6. total == natural + modifier', no_dc_roll['total'] == no_dc_roll['natural'] + 3,
       'roll = %r' % no_dc_roll)
 
+# Previously-contradictory combinations: a natural 1 must always fail (even
+# when a huge modifier would otherwise beat the DC), and a natural 20 must
+# always succeed (even against a DC no modifier could realistically beat).
+# 'success' and 'band' must always agree.
+nat1_huge_modifier = next(r for r in (game.query_engine.roll_d20(modifier=100, dc=15) for _ in range(4000)) if r['natural'] == 1)
+check('6. natural 1 with a huge modifier still fails (tabletop crit-fail overrides the DC)',
+      nat1_huge_modifier['success'] is False and nat1_huge_modifier['band'] == 'crit_fail',
+      'roll = %r' % nat1_huge_modifier)
+
+nat20_impossible_dc = next(r for r in (game.query_engine.roll_d20(modifier=0, dc=1000) for _ in range(4000)) if r['natural'] == 20)
+check('6. natural 20 against an impossible DC still succeeds (tabletop crit-success overrides the DC)',
+      nat20_impossible_dc['success'] is True and nat20_impossible_dc['band'] == 'crit_success',
+      'roll = %r' % nat20_impossible_dc)
+
 # ---------------------------------------------------------------------------
 # 7. STREAM ISOLATION -- roll_d20 must draw exclusively from the other_random
 #    (turnwheel-safe) stream, and must NEVER touch combat_random. This is the

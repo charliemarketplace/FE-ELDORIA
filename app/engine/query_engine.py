@@ -424,46 +424,42 @@ class GameQueryEngine():
         return utils.clamp(raw, _ALIGNMENT_MIN, _ALIGNMENT_MAX)
 
     def roll_d20(self, unit=None, modifier: int = 0, dc: int = None) -> dict:
-        """Rolls a d20, tabletop-style, and reports the result against an
-        optional difficulty class (DC).
-        Uses `game.get_random`, which draws from the turnwheel-safe
-        `other_random` stream (NOT the `combat_random` stream that combat rolls
-        use) so calling this never perturbs combat replay/turnwheel state.
-        Example usage:
-        * `roll_d20(unit, modifier=2, dc=15)['success']` in a condition string
-          to gate a skill-check event branch
+        """Rolls a d20, tabletop-style, against an optional difficulty class
+        (DC). Uses `game.get_random` (the turnwheel-safe `other_random`
+        stream, not `combat_random`), so this never perturbs combat replay.
+
+        Tabletop precedence: a natural 1 always fails and a natural 20
+        always succeeds, overriding the DC comparison -- 'success' and
+        'band' always agree.
+
         Args:
-            unit (optional): unit the roll is being made for. Currently
-                unused by the roll itself (no unit stat bonuses are applied),
-                but accepted so event scripts can pass it through for
-                flavor/logging without needing a separate signature.
-            modifier (int, optional): flat modifier added to the natural roll
-                to produce the total. Defaults to 0.
-            dc (int, optional): difficulty class to beat. If None, no
-                pass/fail judgement is made against a DC. Defaults to None.
+            unit (optional): passed through for event scripts' flavor/logging;
+                no stat bonuses are applied here.
+            modifier (int, optional): flat bonus added to the natural roll.
+            dc (int, optional): difficulty class to beat. If None, 'success'
+                is None and 'band' is 'normal' (unless natural is 1 or 20).
         Returns:
-            dict: {
-                'natural': the raw 1-20 die result,
-                'total': natural + modifier,
-                'success': total >= dc if dc was given, else None,
-                'band': 'crit_fail' on a natural 1, 'crit_success' on a
-                    natural 20, else 'success'/'fail' vs dc, or 'normal' if
-                    dc is None,
-            }
+            dict: {'natural', 'total' (natural + modifier), 'success'
+                (True/False/None), 'band' ('crit_fail'/'crit_success'/
+                'success'/'fail'/'normal')}
         """
         natural = self.game.get_random(1, 20)
         total = natural + modifier
-        success = None if dc is None else (total >= dc)
 
         if natural == 1:
             band = 'crit_fail'
+            success = False if dc is not None else None
         elif natural == 20:
             band = 'crit_success'
+            success = True if dc is not None else None
         elif dc is None:
             band = 'normal'
-        elif success:
+            success = None
+        elif total >= dc:
             band = 'success'
+            success = True
         else:
             band = 'fail'
+            success = False
 
         return {'natural': natural, 'total': total, 'success': success, 'band': band}

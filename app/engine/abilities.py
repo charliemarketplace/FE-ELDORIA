@@ -338,6 +338,13 @@ class TradeAbility(Ability):
     def do(unit):
         game.state.change('trade')
 
+# __subclasses__() returns classes in the order they were DEFINED in this
+# file, not by name or any explicit priority list -- so the first 3 classes
+# above (Attack/Spell/Talk) become PRIMARY_ABILITIES purely by virtue of
+# being defined first. Inserting a new Ability subclass above SupportAbility
+# silently reshuffles which abilities are "primary"; add new abilities below
+# TradeAbility (the last one before this line) unless you mean to change
+# what's primary.
 ABILITIES = Ability.__subclasses__()
 PRIMARY_ABILITIES = ABILITIES[:3]
 OTHER_ABILITIES = ABILITIES[3:]

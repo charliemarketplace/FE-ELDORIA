@@ -346,6 +346,39 @@ def buy_menu_item_nids(prep_market_state):
     return [item.nid for item in prep_market_state.buy_menu.options]
 
 
+def buy_item_in_prep_market(prep_market_state, item_nid):
+    """Drives PrepMarketState's REAL Buy path end to end for one unit of
+    `item_nid`: from the initial free Buy/Sell choice (if not already past
+    it), positions the live Market menu's selection on the matching item,
+    then sends the actual 'SELECT' event -- the exact take_input() branch
+    (app/engine/prep.py) that computes item_funcs.buy_price /
+    skill_system.modify_buy_price and calls game.set_money(). Nothing here
+    reimplements that arithmetic; callers read game.get_money() before/after
+    to observe the real effect.
+
+    Returns True if `item_nid` was found in the live buy_menu and SELECT was
+    sent, False if it wasn't found (nothing is pressed, nothing changes).
+    """
+    state = prep_market_state
+    assert state.name == 'prep_market', "top state is %r, not prep_market" % state.name
+    if state.state == 'free':
+        state.menu.set_selection('Buy')
+        frame('SELECT')
+    assert state.state == 'buy', "expected PrepMarketState in 'buy' substate, got %r" % state.state
+    market_menu = state.buy_menu
+    for i, w_type in enumerate(market_menu.order):
+        submenu = market_menu.menus[w_type]
+        for idx, opt in enumerate(submenu.options):
+            item = opt.get()
+            if item is not None and getattr(item, 'nid', None) == item_nid:
+                market_menu.selection_index = i + 1
+                market_menu.menu_index = i
+                submenu.current_index = idx
+                frame('SELECT')
+                return True
+    return False
+
+
 def leave_prep_by_fighting(max_frames=20000, choose=None):
     """Selects 'Fight' in the live prep_main menu and drives forward (through
     whatever post-prep dialogue the level's intro/reenter event still has,

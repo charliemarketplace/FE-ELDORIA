@@ -2409,6 +2409,29 @@ def remove_talk(self: Event, unit1, unit2, flags=None):
         return
     action.do(action.RemoveTalk(u1.nid, u2.nid))
 
+def add_skill_check(self: Event, unit1, unit2, dc=None, flags=None):
+    u1 = self._get_unit(unit1)
+    if not u1:
+        self.logger.error("add_skill_check: Couldn't find unit %s" % unit1)
+        return
+    u2 = self._get_unit(unit2)
+    if not u2:
+        self.logger.error("add_skill_check: Couldn't find unit %s" % unit2)
+        return
+    dc = int(dc) if dc is not None else 12
+    action.do(action.AddSkillCheck(u1.nid, u2.nid, dc))
+
+def remove_skill_check(self: Event, unit1, unit2, flags=None):
+    u1 = self._get_unit(unit1)
+    if not u1:
+        self.logger.error("remove_skill_check: Couldn't find unit %s" % unit1)
+        return
+    u2 = self._get_unit(unit2)
+    if not u2:
+        self.logger.error("remove_skill_check: Couldn't find unit %s" % unit2)
+        return
+    action.do(action.RemoveSkillCheck(u1.nid, u2.nid))
+
 def add_lore(self: Event, lore, flags=None):
     action.do(action.AddLore(lore))
 
