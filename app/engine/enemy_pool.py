@@ -75,11 +75,17 @@ def pick_band(avg: float, bands: List[dict]) -> dict:
     for band in bands:
         if band['min_avg_level'] <= avg <= band['max_avg_level']:
             return band
-    lowest = min(bands, key=lambda b: b['min_avg_level'])
-    highest = max(bands, key=lambda b: b['max_avg_level'])
-    if avg < lowest['min_avg_level']:
-        return lowest
-    return highest
+    # Bands are authored as INTEGER intervals ([1,4], [5,8], ...) but avg is a
+    # float mean, so every fractional value between two bands -- 4.33, 8.5,
+    # 12.4 -- matches none of them. Falling back to "the highest band" here
+    # would hand a party averaging 4.33 the level-17+ endgame squad, which is
+    # exactly the range a grinding party passes through. Pick the band whose
+    # interval is nearest instead.
+    def distance(band):
+        if avg < band['min_avg_level']:
+            return band['min_avg_level'] - avg
+        return avg - band['max_avg_level']
+    return min(bands, key=distance)
 
 
 def _range_for_target(template: dict, target_level) -> tuple:

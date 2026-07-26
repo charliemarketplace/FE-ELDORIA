@@ -81,9 +81,20 @@ class OverworldManager(OverworldManagerInterface):
         return qualifying >= req_count
 
     def get_node_safety(self, level_nid: NID) -> str:
-        """Rolls (once) whether a revisited node's level is 'Safe' or
-        'Unsafe', caching the result in game.game_vars['_node_safety']
-        (keyed by level nid) so re-selecting the node never re-rolls.
+        """Rolls whether THIS visit to an already-cleared level is 'Safe' or
+        'Unsafe', recording the outcome in game.game_vars['_node_safety']
+        (keyed by level nid).
+
+        The roll is per-visit, not per-level-for-the-campaign. An earlier
+        version cached the first result and reused it forever, which meant a
+        single coin flip decided a level's fate permanently: roll Safe once
+        and that level could never produce a generated encounter again,
+        sealing off the grinding loop the enemy pool exists to feed. There is
+        no re-roll to guard against, either -- the only caller rolls and
+        changes state to 'overworld_next_level' in the same breath, so
+        selection and launch are one action with no browsing window between
+        them. The stored value is the last outcome, kept so the level side and
+        saves can see what this visit rolled.
 
         Uses game.get_random_weighted_choice, which draws from the
         turnwheel-safe `other_random` stream (see action.RecordOtherRandomState)
@@ -101,9 +112,13 @@ class OverworldManager(OverworldManagerInterface):
         clears are always Safe.
         """
         from app.engine.game_state import game
-        safety = game.game_vars.setdefault('_node_safety', {})
+        safety = dict(game.game_vars.get('_node_safety', {}))
         if level_nid not in safety:
             safety[level_nid] = game.get_random_weighted_choice(['Safe', 'Unsafe'], [1, 1])
+            # Copy-then-reassign rather than mutating in place: PrimitiveCounter
+            # validates on __setitem__, and an in-place write through
+            # setdefault would slip past it.
+            game.game_vars['_node_safety'] = safety
         outcome = safety[level_nid]
         if outcome == 'Unsafe':
             game.game_vars['_pending_unsafe_encounter'] = level_nid
