@@ -42,6 +42,11 @@ with `name` and `description`, then these five sections:
 | `configure-initiative-turn-order` | Replace team-phase turns with a per-unit initiative queue (`initiative` constant, `InitiativeTracker`, per-unit upkeep timing) |
 | `configure-fog-of-war` | Activate level-wide fog of war via event commands and layer `fog`/`vision` map regions on top for local overrides |
 | `author-persistent-records-and-achievements` | Author cross-save persistent records and player-facing achievements via event commands, distinct from the automatic Recordkeeper |
+| `author-effective-damage-weapon` | Author an item that deals bonus/multiplied damage against unit tags (`effective_damage` component), with its icon/reticle tells and the `negate`/`negate_tags` counter |
+| `author-multi-item-or-sequence-item` | Author a composite item: a `multi_item` picker menu (Three-Houses-style spell list) or a `sequence_item` step pipeline (Warp/Rescue-style), plus `multi_target`/`allow_same_target`/`allow_less_than_max_targets` |
+| `author-combat-art-or-proc-skill` | Author a player-selectable Combat Art or an automatic proc skill (chance- or charge-gated), including the `build_charge`/`drain_charge`/mana resource layer |
+| `author-aura-skill` | Author a passive radius buff/debuff (`aura`/`aura_range`/`aura_target`) that auto-attaches a child skill to nearby units, with LOS gating and map highlighting |
+| `author-movement-granting-skill` | Author a move-again skill (Canto/Canter/CantoSharp), Pass-through, or a Witch Warp teleport, plus Galeforce's kill-to-move-again |
 
 ## Seed exclusion list — round 1 must NOT re-document these
 
@@ -92,3 +97,11 @@ They will be converted to skills separately; discovery rounds should look past t
 33. Initiative / per-unit turn-order mode (`initiative` constant, `InitiativeTracker`, the `initiative` equation hook, `PhaseController`/`InitiativeUpkeep` rerouting, `DelayInitiativeOrder`)
 34. Fog of war plus the `fog`/`vision` region types (`enable_fog_of_war`/`set_fog_of_war` event commands, `fog_los`/`ai_fog_of_war` constants, `RegionType.FOG`/`VISION`, `game_board.in_vision`, `sight_range` skill components)
 35. Persistent records and achievements event layer (`create_record`/`update_record`/`replace_record`/`delete_record`/`unlock_difficulty`, `create_achievement`/`update_achievement`/`complete_achievement`/`clear_achievements`, the cross-save `AchievementManager`/`PersistentRecordManager` pickle stores, contrasted with the automatic save-bound Recordkeeper)
+
+## Round 4 additions — also excluded from round 5 onward
+
+36. Effective damage against unit tags (`effective_damage` item component's `effective_tags`/`effective_multiplier`/`effective_bonus_damage`/`weapon_effectiveness_multiplied` options, the icon-flash/danger-reticle tells, and the `negate`/`negate_tags` skill-side counters)
+37. Multi-item and sequence-item construction (`multi_item`/`multi_item_hides_unavailable`/`sequence_item`/`multi_target`/`allow_same_target`/`allow_less_than_max_targets`/`store_unit`/`unload_unit`, the recursive `item_funcs` helpers, and the `CombatTargetingState` step-by-step sequence pipeline)
+38. Combat Arts and proc skills (`combat_art`/`automatic_combat_art`/`attack_proc`/`defense_proc`/`attack_pre_proc`/`defense_pre_proc`/`proc_rate`/`astra_proc`/`allowed_weapons`, the `build_charge`/`drain_charge`/`charges_per_turn`/`combat_charge_increase(_by_stat)`/mana-cost resource layer, `action.TriggerCharge`, and the unconditional `combat2` survival family (`miracle`/`true_miracle`/`ignore_damage`/`live_to_serve`/`lifetaker`/`lifelink`))
+39. Aura skills (`aura`/`aura_range`/`aura_target`/`show_aura`/`hide_aura`, `aura_funcs.py` propagation/pull/release, the `aura_los` DB constant, and the board/boundary/highlight rendering machinery)
+40. Movement-granting skills (`canto`/`canto_plus`/`canto_sharp`/`canter`, `pass`/`ignore_terrain`/`ignore_rescue_penalty`/`grounded`, `witch_warp`/`specific_witch_warp`/`witch_warp_expression`, and `galeforce`)
