@@ -52,6 +52,11 @@ with `name` and `description`, then these five sections:
 | `author-camera-and-screen-transitions` | Direct cutscene camera/screen: `transition` fades, `change_background` panoramas, `move_cursor`/`center_cursor`/`flicker_cursor` pans, and `screen_shake` |
 | `author-overworld-nodes-roads-and-entities` | Progressively reveal overworld nodes/roads, toggle a node's custom menu options, and spawn/move standalone cinematic or reinforcement entities distinct from the automatic party entity |
 | `author-portrait-and-sprite-presentation` | Stage dialogue portraits beyond a bare add/remove: screen slots and auto-mirroring, slide vs. fade transitions, `move_portrait`/`bop_portrait`/`mirror_portrait`, and manual `expression` control |
+| `configure-save-slots-and-chapter-cleanup` | Control the save-slot prompt, mid-battle saving, save deletion, and a non-destructive chapter reset (`SkipSave`/`BattleSave`/`DeleteSave`/`ForceChapterCleanUp`), distinct from the automatic end-of-level save and the player-facing pause-menu Suspend/Save |
+| `author-chapter-title-objectives-and-narration` | Author the chapter-title interstitial (`chapter_title`), rewrite a level's win/loss/simple objective text mid-chapter (`change_objective_simple`/`win`/`loss`), and stage full-screen narration mode (`toggle_narration_mode`, the deprecated `narrate`) |
+| `author-music-and-sound` | Direct music (fade in/out, the 4-deep song stack, `change_music`/`change_special_music`) and one-shot sound effects from events, plus the per-level phase/battle music table and the `battle_animation_music` item/skill override |
+| `author-aoe-item-targeting` | Give an item an area-of-effect shape — blast radius, line, cleave, or all-allies/all-enemies (`blast_aoe` and its enemy/ally/equation variants, `line_aoe`, `enemy_cleave_aoe`, `all_allies_aoe`/`all_enemies_aoe`) — with correct hit-resolution vs. targeting-highlight behavior |
+| `author-forced-movement-on-hit` | Give an item a forced-movement effect on hit — `shove`, `swap`, `pivot`, or `draw_back` — plus their `_on_end_combat` and `_target_restrict` (suppress-if-invalid) variants |
 
 ## Seed exclusion list — round 1 must NOT re-document these
 
@@ -118,3 +123,47 @@ They will be converted to skills separately; discovery rounds should look past t
 43. Camera and screen transition control (`transition`, `change_background`/`pause_background`, `move_cursor`/`center_cursor`/`flicker_cursor`, `screen_shake`/`screen_shake_end` and its five `ShakeType` offset patterns)
 44. Overworld nodes, roads, and entities (`reveal_overworld_node`/`reveal_overworld_road` ordering dependency, `set_overworld_menu_option_enabled`/`visible`, `create_overworld_entity`/`disable_overworld_entity`/`overworld_move_unit`/`set_overworld_position`, and the automatic `PARTY`-type entity seeded per `parties.json` entry)
 45. Portrait and sprite presentation (`add_portrait`/`remove_portrait`'s `Slide`/`ExpressionList`/`SpeedMult`/`mirror`/`low_priority`, screen-position auto-mirroring, `move_portrait`/`bop_portrait`/`mirror_portrait`, `multi_add_portrait`/`multi_remove_portrait`, `expression`, and the unit-level `change_portrait`)
+
+## Round 6 additions — discovery concluded, see closing note
+
+46. Save slots, suspend/resume, and chapter-transition control (`skip_save`'s one-shot `_skip_save`/`game.memory` handoff, `battle_save`'s deferred-vs-`immediately` prompt timing, `delete_save`'s missing-`SaveSlot` `AttributeError` crash bug, `force_chapter_clean_up`'s `game.clean_up(full=False)` turncount/turnwheel/resurrection semantics, and the distinct player-facing pause-menu Suspend/Save path)
+47. Chapter title, objective text, and narration mode (`chapter_title`'s music/title fallbacks, `change_objective_simple`/`win`/`loss` rewriting `LevelPrefab.objective` live via `TextEvaluator`-evaluated `EvaluableString`, `toggle_narration_mode`'s `open`/`close`-only `Direction` and the deprecated `narrate`)
+48. Music and sound (`music`/`music_fade_back`/`music_clear`'s 4-deep song stack, `change_music`/`change_special_music`, the per-level `player_phase`/`enemy_phase`/`boss_battle`/etc. music table all null across all 7 levels, and the unused `battle_animation_music` item/skill override)
+49. AOE item targeting (`blast_aoe`/`enemy_blast_aoe`/`ally_blast_aoe`/`smart_blast_aoe`/`equation_blast_aoe`/`enemy_cleave_aoe`/`all_allies_aoe`/`all_enemies_aoe`/`line_aoe`/`enemy_line_aoe`, the `splash` vs. `splash_positions` hit-resolution/highlight split, `skill_system.alternate_splash`/`empower_splash`)
+50. Forced movement on hit (`shove`/`swap`/`pivot`/`draw_back`, their `_on_end_combat` and `_target_restrict` suppress-if-invalid variants, `skill_system.ignore_forced_movement`)
+
+## Discovery closed at round 6
+
+Six rounds documented 50 capabilities. Round 5 judged the well thin enough
+to recommend round 6 be the last full sweep, explicitly scoping "the engine
+supports this richly, this project never authors it" as the norm rather
+than the exception — round 6 confirmed that framing: of its five new
+entries, three (save/chapter-transition control, chapter title/objective/
+narration, music/sound) have **zero** live call sites in this project's
+event data, and even the two picked specifically for having a live example
+(AOE targeting, forced movement) each turned up exactly *one* real usage
+apiece (`Mend`'s `ally_blast_aoe`, `so_Shove`'s `shove_target_restrict`)
+against eight and nine sibling variants respectively that go completely
+unused.
+
+What's left unexplored: the candidate ground listed for round 6 that
+wasn't picked up — dynamic eval-based stat modifiers, status duration and
+upkeep timing, and weapon-triangle override components (`Reaver`/
+`DoubleTriangle`/`CustomTriangleMultiplier`/`WeaponTriangleOverride`) — was
+surveyed but not written up; each looked plausible but none surfaced a
+distinct enough mechanism or a live example to justify a sixth entry over
+padding the catalogue. Beyond that, this catalogue has focused on
+event commands, DB-level authoring surfaces, and item/skill components
+reachable through `items.json`/`skills.json`; it has not systematically
+covered the editor UI (`app/editor/`) itself, the resource-authoring
+pipelines for sprites/tilemaps/animations beyond what
+`AUTHORING_CASE_STUDY.md` already covers, or the AI's internal scoring
+heuristics beyond the `ai.json` preset surface in
+`configure-ai-presets-and-groups`.
+
+To extend the catalogue later: don't run another blanket sweep. Pick a
+specific engine subsystem not listed above (the editor, a resource
+pipeline, or AI internals are the three named gaps) and scope a round to
+just that subsystem, or wait for this project's own event/item/skill data
+to grow into new mechanisms and document those once they're live rather
+than hunting for more unused engine surface.
