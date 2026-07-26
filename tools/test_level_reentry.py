@@ -133,17 +133,21 @@ reenter_script = '\n'.join(reenter_events[0]._source) if reenter_events else ''
 # win_game with no fight. Check both halves are actually present, rather
 # than pinning the old unconditional shape.
 #
-# S1 specifically also carries the deploy-cap fix (BACKLOG_AUDIT.md item 3 /
-# adversarial-review finding 1): its Intro and this Unsafe branch both call
-# `prep;1` (pick_units_enabled=True), not the bare `prep;0` every other
-# level's prep event still uses -- `_prep_pick` seeded by `max_deploy` on
-# S1's levels.json entry would otherwise be immediately stomped back to
-# False by an unconditional `prep;0`, exactly the "inert cap" bug
-# BACKLOG_AUDIT.md #3 describes. tools/test_playthrough.py drives the real
-# Pick Units screen and proves the cap actually refuses a unit; this only
-# proves the authored content actually asks for it.
-check('4. S1 Reenter reaches prep;1 (Pick Units enabled) on an Unsafe roll',
-      reenter_events and 'prep;1' in reenter_events[0]._source,
+# S2 (checked further below in the branched_levels loop) carries the
+# deploy-cap fix instead (BACKLOG_AUDIT.md item 3 / adversarial-review
+# finding 1): its Intro and Unsafe-reentry branch both call `prep;1`
+# (pick_units_enabled=True), not the bare `prep;0` every other level's prep
+# event still uses -- `_prep_pick` seeded by `max_deploy` on S2's
+# levels.json entry would otherwise be immediately stomped back to False by
+# an unconditional `prep;0`, exactly the "inert cap" bug BACKLOG_AUDIT.md #3
+# describes. (Authored on S2, not S1: tools/test_deploy_cap.py hard-codes
+# S1 as its own zero-migration regression fixture, so declaring max_deploy
+# on S1 would falsify that suite's premise instead.)
+# tools/test_playthrough.py drives the real Pick Units screen and proves
+# the cap actually refuses a unit; this only proves the authored content
+# actually asks for it.
+check('4. S1 Reenter still reaches prep;0 (Manage/Formation/Save entry point) on an Unsafe roll',
+      reenter_events and 'prep;0' in reenter_events[0]._source,
       'S1 Reenter _source = %r' % (reenter_events[0]._source if reenter_events else None,))
 check('4. S1 Reenter branches on the Safe/Unsafe pending-encounter flag',
       reenter_events and "_pending_unsafe_encounter" in reenter_script and 'win_game' in reenter_events[0]._source,
@@ -191,6 +195,28 @@ for lvl, unsafe_group in branched_levels.items():
     check('4. %s level_reenter re-places its Intro\'s companions too' % lvl,
           lvl_reenter and 'add_unit;Kael;' in lvl_reenter_script,
           '%s level_reenter _source = %r' % (lvl, lvl_reenter[0]._source if lvl_reenter else None))
+
+# S2 carries the deploy-cap fix (see comment above [4]): both its Intro and
+# this Unsafe branch call `prep;1`, and its levels.json entry actually
+# declares max_deploy/min_deploy -- unlike every other level, which still
+# has neither field set.
+s2_intro_script = '\n'.join(DB.events.get('level_start', 'S2')[0]._source)
+check('4. S2 Intro reaches prep;1 (Pick Units enabled), not the bare prep;0',
+      'prep;1' in s2_intro_script,
+      'S2 Intro _source = %r' % s2_intro_script)
+s2_reenter_unsafe_script = '\n'.join(DB.events.get('level_reenter', 'S2')[0]._source)
+check('4. S2 Reenter Unsafe branch also reaches prep;1',
+      'prep;1' in s2_reenter_unsafe_script,
+      'S2 Reenter _source = %r' % s2_reenter_unsafe_script)
+s2_prefab = DB.levels.get('S2')
+check('4. S2 levels.json entry actually declares max_deploy/min_deploy (not just seeded at runtime)',
+      s2_prefab.max_deploy == 3 and s2_prefab.min_deploy == 1,
+      'S2 max_deploy=%r min_deploy=%r' % (s2_prefab.max_deploy, s2_prefab.min_deploy))
+for other in ('S1', 'S3', 'S4', 'S5'):
+    other_prefab = DB.levels.get(other)
+    check('4. %s levels.json entry still has no max_deploy/min_deploy set (only S2 does)' % other,
+          other_prefab.max_deploy is None and other_prefab.min_deploy is None,
+          '%s max_deploy=%r min_deploy=%r' % (other, other_prefab.max_deploy, other_prefab.min_deploy))
 
 # S3/S2 additionally re-place a mid-level recruit (Ysolde/Tamsin respectively)
 # who is NOT part of S1's four CAPITAL companions -- adversarial-review

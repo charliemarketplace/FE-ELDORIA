@@ -186,7 +186,7 @@
             "if;game.game_vars.get('briar_joined') and game.get_unit('Briar') and game.get_unit('Briar').team == 'player'",
             "add_unit;Briar;5,16;immediate",
             "end",
-            "prep;0",
+            "prep;1",
             "add_talk;Iska;Tamsin",
             "transition;Close",
             "change_background;Desert",
@@ -205,6 +205,11 @@
             "add_portrait;Rowan;Left",
             "speak;Rowan;There's a warmth on that ridge wind that isn't the desert's. Push on, or make camp and wait for first light?",
             "choice;S2Gambit;What do we do?;Push Through,Make Camp",
+            "if;game.game_vars['S2Gambit'] == 'Push Through'",
+            "inc_game_var;alignment_lawful_chaotic;-3",
+            "elif;game.game_vars['S2Gambit'] == 'Make Camp'",
+            "inc_game_var;alignment_lawful_chaotic;3",
+            "end",
             "remove_portrait;Rowan"
         ],
         "nid": "S2 Intro"
@@ -278,7 +283,18 @@
             "if;game.game_vars.get('briar_joined') and game.get_unit('Briar') and game.get_unit('Briar').team == 'player'",
             "add_unit;Briar;5,16;immediate",
             "end",
-            "prep;0"
+            "if;game.game_vars.get('tamsin_joined') and game.get_unit('Tamsin') and game.get_unit('Tamsin').team == 'player'",
+            "add_unit;Tamsin;6,16;immediate",
+            "end",
+            "if;game.game_vars.get('_pending_unsafe_encounter') == 'S2'",
+            "game_var;_pending_unsafe_encounter;None",
+            "add_group;S2_UnsafeSquad",
+            "prep;1",
+            "else",
+            "game_var;_pending_unsafe_encounter;None",
+            "speak;Rowan;The wastes are quiet today. We push on without incident.",
+            "win_game",
+            "end"
         ],
         "nid": "S2 Reenter"
     },
@@ -465,7 +481,11 @@
         "priority": 20,
         "_source": [
             "transition;Close",
+            "if;game.get_unit('Merchant') and skill_system.unlocked_market_tier(game.get_unit('Merchant')) >= 2",
             "shop;{unit};Steel Sword,Steel Lance,Steel Axe,EMB_CinderVial",
+            "else",
+            "shop;{unit};EMB_CinderVial",
+            "end",
             "transition;Open"
         ],
         "nid": "SHUB Armory"
@@ -725,7 +745,18 @@
             "if;game.game_vars.get('corwin_joined') and game.get_unit('Corwin') and game.get_unit('Corwin').team == 'player'",
             "add_unit;Corwin;4,17;immediate",
             "end",
-            "prep;0"
+            "if;game.game_vars.get('ysolde_joined') and game.get_unit('Ysolde') and game.get_unit('Ysolde').team == 'player'",
+            "add_unit;Ysolde;0,16;immediate",
+            "end",
+            "if;game.game_vars.get('_pending_unsafe_encounter') == 'S3'",
+            "game_var;_pending_unsafe_encounter;None",
+            "add_group;S3_UnsafeSquad",
+            "prep;0",
+            "else",
+            "game_var;_pending_unsafe_encounter;None",
+            "speak;Rowan;The reliquary halls are still tonight. Nothing waits for us.",
+            "win_game",
+            "end"
         ],
         "nid": "S3 Reenter"
     },
@@ -878,7 +909,15 @@
             "if;game.game_vars.get('corwin_joined') and game.get_unit('Corwin') and game.get_unit('Corwin').team == 'player'",
             "add_unit;Corwin;7,17;immediate",
             "end",
-            "prep;0"
+            "if;game.game_vars.get('_pending_unsafe_encounter') == 'S4'",
+            "game_var;_pending_unsafe_encounter;None",
+            "add_group;S4_UnsafeSquad",
+            "prep;0",
+            "else",
+            "game_var;_pending_unsafe_encounter;None",
+            "speak;Rowan;Emberfall's road is empty. Whatever's left of Voss's men, they're not here.",
+            "win_game",
+            "end"
         ],
         "nid": "S4 Reenter"
     },
@@ -1729,6 +1768,21 @@
             "game_var;_alignment_blessing_given;1"
         ],
         "nid": "S1 AlignmentBlessing"
+    },
+    {
+        "name": "AlignmentDiscipline",
+        "trigger": "level_start",
+        "level_nid": "S3",
+        "condition": "game.query_engine.check_alignment('lawful_chaotic') >= 5",
+        "commands": [],
+        "only_once": true,
+        "priority": 20,
+        "_source": [
+            "speak;Rowan;Keep the line. We've held worse ground than this by holding formation.",
+            "give_money;300",
+            "game_var;_alignment_discipline_given;1"
+        ],
+        "nid": "S3 AlignmentDiscipline"
     },
     {
         "name": "SkillCheckResolve",
