@@ -32,6 +32,11 @@ with `name` and `description`, then these five sections:
 | `author-support-affinity-relationship` | Declare a support pair and/or character affinity with per-rank combat bonuses, rank thresholds, and the constants governing how they're earned/combined |
 | `add-weapon-type-or-rank` | Add a new weapon type (triangle advantage/disadvantage, rank bonus) or extend the weapon-rank ladder |
 | `configure-difficulty-mode` | Author a difficulty mode: permadeath/growth/RNG policy, per-team (player/enemy/boss) stat bonuses, unlock gating |
+| `author-terrain-effects` | Give a terrain type a movement-cost key (`mtype`), an LOS-blocking flag (`opaque`), and a passive on-tile status skill (`status`) |
+| `configure-movement-cost-grid` | Edit the `mcost.json` movement-type × terrain cost grid and per-class `movement_group` assignment |
+| `configure-ai-presets-and-groups` | Author `ai.json` behavior presets (targeting, view range, offense bias) and link units via `ai_group` so a squad reacts together |
+| `author-rescue-and-pairup` | Enable classic Rescue/Drop/Give/Take carrying, or switch to Fates-style Pair-Up (guard stance/gauge), via the shared `traveler` slot |
+| `configure-turnwheel-rewind-limits` | Cap Turnwheel rewinds per chapter, force a rewind after a scripted death, or permanently lock in history |
 
 ## Seed exclusion list — round 1 must NOT re-document these
 
@@ -66,3 +71,11 @@ They will be converted to skills separately; discovery rounds should look past t
 23. Support pairs and affinities (rank thresholds, per-rank combat bonuses, `bonus_method`)
 24. Weapon types and weapon ranks (triangle advantage/disadvantage, rank bonus, wexp constants)
 25. Difficulty modes (permadeath/growth/RNG policy, per-team stat bonuses, unlock gating)
+
+## Round 2 additions — also excluded from round 3 onward
+
+26. Terrain authoring — `mtype` (movement-cost key), `opaque` (LOS blocking), `status` (on-tile skill effect), and the `RegionType.TERRAIN`/`STATUS` region overrides
+27. The `mcost.json` movement-type × terrain cost grid and per-class `movement_group` resolution (including the `MovementType` skill-component override)
+28. AI presets (`ai.json` behaviours, priority, offense_bias, view_range codes, roam_ai) and `ai_group` squad coordination (trigger_threshold, the `LevelPrefab.restore()` auto-heal)
+29. Rescue/Drop/Give/Take and Pair-Up (guard stance/gauge, the shared `traveler` slot, the `pair_up`/`separate` event commands and their rescue/drop nicknames)
+30. Turnwheel rewind limits (`_turnwheel` game_var gate, `_max_turnwheel_uses`/`_current_turnwheel_uses` budget, `activate_turnwheel` forced rewind, `LockTurnwheel`/`clear_turnwheel`/turnwheel-recording toggle)
